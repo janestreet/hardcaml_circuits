@@ -11,7 +11,11 @@ build: [
 ]
 depends: [
   "ocaml" {>= "4.07.0"}
-  "dune" {>= "2.0.0"}
+  "base"
+  "hardcaml"
+  "ppx_deriving_hardcaml"
+  "ppx_jane"
+  "dune"                  {>= "2.0.0"}
 ]
 synopsis: "Hardcaml Circuits"
 description: "

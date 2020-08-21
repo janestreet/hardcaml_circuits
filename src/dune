@@ -1,0 +1,2 @@
+(library (name hardcaml_circuits) (public_name hardcaml_circuits)
+ (libraries base hardcaml) (preprocess (pps ppx_deriving_hardcaml ppx_jane)))
