@@ -1,5 +1,5 @@
 open! Core
-module Synth = Hardcaml_synthesis_reports
+module Synth = Hardcaml_xilinx_reports
 
 module Make (Bits : sig
     val data_width : int
@@ -25,7 +25,7 @@ struct
   end
 
   module O = With_valid
-  module With_regs = Hardcaml_synthesis_reports.Wrap_with_registers.Make (I) (O)
+  module With_regs = Hardcaml_xilinx_reports.Wrap_with_registers.Make (I) (O)
   module Arb = Hardcaml_circuits.Arbiters
 
   let wrap_comb f =
@@ -81,7 +81,7 @@ let command =
     ~summary:"count leading zeros logic"
     (let open Command.Let_syntax in
      let%map_open () = return ()
-     and flags = Hardcaml_synthesis_reports.Command.Command_flags.flags
+     and flags = Hardcaml_xilinx_reports.Command.Command_flags.flags
      and data_width = flag "width" (required int) ~doc:"DATA_WIDTH Width of data"
      and num_sources = flag "num-sources" (required int) ~doc:"NUM sources to arbitrate" in
      fun () ->

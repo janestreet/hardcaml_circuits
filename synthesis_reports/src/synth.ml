@@ -37,7 +37,7 @@ let create_circuit
     include Hardcaml.Interface.Make (Pre)
   end
   in
-  let module Command = Hardcaml_synthesis_reports.Command.With_interface (I) (O) in
+  let module Command = Hardcaml_xilinx_reports.Command.With_interface (I) (O) in
   let create scope (input : _ I.t) =
     let spec_no_clear = Reg_spec.create ~clock:input.clock () in
     let reg x = Signal.reg spec_no_clear ~enable:Signal.vdd x in
@@ -110,10 +110,10 @@ let command_for_single =
       Command.basic
         ~summary:(Printf.sprintf "Single-component synthesis for %s" Component.name)
         [%map_open.Command
-          let synth_flags = Hardcaml_synthesis_reports.Command.Command_flags.flags
+          let synth_flags = Hardcaml_xilinx_reports.Command.Command_flags.flags
           and params = Component.Params.flags in
           fun () ->
-            Hardcaml_synthesis_reports.Command.run_circuit
+            Hardcaml_xilinx_reports.Command.run_circuit
               ~sort_by_name:true
               ~flags:synth_flags
               (fun scope -> create_circuit scope (module Component) params)]
@@ -131,7 +131,7 @@ let command_for_all =
         create_circuit scope (module Component) param))
     |> create_mega_circuit scope
   in
-  Hardcaml_synthesis_reports.Command.command_circuit ~sort_by_name:true circuit
+  Hardcaml_xilinx_reports.Command.command_circuit ~sort_by_name:true circuit
 ;;
 
 let command_old =
