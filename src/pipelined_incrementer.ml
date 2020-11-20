@@ -1,4 +1,5 @@
-open! Import
+open Base
+open Hardcaml
 open Signal
 
 let create ~part_width ~clock ~clear ~(set : Signal.t With_valid.t) ~increment =

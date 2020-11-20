@@ -1,4 +1,5 @@
-open! Import
+open Base
+open Hardcaml
 
 module Architecture = struct
   type t =

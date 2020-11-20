@@ -1,4 +1,5 @@
 open! Import
+open Hardcaml_waveterm
 
 let%expect_test "select next with clz" =
   let test valids =
@@ -279,7 +280,7 @@ module Test_priority_onehot_cleaner_comb = Test_round_robin_comb (struct
 
 let display_rules =
   let re x = Re.Posix.(compile (re x)) in
-  Waveterm.Display_rule.
+  Display_rule.
     [ port_name_is "index" ~wave_format:Unsigned_int
     ; port_name_is "valid" ~wave_format:Bit
     ; port_name_is "value" ~wave_format:Unsigned_int

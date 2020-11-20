@@ -1,6 +1,7 @@
 (** Pipelined adder architectures for very wide adders. *)
 
-open! Import
+open Base
+open Hardcaml
 
 (** Pipelined adder. The result is available after
     [(adder_width + partwidth) / part_width] cycles. *)

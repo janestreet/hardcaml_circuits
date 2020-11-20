@@ -1,4 +1,5 @@
-open! Import
+open Base
+open Hardcaml
 
 module type Gen = sig
   include Add.Gen

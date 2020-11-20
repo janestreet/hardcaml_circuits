@@ -1,4 +1,5 @@
-open! Import
+open Base
+open Hardcaml
 include Fixnum_intf
 
 module Make (Spec : Spec) = struct

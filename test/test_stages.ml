@@ -1,4 +1,5 @@
 open! Import
+open Hardcaml_waveterm
 
 let%expect_test "sum stages" =
   let stages = Stages.create 10 ~init:0 ~f:(fun _i x -> x + 1) in

@@ -1,5 +1,6 @@
 open Base
 open Hardcaml
+open Hardcaml_waveterm
 open Hardcaml_circuits
 
 let test ~arity n =
@@ -18,7 +19,7 @@ let test ~arity n =
       ]
   in
   let sim = Cyclesim.create circuit in
-  let waves, sim = Hardcaml_waveterm.Waveform.create sim in
+  let waves, sim = Waveform.create sim in
   let get_input name =
     List.find_exn ~f:(fun (a, _) -> String.equal name a) (Cyclesim.inputs sim) |> snd
   in
@@ -49,11 +50,11 @@ let test ~arity n =
       ""
         ~expected_answer_1:(n * (1 + n) / 2 : int)
         ~expected_answer_2:(n * (1 + n) / 2 * 2 : int)];
-  Hardcaml_waveterm.Waveform.print
+  Waveform.print
     ~display_width:80
     ~display_height:13
     ~display_rules:
-      Hardcaml_waveterm.Display_rule.
+      Display_rule.
         [ port_name_is "clock" ~wave_format:Bit
         ; port_name_is "enable" ~wave_format:Bit
         ; port_name_is "a_valid" ~wave_format:Bit

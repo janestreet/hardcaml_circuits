@@ -1,6 +1,7 @@
 (** Simple pipelined incrementer. *)
 
-open Import
+open Base
+open Hardcaml
 
 (** Split the addition into [width / part_width] sub-adders. The increment value must be
     no wider than [part_width].

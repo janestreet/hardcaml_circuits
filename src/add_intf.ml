@@ -1,6 +1,7 @@
 (** Low level adder components *)
 
-open! Import
+open Base
+open Hardcaml
 
 (** [Gen] is a (massively) cut down [Comb.S] that distinguishes between the type of a
     single bit, [bit], and a sequence of bits, [t].  This interface makes it clear that

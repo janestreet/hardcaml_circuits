@@ -2,8 +2,6 @@ include Base
 include Hardcaml
 include Hardcaml_circuits
 include Expect_test_helpers_base
-module Waveterm = Hardcaml_waveterm
-module Waveform = Waveterm.Waveform
 
 let rec num_bits bits =
   if bits < 0 then raise_s [%message "arg to [num_bits] must be >= 0" (bits : int)];

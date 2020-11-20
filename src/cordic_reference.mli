@@ -1,6 +1,7 @@
 (** Reference implementation of the CORDIC algorithm using [Float.t]. *)
 
-open! Import
+open Base
+open! Hardcaml
 
 (** Determines the cordic update equations *)
 module System : sig

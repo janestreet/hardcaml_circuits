@@ -1,4 +1,5 @@
-open! Import
+open Base
+open Hardcaml
 module Architecture = Cordic.Architecture
 module Config = Cordic.Config
 module Mode = Cordic.Mode

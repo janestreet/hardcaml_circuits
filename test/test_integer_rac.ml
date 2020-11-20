@@ -1,4 +1,5 @@
 open! Import
+open Hardcaml_waveterm
 
 module Make (Config : Rac.Config) = struct
   module Rac = Rac.Make (Config)
@@ -53,13 +54,9 @@ module Make (Config : Rac.Config) = struct
   ;;
 
   let run_and_print_waves ~simulator ~testbench ~data_in =
-    let waves, simulator = Hardcaml_waveterm.Waveform.create simulator in
+    let waves, simulator = Waveform.create simulator in
     let result = run ~simulator ~testbench ~data_in in
-    Hardcaml_waveterm.Waveform.print
-      ~display_height:28
-      ~display_width:120
-      ~wave_width:2
-      waves;
+    Waveform.print ~display_height:28 ~display_width:120 ~wave_width:2 waves;
     result
   ;;
 

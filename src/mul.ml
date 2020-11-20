@@ -1,4 +1,5 @@
-open! Import
+open Base
+open Hardcaml
 include Mul_intf
 
 module Config = struct

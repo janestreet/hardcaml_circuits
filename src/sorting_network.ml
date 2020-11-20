@@ -1,4 +1,5 @@
-open! Import
+open Base
+open! Hardcaml
 
 module Min_or_max = struct
   type t =

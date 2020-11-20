@@ -1,4 +1,5 @@
-open! Import
+open Base
+open Hardcaml
 
 (* twos-complement normalization -- returns the narrowest [Bits.t] value that represents
    the same integer as the input.  *)

@@ -1,4 +1,5 @@
-open! Import
+open Base
+open Hardcaml
 include Cordic_special_functions_intf
 
 let gain (config : Config.t) = Cordic_reference.gain ~iterations:config.iterations

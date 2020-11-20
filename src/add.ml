@@ -1,4 +1,5 @@
-open! Import
+open Base
+open Hardcaml
 include Add_intf
 
 module Make_gen (B : Gen) = struct

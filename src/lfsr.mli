@@ -1,6 +1,7 @@
 (** Linear feedback shift registers *)
 
-open! Import
+open Base
+open! Hardcaml
 
 module Config : sig
   type t =

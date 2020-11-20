@@ -20,7 +20,8 @@
     The address is looked up in the rom and added to (or subtracted from) the shifted
     accumulator. *)
 
-open! Import
+open Base
+open Hardcaml
 
 module Mode : sig
   (** In [integer] mode the coefficients and accumulator are treated as integers, the

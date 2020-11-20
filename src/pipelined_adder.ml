@@ -1,4 +1,5 @@
-open! Import
+open Base
+open Hardcaml
 open Signal
 
 (* Creates an architecture that looks like

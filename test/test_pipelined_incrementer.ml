@@ -1,4 +1,5 @@
 open Import
+open Hardcaml_waveterm
 
 let sim ~part_width ~increment_width ~total_width =
   let clock = Signal.input "clock" 1 in

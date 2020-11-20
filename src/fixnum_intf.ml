@@ -3,7 +3,8 @@
     [2**(-fractional_width)].  It is represented as an integer between [-2**(width-1)] and
     [2**(width-1)]. *)
 
-open! Import
+open Base
+open Hardcaml
 
 module type Spec = sig
   (** overall width *)

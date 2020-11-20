@@ -1,4 +1,5 @@
-open! Import
+open Base
+open Hardcaml
 include Cordic_intf
 
 (* (1/2) * log2 ((1+t) / (1-t)) *)
