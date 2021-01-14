@@ -462,7 +462,6 @@ let%expect_test "prove the combinational architectures are equivalent" =
         ~index
         ~data
     in
-    let ( -->: ) a b = ~:a |: b in
     let prove (a : _ With_valid.t) (b : _ With_valid.t) =
       print_s [%message "valid"];
       print_is_proved (a.valid ==: b.valid);
