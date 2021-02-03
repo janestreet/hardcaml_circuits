@@ -359,7 +359,7 @@ struct
         Cyclesim.cycle sim
       done;
       Cyclesim.cycle sim;
-      Waveform.print ~display_rules ~wave_width:1 waves
+      Waveform.expect ~display_rules ~wave_width:1 waves
     in
     test ~use_mask:false F.round_robin;
     [%expect
@@ -383,7 +383,8 @@ struct
       │               ││────┘                                              │
       │               ││                                                   │
       │               ││                                                   │
-      └───────────────┘└───────────────────────────────────────────────────┘ |}];
+      └───────────────┘└───────────────────────────────────────────────────┘
+      77092ffc62154171f20e0de42740879e |}];
     test ~use_mask:true F.round_robin;
     [%expect
       {|
@@ -406,7 +407,8 @@ struct
       │               ││────┘                                              │
       │               ││                                                   │
       │               ││                                                   │
-      └───────────────┘└───────────────────────────────────────────────────┘ |}]
+      └───────────────┘└───────────────────────────────────────────────────┘
+      77092ffc62154171f20e0de42740879e |}]
   ;;
 end
 

@@ -56,7 +56,7 @@ module Make (Config : Rac.Config) = struct
   let run_and_print_waves ~simulator ~testbench ~data_in =
     let waves, simulator = Waveform.create simulator in
     let result = run ~simulator ~testbench ~data_in in
-    Waveform.print ~display_height:28 ~display_width:120 ~wave_width:2 waves;
+    Waveform.expect ~display_height:28 ~display_width:120 ~wave_width:2 waves;
     result
   ;;
 
@@ -118,6 +118,7 @@ let%expect_test "simulation example" =
     │                  ││────────────────────────────────────────────────┴─────┴─────┴─────┴─────                          │
     │                  ││                                                                                                  │
     └──────────────────┘└──────────────────────────────────────────────────────────────────────────────────────────────────┘
+    c9c8c3cbb6be329ef2dd1fbd04750459
     (result 30) |}]
 ;;
 

@@ -29,7 +29,7 @@ let%expect_test "increment by 1" =
   for _ = 0 to 30 do
     Cyclesim.cycle sim
   done;
-  Waveform.print ~wave_width:0 ~display_width:86 ~display_height:17 waves;
+  Waveform.expect ~wave_width:0 ~display_width:86 ~display_height:17 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────┐
@@ -48,7 +48,8 @@ let%expect_test "increment by 1" =
     │                  ││────┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─  │
     │q                 ││ 0  │1│2│3│4│5│6│7│8│9│A│B│C│D│E│F│0│1│2│3│4│5│6│7│8│9│A│B│C│D  │
     │                  ││────┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─  │
-    └──────────────────┘└────────────────────────────────────────────────────────────────┘ |}]
+    └──────────────────┘└────────────────────────────────────────────────────────────────┘
+    4e6bda0b134ed1b7501838b9aa2fe79e |}]
 ;;
 
 let%expect_test "increment by 3" =
@@ -59,7 +60,7 @@ let%expect_test "increment by 3" =
   for _ = 0 to 30 do
     Cyclesim.cycle sim
   done;
-  Waveform.print ~wave_width:0 ~display_width:86 ~display_height:17 waves;
+  Waveform.expect ~wave_width:0 ~display_width:86 ~display_height:17 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────┐
@@ -78,7 +79,8 @@ let%expect_test "increment by 3" =
     │                  ││────┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─  │
     │q                 ││ 0  │3│6│9│C│F│2│5│8│B│E│1│4│7│A│D│0│3│6│9│C│F│2│5│8│B│E│1│4│7  │
     │                  ││────┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─  │
-    └──────────────────┘└────────────────────────────────────────────────────────────────┘ |}]
+    └──────────────────┘└────────────────────────────────────────────────────────────────┘
+    5eba6ea68cdd97511e0d017f79839d5a |}]
 ;;
 
 let%expect_test "increment by differing amounts" =
@@ -89,7 +91,7 @@ let%expect_test "increment by differing amounts" =
     increment := Bits.of_int ~width:2 (i % 4);
     Cyclesim.cycle sim
   done;
-  Waveform.print ~wave_width:0 ~display_width:86 ~display_height:17 waves;
+  Waveform.expect ~wave_width:0 ~display_width:86 ~display_height:17 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────┐
@@ -108,7 +110,8 @@ let%expect_test "increment by differing amounts" =
     │                  ││──────┬─┬─┬───┬─┬─┬───┬─┬─┬───┬─┬─┬───┬─┬─┬───┬─┬─┬───┬─┬─┬───  │
     │q                 ││ 0    │1│3│6  │7│9│C  │D│F│2  │3│5│8  │9│B│E  │F│1│4  │5│7│A    │
     │                  ││──────┴─┴─┴───┴─┴─┴───┴─┴─┴───┴─┴─┴───┴─┴─┴───┴─┴─┴───┴─┴─┴───  │
-    └──────────────────┘└────────────────────────────────────────────────────────────────┘ |}]
+    └──────────────────┘└────────────────────────────────────────────────────────────────┘
+    113111fcbcaef1020e0e08e64aa6ac7a |}]
 ;;
 
 let%expect_test "set value" =
@@ -133,7 +136,7 @@ let%expect_test "set value" =
   for _ = 0 to 8 do
     Cyclesim.cycle sim
   done;
-  Waveform.print ~wave_width:0 ~display_width:86 ~display_height:17 waves;
+  Waveform.expect ~wave_width:0 ~display_width:86 ~display_height:17 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────┐
@@ -152,7 +155,8 @@ let%expect_test "set value" =
     │                  ││────┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─      │
     │q                 ││ 0  │1│2│3│4│5│6│7│8│9│F│0│1│2│3│4│5│6│7│8│3│4│5│6│7│8│9│A      │
     │                  ││────┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─      │
-    └──────────────────┘└────────────────────────────────────────────────────────────────┘ |}]
+    └──────────────────┘└────────────────────────────────────────────────────────────────┘
+    12d8bdd71c924359345c27d4eef31faa |}]
 ;;
 
 let%expect_test "weird sizes" =
@@ -163,7 +167,7 @@ let%expect_test "weird sizes" =
   for _ = 0 to 30 do
     Cyclesim.cycle sim
   done;
-  Waveform.print ~wave_width:0 ~display_width:86 ~display_height:17 waves;
+  Waveform.expect ~wave_width:0 ~display_width:86 ~display_height:17 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────┐
@@ -182,7 +186,8 @@ let%expect_test "weird sizes" =
     │                  ││────┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─  │
     │q                 ││ 0  │1│2│3│4│5│6│7│8│9│A│B│C│D│E│F│0│1│2│3│4│5│6│7│8│9│A│B│C│D  │
     │                  ││────┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─  │
-    └──────────────────┘└────────────────────────────────────────────────────────────────┘ |}]
+    └──────────────────┘└────────────────────────────────────────────────────────────────┘
+    4e6bda0b134ed1b7501838b9aa2fe79e |}]
 ;;
 
 let%expect_test "64 bit" =

@@ -58,7 +58,7 @@ let%expect_test "pipeline" =
     d := Bits.of_int ~width:8 0;
     Cyclesim.cycle sim
   done;
-  Waveform.print ~display_width:84 ~display_height:10 ~wave_width:2 waves;
+  Waveform.expect ~display_width:84 ~display_height:10 ~wave_width:2 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves─────────────────────────────────────────────────────────┐
@@ -70,7 +70,8 @@ let%expect_test "pipeline" =
     │                  ││──────────────────┬─────┬─────┬─────┬─────┬─────┬─────        │
     │q                 ││ 00               │05   │06   │07   │08   │09   │00           │
     │                  ││──────────────────┴─────┴─────┴─────┴─────┴─────┴─────        │
-    └──────────────────┘└──────────────────────────────────────────────────────────────┘ |}]
+    └──────────────────┘└──────────────────────────────────────────────────────────────┘
+    928249b6013e768be76b5bf304fb7a05 |}]
 ;;
 
 let%expect_test "pipeline with enable" =
@@ -108,7 +109,7 @@ let%expect_test "pipeline with enable" =
   for _ = 0 to 3 do
     Cyclesim.cycle sim
   done;
-  Waveform.print ~display_width:84 ~display_height:15 ~wave_width:2 waves;
+  Waveform.expect ~display_width:84 ~display_height:15 ~wave_width:2 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves─────────────────────────────────────────────────────────┐
@@ -125,5 +126,6 @@ let%expect_test "pipeline with enable" =
     │valid             ││                  ┌───────────┐     ┌─────┐                   │
     │                  ││──────────────────┘           └─────┘     └─────              │
     │                  ││                                                              │
-    └──────────────────┘└──────────────────────────────────────────────────────────────┘ |}]
+    └──────────────────┘└──────────────────────────────────────────────────────────────┘
+    e0c872fcbd3d1442f2900a7898d567e5 |}]
 ;;
