@@ -45,7 +45,7 @@ let test ~arity n =
   Cyclesim.cycle sim;
   Cyclesim.cycle sim;
   Cyclesim.cycle sim;
-  Core_kernel.print_s
+  Core.print_s
     [%message
       ""
         ~expected_answer_1:(n * (1 + n) / 2 : int)

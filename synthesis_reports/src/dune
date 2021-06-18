@@ -1,3 +1,4 @@
 (library (name hardcaml_circuits_synthesis_reports)
- (libraries core hardcaml hardcaml_circuits hardcaml_xilinx_reports)
+ (libraries core_kernel.core hardcaml hardcaml_circuits
+  hardcaml_xilinx_reports)
  (preprocess (pps ppx_deriving_hardcaml ppx_jane)))
