@@ -56,7 +56,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
       x', y', z'
     ;;
 
-    let cordic ?(pipe = Fn.id) ~system ~mode ~iterations ~c ~x ~y ~z =
+    let cordic ?(pipe = Fn.id) ~system ~mode ~iterations ~c ~x ~y ~z () =
       let open B in
       assert (width x = width y);
       assert (width x = width z);
@@ -159,7 +159,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
       let system, mode = i.system, i.mode in
       let x, y, z, c = i.x, i.y, i.z, i.c in
       match config.architecture with
-      | Combinational -> Unrolled.cordic ?pipe:None ~system ~mode ~iterations ~c ~x ~y ~z
+      | Combinational -> Unrolled.cordic ~system ~mode ~iterations ~c ~x ~y ~z ()
       | Pipelined ->
         Unrolled.cordic
           ~pipe:(Signal.reg reg_spec ~enable:i.enable)
@@ -170,6 +170,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
           ~x
           ~y
           ~z
+          ()
       | Iterative ->
         Iterative.cordic
           ~reg_spec

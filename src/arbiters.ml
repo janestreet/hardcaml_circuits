@@ -204,7 +204,7 @@ module Round_robin_with_priority = struct
     A.combinational (module Bits) ~index ~data
   ;;
 
-  let sequential ?(arch = Architecture.default) ~clock ~clear ~index ~data =
+  let sequential ?(arch = Architecture.default) () ~clock ~clear ~index ~data =
     let module A = (val get_arch arch data) in
     A.sequential ~clock ~clear ~index ~data
   ;;

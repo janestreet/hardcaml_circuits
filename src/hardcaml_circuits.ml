@@ -2,6 +2,7 @@ module Arbiters = Arbiters
 module Cordic = Cordic
 module Cordic_reference = Cordic_reference
 module Cordic_special_functions = Cordic_special_functions
+module Fast_fifo = Fast_fifo
 module Index_vec = Index_vec
 module Lfsr = Lfsr
 module Modulo = Modulo

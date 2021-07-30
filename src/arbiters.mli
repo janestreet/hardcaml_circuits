@@ -80,5 +80,5 @@ module Round_robin_with_priority : sig
 
      Defaults to balanced. *)
   val combinational : ?arch:Architecture.t -> 'a combinational
-  val sequential : ?arch:Architecture.t -> sequential
+  val sequential : ?arch:Architecture.t -> unit -> sequential
 end
