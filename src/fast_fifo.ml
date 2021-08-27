@@ -19,6 +19,7 @@ module Make (M : Hardcaml.Interface.S) = struct
       { rd_data : 'a M.t [@rtlprefix "rd_"]
       ; rd_valid : 'a
       ; full : 'a
+      ; one_from_full : 'a
       }
     [@@deriving sexp_of, hardcaml]
   end
@@ -54,7 +55,11 @@ module Make (M : Hardcaml.Interface.S) = struct
         (M.Of_signal.unpack underlying_fifo.q)
     in
     let rd_valid = ~:(i.clear) &: (~:(underlying_fifo.empty) |: i.wr_enable) in
-    { O.full = underlying_fifo.full; rd_data; rd_valid }
+    { O.full = underlying_fifo.full
+    ; rd_data
+    ; rd_valid
+    ; one_from_full = underlying_fifo.nearly_full
+    }
   ;;
 
   let hierarchical ?instance ~capacity (scope : Scope.t) (i : _ I.t) =

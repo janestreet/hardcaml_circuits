@@ -19,6 +19,7 @@ module Make (M : Hardcaml.Interface.S) : sig
       { rd_data : 'a M.t
       ; rd_valid : 'a
       ; full : 'a
+      ; one_from_full : 'a
       }
     [@@deriving sexp_of, hardcaml]
   end
