@@ -15,7 +15,7 @@ module Fast_fifo = Fast_fifo.Make (Foo)
 let create_sim ?(capacity = 2) () =
   let scope = Scope.create ~flatten_design:true () in
   let module Sim = Cyclesim.With_interface (Fast_fifo.I) (Fast_fifo.O) in
-  let sim = Sim.create (Fast_fifo.create ~capacity scope) in
+  let sim = Sim.create (Fast_fifo.create ~cut_through:true ~capacity scope) in
   let waves, sim = Hardcaml_waveterm.Waveform.create sim in
   let inputs = Cyclesim.inputs sim in
   inputs.clear := Bits.vdd;

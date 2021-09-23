@@ -34,10 +34,11 @@ module Make (M : Hardcaml.Interface.S) : sig
 
       Raises an exception if [capacity < 1].
   *)
-  val create : capacity:int -> Scope.t -> Signal.t I.t -> Signal.t O.t
+  val create : cut_through:bool -> capacity:int -> Scope.t -> Signal.t I.t -> Signal.t O.t
 
   val hierarchical
     :  ?instance:string
+    -> cut_through:bool
     -> capacity:int
     -> Scope.t
     -> Signal.t I.t

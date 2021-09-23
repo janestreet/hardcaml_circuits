@@ -24,18 +24,18 @@ module Make (M : Hardcaml.Interface.S) = struct
     [@@deriving sexp_of, hardcaml]
   end
 
-  let create ~capacity (_scope : Scope.t) (i : _ I.t) =
+  let create ~cut_through ~capacity (_scope : Scope.t) (i : _ I.t) =
     (* Fifo from [Fifo.create] has a one-cycle write latency. This means that
        writes on cycle [T] will be available immediately at cycle [T+1].
     *)
     let fifo_empty = wire 1 in
     let wr_underlying_fifo = i.wr_enable &: (~:fifo_empty |: ~:(i.rd_enable)) in
     let underlying_fifo =
-      (* Explicitly tell vivado to use LUTRAM rather than BRAM, because
-         this fifo should generally be small.
+      (* Explicitly tell vivado to use registers rather than any kind of RAM,
+         because this fifo should generally be small.
       *)
       Fifo.create
-        ~ram_attributes:[ Rtl_attribute.Vivado.Ram_style.distributed ]
+        ~ram_attributes:[ Rtl_attribute.Vivado.Ram_style.registers ]
         ~overflow_check:true
         ~underflow_check:true
         ~showahead:true
@@ -49,12 +49,19 @@ module Make (M : Hardcaml.Interface.S) = struct
     in
     fifo_empty <== underlying_fifo.empty;
     let rd_data =
-      M.Of_signal.mux2
-        underlying_fifo.empty
-        i.wr_data
-        (M.Of_signal.unpack underlying_fifo.q)
+      if cut_through
+      then
+        M.Of_signal.mux2
+          underlying_fifo.empty
+          i.wr_data
+          (M.Of_signal.unpack underlying_fifo.q)
+      else M.Of_signal.unpack underlying_fifo.q
     in
-    let rd_valid = ~:(i.clear) &: (~:(underlying_fifo.empty) |: i.wr_enable) in
+    let rd_valid =
+      if cut_through
+      then ~:(i.clear) &: (~:(underlying_fifo.empty) |: i.wr_enable)
+      else ~:(i.clear) &: ~:(underlying_fifo.empty)
+    in
     { O.full = underlying_fifo.full
     ; rd_data
     ; rd_valid
@@ -62,8 +69,8 @@ module Make (M : Hardcaml.Interface.S) = struct
     }
   ;;
 
-  let hierarchical ?instance ~capacity (scope : Scope.t) (i : _ I.t) =
+  let hierarchical ?instance ~cut_through ~capacity (scope : Scope.t) (i : _ I.t) =
     let module H = Hierarchy.In_scope (I) (O) in
-    H.hierarchical ?instance ~scope ~name:"fast_fifo" (create ~capacity) i
+    H.hierarchical ?instance ~scope ~name:"fast_fifo" (create ~cut_through ~capacity) i
   ;;
 end

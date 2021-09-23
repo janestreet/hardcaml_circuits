@@ -107,7 +107,7 @@ let command_for_single =
   List.map Synth_targets.targets ~f:(fun component ->
     let (module Component : Component_intf.S) = component in
     let command =
-      Command.basic
+      Async.Command.async
         ~summary:(Printf.sprintf "Single-component synthesis for %s" Component.name)
         [%map_open.Command
           let synth_flags = Hardcaml_xilinx_reports.Command.Command_flags.flags
