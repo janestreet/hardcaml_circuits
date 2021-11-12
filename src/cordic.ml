@@ -30,7 +30,6 @@ module Mode = struct
 end
 
 module Make (Fixnum_spec : Fixnum.Spec) = struct
-  module Architecture = Architecture
   module Fixnum = Fixnum.Make (Fixnum_spec)
 
   module Make_unrolled (B : Comb.S) = struct

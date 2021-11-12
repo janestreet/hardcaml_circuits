@@ -37,7 +37,7 @@ let create_circuit
     include Hardcaml.Interface.Make (Pre)
   end
   in
-  let module Command = Hardcaml_xilinx_reports.Command.With_interface (I) (O) in
+  let module _ = Hardcaml_xilinx_reports.Command.With_interface (I) (O) in
   let create scope (input : _ I.t) =
     let spec_no_clear = Reg_spec.create ~clock:input.clock () in
     let reg x = Signal.reg spec_no_clear ~enable:Signal.vdd x in

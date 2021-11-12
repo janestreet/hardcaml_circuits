@@ -260,19 +260,19 @@ struct
   ;;
 end
 
-module Test_log_shift_comb = Test_round_robin_comb (struct
+module _ = Test_round_robin_comb (struct
     let round_robin =
       Arbiters.Round_robin_with_priority.Log_shift.combinational (module Bits)
     ;;
   end)
 
-module Test_priority_count_zeros_comb = Test_round_robin_comb (struct
+module _ = Test_round_robin_comb (struct
     let round_robin =
       Arbiters.Round_robin_with_priority.Count_zeros.combinational (module Bits)
     ;;
   end)
 
-module Test_priority_onehot_cleaner_comb = Test_round_robin_comb (struct
+module _ = Test_round_robin_comb (struct
     let round_robin =
       Arbiters.Round_robin_with_priority.Onehot_cleaner.combinational (module Bits)
     ;;
@@ -412,15 +412,15 @@ struct
   ;;
 end
 
-module Test_log_shift_seq = Test_round_robin_seq (struct
+module _ = Test_round_robin_seq (struct
     let round_robin = Arbiters.Round_robin_with_priority.Log_shift.sequential
   end)
 
-module Test_priority_count_zeros_seq = Test_round_robin_seq (struct
+module _ = Test_round_robin_seq (struct
     let round_robin = Arbiters.Round_robin_with_priority.Count_zeros.sequential
   end)
 
-module Test_priority_onehot_cleaner_seq = Test_round_robin_seq (struct
+module _ = Test_round_robin_seq (struct
     let round_robin = Arbiters.Round_robin_with_priority.Onehot_cleaner.sequential
   end)
 
