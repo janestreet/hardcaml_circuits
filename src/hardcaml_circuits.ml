@@ -11,6 +11,7 @@ module Onehot_clean = Onehot_clean
 module Pipelined_adder = Pipelined_adder
 module Pipelined_incrementer = Pipelined_incrementer
 module Pipelined_tree_reduce = Pipelined_tree_reduce
+module Pipelined_tree_mux = Pipelined_tree_mux
 module Prefix_sum = Prefix_sum
 module Rac = Rac
 module Sorting_network = Sorting_network
