@@ -1,4 +1,3 @@
 (executables (names synth)
- (libraries core.command_unix core_kernel.core
-  hardcaml_circuits_synthesis_reports)
+ (libraries core_unix.command_unix core hardcaml_circuits_synthesis_reports)
  (preprocess (pps ppx_deriving_hardcaml ppx_jane)))
