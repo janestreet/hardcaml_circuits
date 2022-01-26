@@ -51,3 +51,43 @@ let pipelined_tree_mux ~cycles ~reg ~selector state =
   let steps = min_sequence_sums_to ~value:bits ~in_num_steps:cycles in
   f selector state steps
 ;;
+
+let pipelined_tree_priority_select ?(trace_reductions = false) ~cycles ~reg data =
+  if cycles < 0
+  then
+    raise_s
+      [%message
+        "pipelined_tree_priority_select cannot accept negative [cycles] argument"
+          (cycles : int)]
+  else if cycles = 0
+  then Signal.priority_select data
+  else (
+    let length = List.length data in
+    let rec search_for_reduction_factor i =
+      if Int.pow i cycles > length then i else search_for_reduction_factor (i + 1)
+    in
+    let reduction_factor = search_for_reduction_factor 2 in
+    let rec reduce cycle data =
+      if cycle = cycles
+      then (
+        match data with
+        | [ hd ] -> hd
+        | _ ->
+          raise_s
+            [%message
+              "Expecting singleton list after reductions"
+                (cycles : int)
+                (reduction_factor : int)
+                ~reduced_length:(List.length data : int)
+                ~input_length:(length : int)])
+      else
+        (let l = List.chunks_of data ~length:reduction_factor in
+         if trace_reductions
+         then (
+           let reductions = List.map l ~f:List.length in
+           Stdio.print_s [%message (cycle : int) (reductions : int list)]);
+         List.map l ~f:(fun l -> With_valid.map (Signal.priority_select l) ~f:reg))
+        |> reduce (cycle + 1)
+    in
+    reduce 0 data)
+;;

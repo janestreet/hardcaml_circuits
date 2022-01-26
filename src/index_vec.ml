@@ -92,19 +92,19 @@ module Make_tagged (Arg : Arg) = struct
     <== reg_fb
           spec
           ~enable:(do_insert |: do_remove)
-          ~w:(Int.ceil_log2 (vec_size + 1))
-          (fun length ->
-             let slot = uresize op.slot (width length) in
-             let next = length +:. 1 in
-             let prev = length -:. 1 in
-             let max = of_int ~width:(width length) vec_size in
-             let min = of_int ~width:(width length) 0 in
-             let slot_is_empty = slot >=: length in
-             let on_insert =
-               mux2 (length ==: max) max @@ mux2 slot_is_empty (slot +:. 1) next
-             in
-             let on_delete = mux2 (length ==:. 0) min @@ mux2 slot_is_empty length prev in
-             mux2 do_insert on_insert on_delete);
+          ~width:(Int.ceil_log2 (vec_size + 1))
+          ~f:(fun length ->
+            let slot = uresize op.slot (width length) in
+            let next = length +:. 1 in
+            let prev = length -:. 1 in
+            let max = of_int ~width:(width length) vec_size in
+            let min = of_int ~width:(width length) 0 in
+            let slot_is_empty = slot >=: length in
+            let on_insert =
+              mux2 (length ==: max) max @@ mux2 slot_is_empty (slot +:. 1) next
+            in
+            let on_delete = mux2 (length ==:. 0) min @@ mux2 slot_is_empty length prev in
+            mux2 do_insert on_insert on_delete);
     let full = length ==:. vec_size in
     let empty = length ==:. 0 in
     { vec

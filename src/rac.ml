@@ -75,16 +75,18 @@ module Make (Config : Config) = struct
     let piso xi =
       match mode with
       | Fixed ->
-        lsb (reg_fb reg_spec ~enable:en ~w:data_bits (fun d -> mux2 ld xi (srl d 1)))
+        lsb
+          (reg_fb reg_spec ~enable:en ~width:data_bits ~f:(fun d -> mux2 ld xi (srl d 1)))
       | Integer ->
-        msb (reg_fb reg_spec ~enable:en ~w:data_bits (fun d -> mux2 ld xi (sll d 1)))
+        msb
+          (reg_fb reg_spec ~enable:en ~width:data_bits ~f:(fun d -> mux2 ld xi (sll d 1)))
     in
     (* rom address *)
     let addr = concat_lsb (List.map x ~f:piso) -- "piso_addr" in
     (* build and index rom *)
     let coef = mux addr romcoefs -- "rom_coef" in
     (* accumulator *)
-    reg_fb reg_spec ~enable:en ~w:accumulator_bits (fun acc ->
+    reg_fb reg_spec ~enable:en ~width:accumulator_bits ~f:(fun acc ->
       let acc =
         (match mode with
          | Fixed -> sra

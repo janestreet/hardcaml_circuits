@@ -99,7 +99,8 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
     let cordic ~reg_spec ~enable ~ld ~system ~mode ~iterations ~c ~x ~y ~z =
       let wi = num_bits_to_represent (iterations - 1) in
       let iter =
-        reg_fb reg_spec ~enable ~w:wi (fun d -> mux2 ld (zero wi) (d +:. 1)) -- "iter"
+        reg_fb reg_spec ~enable ~width:wi ~f:(fun d -> mux2 ld (zero wi) (d +:. 1))
+        -- "iter"
       in
       let table_lookup table =
         mux
