@@ -106,7 +106,8 @@ module Make (Config : Config) = struct
         ~en:i.en
         ~ld:i.ld
         ~addsub:i.addsub
-        ~romcoefs:(List.map romcoefs ~f:(fun coef -> Signal.constb (Bits.to_bstr coef)))
+        ~romcoefs:
+          (List.map romcoefs ~f:(fun coef -> Signal.of_constant (Bits.to_constant coef)))
         ~x:(Array.to_list i.x)
     in
     { O.q }

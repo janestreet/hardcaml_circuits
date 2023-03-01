@@ -117,6 +117,7 @@ let command_for_single =
               ~sort_by_name:true
               ~flags:synth_flags
               (fun scope -> create_circuit scope (module Component) params)]
+        ~behave_nicely_in_pipeline:false
     in
     let name = Component.name |> String.substr_replace_all ~pattern:"_" ~with_:"-" in
     name, command)

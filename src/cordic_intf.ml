@@ -6,7 +6,7 @@ module Architecture = struct
     | Combinational
     | Pipelined
     | Iterative
-  [@@deriving sexp_of]
+  [@@deriving sexp_of, enumerate]
 end
 
 module Config = struct

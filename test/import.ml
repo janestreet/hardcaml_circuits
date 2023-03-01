@@ -3,13 +3,7 @@ include Hardcaml
 include Hardcaml_circuits
 include Expect_test_helpers_base
 
-let rec num_bits bits =
-  if bits < 0 then raise_s [%message "arg to [num_bits] must be >= 0" (bits : int)];
-  match bits with
-  | 0 | 1 -> 1
-  | _ -> 1 + num_bits (bits / 2)
-;;
-
+let num_bits = Signal.num_bits_to_represent
 let concat = String.concat
 let incr = Int.incr
 

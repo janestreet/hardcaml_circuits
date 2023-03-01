@@ -9,6 +9,7 @@ module System : sig
     | Circular
     | Linear
     | Hyperbolic
+  [@@deriving enumerate, sexp_of]
 end
 
 (** iteration mode *)
@@ -17,6 +18,7 @@ module Mode : sig
     | Rotation
     | Vectoring
     | Inverse
+  [@@deriving enumerate, sexp_of]
 end
 
 val iter : iterations:int -> init:'a -> f:(i:int -> ih:int -> 'a -> 'a) -> 'a

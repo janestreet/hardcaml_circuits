@@ -94,4 +94,5 @@ let command =
        let module Synth = Synth.Command.With_interface (Arb.With_regs.I_with_clock) (Arb.O)
        in
        Synth.run ~name:"arbiters" ~flags Arb.create)
+    ~behave_nicely_in_pipeline:false
 ;;

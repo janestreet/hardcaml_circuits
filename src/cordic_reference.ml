@@ -7,7 +7,7 @@ module System = struct
     | Circular
     | Linear
     | Hyperbolic
-  [@@deriving variants]
+  [@@deriving enumerate, sexp_of, variants]
 end
 
 (** iteration mode *)
@@ -16,6 +16,7 @@ module Mode = struct
     | Rotation
     | Vectoring
     | Inverse
+  [@@deriving enumerate, sexp_of]
 end
 
 let iter ~iterations ~init ~f =

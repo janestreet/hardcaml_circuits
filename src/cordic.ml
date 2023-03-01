@@ -2,9 +2,6 @@ open Base
 open Hardcaml
 include Cordic_intf
 
-(* (1/2) * log2 ((1+t) / (1-t)) *)
-let atanh t = 0.5 *. Float.log ((1.0 +. t) /. (1.0 -. t))
-
 module System = struct
   include Cordic_reference.System
 
@@ -61,10 +58,10 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
       assert (width x = width z);
       let m = system in
       let e = [ atan iterations; atanh iterations; t iterations ] in
-      let is_hyper = system ==: B.constb (System.const Hyperbolic) in
+      let is_hyper = system ==: B.of_bit_string (System.const Hyperbolic) in
       iter ~iterations ~init:(x, y, z) ~f:(fun ~i ~ih (x, y, z) ->
         let e =
-          mux system (List.map e ~f:(fun e -> B.constb (e.(i) |> Fixnum.constb)))
+          mux system (List.map e ~f:(fun e -> B.of_bit_string (e.(i) |> Fixnum.constb)))
         in
         let d = mux mode [ z <+. 0; y >=+. 0; y >=+ c ] in
         let xsft = mux2 is_hyper (sra x ih) (sra x i) in
@@ -80,7 +77,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
     open S
 
     let hyper_iter ~reg_spec ~enable ~ld ~system ~iter =
-      let is_hyper = system ==: Signal.constb (System.const Hyperbolic) in
+      let is_hyper = system ==: Signal.of_bit_string (System.const Hyperbolic) in
       let iterh = wire (width iter) -- "iterh" in
       let k = wire (width iter + 2) -- "k" in
       let repeat = (k ==: zero 2 @: iterh) -- "repeated_step" in
@@ -105,7 +102,8 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
       let table_lookup table =
         mux
           iter
-          (Array.to_list (Array.map table ~f:(fun c -> S.constb (c |> Fixnum.constb))))
+          (Array.to_list
+             (Array.map table ~f:(fun c -> S.of_bit_string (c |> Fixnum.constb))))
       in
       let atan = table_lookup (C.atan iterations) in
       let atanh = table_lookup (C.atanh iterations) in

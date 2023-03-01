@@ -180,7 +180,9 @@ let counterpart =
     | [] -> []
     | n :: t -> n :: List.map t ~f:(fun t -> n - t)
   in
-  Array.map taps ~f:counterpart
+  (* Taps must be sorted *)
+  Array.map taps ~f:(fun d ->
+    counterpart d |> List.sort ~compare:(fun a b -> -Int.compare a b))
 ;;
 
 type 'a comb = (module Hardcaml.Comb.S with type t = 'a)
