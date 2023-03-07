@@ -24,17 +24,20 @@ module Make (M : Hardcaml.Interface.S) = struct
     [@@deriving sexp_of, hardcaml]
   end
 
-  let create ~cut_through ~capacity (_scope : Scope.t) (i : _ I.t) =
+  let create ~cut_through ~capacity (scope : Scope.t) (i : _ I.t) =
     (* Fifo from [Fifo.create] has a one-cycle write latency. This means that
        writes on cycle [T] will be available immediately at cycle [T+1].
     *)
     let fifo_empty = wire 1 in
-    let wr_underlying_fifo = i.wr_enable &: (~:fifo_empty |: ~:(i.rd_enable)) in
+    let wr_underlying_fifo =
+      if cut_through then i.wr_enable &: ~:(fifo_empty &: i.rd_enable) else i.wr_enable
+    in
     let underlying_fifo =
       (* Explicitly tell vivado to use registers rather than any kind of RAM,
          because this fifo should generally be small.
       *)
       Fifo.create
+        ~scope
         ~ram_attributes:[ Rtl_attribute.Vivado.Ram_style.registers ]
         ~overflow_check:true
         ~underflow_check:true
@@ -44,7 +47,7 @@ module Make (M : Hardcaml.Interface.S) = struct
         ~clear:i.clear
         ~wr:wr_underlying_fifo
         ~d:(M.Of_signal.pack i.wr_data)
-        ~rd:(~:fifo_empty &: i.rd_enable)
+        ~rd:i.rd_enable
         ()
     in
     fifo_empty <== underlying_fifo.empty;
@@ -69,8 +72,13 @@ module Make (M : Hardcaml.Interface.S) = struct
     }
   ;;
 
-  let hierarchical ?instance ~cut_through ~capacity (scope : Scope.t) (i : _ I.t) =
+  let hierarchical ?instance ?name ~cut_through ~capacity (scope : Scope.t) (i : _ I.t) =
     let module H = Hierarchy.In_scope (I) (O) in
-    H.hierarchical ?instance ~scope ~name:"fast_fifo" (create ~cut_through ~capacity) i
+    H.hierarchical
+      ?instance
+      ~scope
+      ~name:(Option.value ~default:"fast_fifo" name)
+      (create ~cut_through ~capacity)
+      i
   ;;
 end
