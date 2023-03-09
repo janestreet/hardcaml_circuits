@@ -63,7 +63,7 @@ module Make (M : Hardcaml.Interface.S) = struct
     let rd_valid =
       if cut_through
       then ~:(i.clear) &: (~:(underlying_fifo.empty) |: i.wr_enable)
-      else ~:(i.clear) &: ~:(underlying_fifo.empty)
+      else ~:(underlying_fifo.empty)
     in
     { O.full = underlying_fifo.full
     ; rd_data
