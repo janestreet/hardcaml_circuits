@@ -11,7 +11,7 @@ let create_circuit
     module Pre = struct
       include Component.Input
 
-      let t = Component.input_port_names_and_width params
+      let port_names_and_widths = Component.input_port_names_and_width params
     end
 
     include Pre
@@ -30,7 +30,7 @@ let create_circuit
     module Pre = struct
       include Component.Output
 
-      let t = Component.output_port_names_and_width params
+      let port_names_and_widths = Component.output_port_names_and_width params
     end
 
     include Pre
@@ -80,9 +80,7 @@ let create_mega_circuit scope (circuits : Circuit.t list) =
       circuit_names
       data_inputs
       ~f:(fun circuit circuit_name data_inputs ->
-        let circuit_data_input_names =
-          List.map ~f:name_exn (circuit_data_inputs circuit)
-        in
+        let circuit_data_input_names = List.map ~f:name_exn (circuit_data_inputs circuit) in
         let inputs =
           let clock_input = "clock", clock in
           let data_inputs =

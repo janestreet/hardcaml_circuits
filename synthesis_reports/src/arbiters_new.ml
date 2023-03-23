@@ -49,7 +49,7 @@ module With_valid = struct
   module Pre = struct
     include With_valid
 
-    let t = { valid = "valid", 1; value = "value", 32 }
+    let port_names_and_widths = { valid = "valid", 1; value = "value", 32 }
   end
 
   include Pre
@@ -70,7 +70,7 @@ module Output = With_valid
 let input_port_names_and_width (params : Params.t) =
   let open Input in
   let index_width = Int.ceil_log2 params.num_sources in
-  { clear = t.clear
+  { clear = port_names_and_widths.clear
   ; data =
       List.init params.num_sources ~f:(fun i ->
         { With_valid.valid = sprintf "data_in_%d_valid" i, 1

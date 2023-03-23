@@ -14,7 +14,7 @@ module Make (Config : Rac.Config) = struct
       | Integer -> Bits.vdd
       | Fixed -> Bits.gnd
     in
-    let i : Bits.t Rac.I.t = Rac.I.map Rac.I.t ~f:(fun _ -> Bits.empty) in
+    let i : Bits.t Rac.I.t = Rac.I.const Bits.empty in
     let%bind _ = Step.cycle { i with clr = Bits.vdd } in
     let%bind _ =
       Step.cycle

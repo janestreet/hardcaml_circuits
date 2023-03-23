@@ -111,9 +111,7 @@ let%expect_test _ =
   List.iter Config.all ~f:(fun config ->
     List.iter [ 1; 2; 4; 8 ] ~f:(fun num_inputs ->
       reset_id_counter ();
-      let inputs =
-        List.init num_inputs ~f:(fun i -> concat [ "i"; Int.to_string i ])
-      in
+      let inputs = List.init num_inputs ~f:(fun i -> concat [ "i"; Int.to_string i ]) in
       print_s
         [%message
           ""

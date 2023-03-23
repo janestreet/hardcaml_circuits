@@ -47,8 +47,7 @@ module Make_gen (B : Gen) = struct
       let max_weight = wa + wb - 2 in
       Array.init (max_weight + 1) ~f:(fun w ->
         List.init wa ~f:(fun i ->
-          List.init wb ~f:(fun j ->
-            if i + j = w then Some (bit a i &: bit b j) else None))
+          List.init wb ~f:(fun j -> if i + j = w then Some (bit a i &: bit b j) else None))
         |> List.concat
         |> List.filter_opt)
     ;;

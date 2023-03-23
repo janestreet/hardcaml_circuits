@@ -32,8 +32,7 @@ let%expect_test "3 bit galois, xor" =
   List.iter Config.all ~f:(fun config ->
     List.iter Bool.all ~f:(fun counterpart_taps ->
       List.iter Op.all ~f:(fun op ->
-        print_s
-          [%message "" (config : Config.t) (counterpart_taps : bool) (op : Op.t)];
+        print_s [%message "" (config : Config.t) (counterpart_taps : bool) (op : Op.t)];
         run_lfsr ~nbits:3 ~verbose:true ~config ~counterpart_taps ~op)));
   [%expect
     {|

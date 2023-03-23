@@ -83,7 +83,9 @@ let command =
      let%map_open () = return ()
      and flags = Hardcaml_xilinx_reports.Command.Command_flags.flags
      and data_width = flag "width" (required int) ~doc:"DATA_WIDTH Width of data"
-     and num_sources = flag "num-sources" (required int) ~doc:"NUM sources to arbitrate" in
+     and num_sources =
+       flag "num-sources" (required int) ~doc:"NUM sources to arbitrate"
+     in
      fun () ->
        let module Arb =
          Make (struct
@@ -91,7 +93,8 @@ let command =
            let num_sources = num_sources
          end)
        in
-       let module Synth = Synth.Command.With_interface (Arb.With_regs.I_with_clock) (Arb.O)
+       let module Synth =
+         Synth.Command.With_interface (Arb.With_regs.I_with_clock) (Arb.O)
        in
        Synth.run ~name:"arbiters" ~flags Arb.create)
     ~behave_nicely_in_pipeline:false

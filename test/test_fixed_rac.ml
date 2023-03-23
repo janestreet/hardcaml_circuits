@@ -28,7 +28,7 @@ let test_fixed ?print () ~coefs ~data_in ~coef_prec ~data_prec =
   print_s
     [%message
       ""
-        ~precision:(coef_prec, data_prec : int * int)
+        ~precision:((coef_prec, data_prec) : int * int)
         (result : int)
         (ref_result : float)
         (float_result : float)]
