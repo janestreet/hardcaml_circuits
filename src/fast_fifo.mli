@@ -24,9 +24,9 @@ module Make (M : Hardcaml.Interface.S) : sig
     [@@deriving sexp_of, hardcaml]
   end
 
-  (** Creates a combinational fifo showahead fifo. Namely, [rd_valid] will be asserted
-      whenever at the same cycle data is written into the fifo. The data will be held
-      at the output of the fifo until [read_enable] is asserted.
+  (** Creates a combinational, showahead fifo. Namely, [rd_valid] will be asserted on the
+      same cycle that data is written into the fifo. The data will be held at the output
+      of the fifo until [read_enable] is asserted.
 
       The actual capacity of the fifo is [capacity + 1], due to additional registering.
       Note that when [o.full] is asserted, [i.wr_enable] is ignored, even if [rd_enable]

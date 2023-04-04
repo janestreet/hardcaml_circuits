@@ -7,7 +7,7 @@ module Make (M : Hardcaml.Interface.S) = struct
     type 'a t =
       { clock : 'a
       ; clear : 'a
-      ; wr_data : 'a M.t [@rtlprefix "wr_"]
+      ; wr_data : 'a M.t [@rtlprefix "wr$"]
       ; wr_enable : 'a
       ; rd_enable : 'a
       }
@@ -16,7 +16,7 @@ module Make (M : Hardcaml.Interface.S) = struct
 
   module O = struct
     type 'a t =
-      { rd_data : 'a M.t [@rtlprefix "rd_"]
+      { rd_data : 'a M.t [@rtlprefix "rd$"]
       ; rd_valid : 'a
       ; full : 'a
       ; one_from_full : 'a
