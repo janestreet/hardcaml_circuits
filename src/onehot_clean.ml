@@ -5,6 +5,7 @@ type 'a t =
   { any_bit_set : 'a
   ; data : 'a
   }
+[@@deriving sexp_of, hardcaml]
 
 let scan_from_msb (type t) (module Bits : Comb.S with type t = t) (x : t) =
   let open Bits in

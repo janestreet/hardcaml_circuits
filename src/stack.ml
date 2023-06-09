@@ -39,8 +39,10 @@ module Make (M : Hardcaml.Interface.S) = struct
     let cut_through = (i.push &: i.pop) -- "cut_through" in
     (* size tracking *)
     let used = wire bits_for_addr -- "used" in
+    let used_minus_1 = wire bits_for_addr -- "used_minus_1" in
     let used_next = mux2 push_actual (used +:. 1) (mux2 pop_actual (used -:. 1) used) in
     used <== reg spec used_next;
+    used_minus_1 <== reg spec (used_next -:. 1);
     let empty_next = used_next ==:. 0 in
     empty <== reg (Reg_spec.override spec ~clear_to:vdd ~reset_to:vdd) empty_next;
     let full_next = used_next ==:. capacity in
@@ -54,12 +56,16 @@ module Make (M : Hardcaml.Interface.S) = struct
       }
     in
     let read_port =
-      { Ram.Read_port.read_clock = i.clock; read_address = used -:. 1; read_enable = vdd }
+      { Ram.Read_port.read_clock = i.clock
+      ; read_address = used_minus_1
+      ; read_enable = vdd
+      }
     in
     let ram =
       let ram_arr =
         Ram.create
-          ~collision_mode:Write_before_read
+          ~attributes:[ Rtl_attribute.Vivado.Ram_style.block ]
+          ~collision_mode:Read_before_write
           ~size:capacity
           ~write_ports:[| write_port |]
           ~read_ports:[| read_port |]

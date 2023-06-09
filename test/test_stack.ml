@@ -20,7 +20,7 @@ let display_rules =
     [ I.map I.port_names ~f:(port_name_is ~wave_format:(Bit_or Unsigned_int)) |> I.to_list
     ; O.map O.port_names ~f:(port_name_is ~wave_format:(Bit_or Unsigned_int)) |> O.to_list
     ; [ port_name_matches
-          Re.Posix.(re "used" |> compile)
+          Re.Posix.(re "used$" |> compile)
           ~wave_format:(Bit_or Unsigned_int)
       ; port_name_matches
           Re.Posix.(re "cut_through" |> compile)

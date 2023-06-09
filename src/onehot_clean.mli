@@ -14,6 +14,7 @@ type 'a t =
   { any_bit_set : 'a
   ; data : 'a
   }
+[@@deriving sexp_of, hardcaml]
 
 val scan_from_msb : (module Comb.S with type t = 'a) -> 'a -> 'a t
 val scan_from_lsb : (module Comb.S with type t = 'a) -> 'a -> 'a t

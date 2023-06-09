@@ -9,7 +9,10 @@ val pipelined_tree_mux
 
 val pipelined_tree_priority_select
   :  ?trace_reductions:bool (** For debugging in the expect tests *)
+  -> ?pipelined_enable:Signal.t
+  (** Optional register enable that is pipelined along with the data. Defaults to [vdd]
+      which means data passes every cycle. *)
   -> cycles:int
-  -> reg:(Signal.t -> Signal.t)
+  -> reg:(?enable:Signal.t -> Signal.t -> Signal.t)
   -> Signal.t With_valid.t list
   -> Signal.t With_valid.t

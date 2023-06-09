@@ -52,7 +52,13 @@ let pipelined_tree_mux ~cycles ~reg ~selector state =
   f selector state steps
 ;;
 
-let pipelined_tree_priority_select ?(trace_reductions = false) ~cycles ~reg data =
+let pipelined_tree_priority_select
+      ?(trace_reductions = false)
+      ?(pipelined_enable = Signal.vdd)
+      ~cycles
+      ~(reg : ?enable:Signal.t -> Signal.t -> Signal.t)
+      data
+  =
   if cycles < 0
   then
     raise_s
@@ -67,7 +73,7 @@ let pipelined_tree_priority_select ?(trace_reductions = false) ~cycles ~reg data
       if Int.pow i cycles > length then i else search_for_reduction_factor (i + 1)
     in
     let reduction_factor = search_for_reduction_factor 2 in
-    let rec reduce cycle data =
+    let rec reduce ~cycle ~enable data =
       if cycle = cycles
       then (
         match data with
@@ -84,10 +90,18 @@ let pipelined_tree_priority_select ?(trace_reductions = false) ~cycles ~reg data
         (let l = List.chunks_of data ~length:reduction_factor in
          if trace_reductions
          then (
-           let reductions = List.map l ~f:List.length in
+           let reductions = List.map l ~f:(List.length :> _ -> _) in
            Stdio.print_s [%message (cycle : int) (reductions : int list)]);
-         List.map l ~f:(fun l -> With_valid.map (Signal.priority_select l) ~f:reg))
-        |> reduce (cycle + 1)
+         List.map l ~f:(fun l ->
+           With_valid.map (Signal.priority_select l) ~f:(reg ~enable)))
+        |> reduce
+             ~cycle:(cycle + 1)
+             ~enable:
+               (if Signal.is_vdd enable
+                then
+                  (* Skip inserting a register when enable is just tied to vdd. *)
+                  enable
+                else reg ~enable:Signal.vdd enable)
     in
-    reduce 0 data)
+    reduce ~cycle:0 ~enable:pipelined_enable data)
 ;;
