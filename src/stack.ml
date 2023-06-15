@@ -2,7 +2,14 @@ open Base
 open Hardcaml
 open Signal
 
-module Make (M : Hardcaml.Interface.S) = struct
+module Make (Config : sig
+    module M : Hardcaml.Interface.S
+
+    val capacity : int
+  end) =
+struct
+  open Config
+
   module I = struct
     type 'a t =
       { clock : 'a
@@ -16,21 +23,23 @@ module Make (M : Hardcaml.Interface.S) = struct
 
   module M_with_valid = With_valid.Wrap.Make (M)
 
+  let bits_for_addr = num_bits_to_represent capacity
+
   module O = struct
     type 'a t =
       { q : 'a M_with_valid.t [@rtlprefix "q$"]
       ; full : 'a
       ; empty : 'a
+      ; used : 'a [@bits bits_for_addr]
       }
     [@@deriving sexp_of, hardcaml]
   end
 
-  let create ?(read_latency = 1) ~capacity (scope : Scope.t) (i : _ I.t) =
+  let create ?(read_latency = 1) (scope : Scope.t) (i : _ I.t) =
     if read_latency < 1
     then raise_s [%message "stack read latency must be >= 1" (read_latency : int)];
     let ( -- ) = Scope.naming scope in
     let spec = Reg_spec.create ~clock:i.clock ~clear:i.clear () in
-    let bits_for_addr = num_bits_to_represent capacity in
     let empty = wire 1 -- "empty" in
     let full = wire 1 -- "full" in
     (* decode operation *)
@@ -85,11 +94,11 @@ module Make (M : Hardcaml.Interface.S) = struct
         (* read from ram - only valid when the ram isn't empty *)
         { With_valid.valid = pipeline spec ~n pop_actual; value = ram }
     in
-    { O.q; full; empty }
+    { O.q; full; empty; used }
   ;;
 
-  let hierarchical ?instance ?read_latency ~capacity (scope : Scope.t) (i : _ I.t) =
+  let hierarchical ?instance ?read_latency (scope : Scope.t) (i : _ I.t) =
     let module H = Hierarchy.In_scope (I) (O) in
-    H.hierarchical ?instance ~scope ~name:"stack" (create ?read_latency ~capacity) i
+    H.hierarchical ?instance ~scope ~name:"stack" (create ?read_latency) i
   ;;
 end
