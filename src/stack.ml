@@ -23,14 +23,15 @@ struct
 
   module M_with_valid = With_valid.Wrap.Make (M)
 
-  let bits_for_addr = num_bits_to_represent capacity
+  let bits_for_addr = address_bits_for capacity
 
   module O = struct
     type 'a t =
       { q : 'a M_with_valid.t [@rtlprefix "q$"]
       ; full : 'a
       ; empty : 'a
-      ; used : 'a [@bits bits_for_addr]
+      ; used : 'a [@bits bits_for_addr + 1]
+      (* We need 1 more bit for [used] to encode values up to and including [capacity] *)
       }
     [@@deriving sexp_of, hardcaml]
   end
@@ -47,11 +48,11 @@ struct
     let pop_actual = (~:(i.push) &: i.pop &: ~:empty) -- "pop_actual" in
     let cut_through = (i.push &: i.pop) -- "cut_through" in
     (* size tracking *)
-    let used = wire bits_for_addr -- "used" in
+    let used = wire (bits_for_addr + 1) -- "used" in
     let used_minus_1 = wire bits_for_addr -- "used_minus_1" in
     let used_next = mux2 push_actual (used +:. 1) (mux2 pop_actual (used -:. 1) used) in
     used <== reg spec used_next;
-    used_minus_1 <== reg spec (used_next -:. 1);
+    used_minus_1 <== reg spec (lsbs (used_next -:. 1));
     let empty_next = used_next ==:. 0 in
     empty <== reg (Reg_spec.override spec ~clear_to:vdd ~reset_to:vdd) empty_next;
     let full_next = used_next ==:. capacity in
@@ -59,7 +60,7 @@ struct
     (* ram instantiation *)
     let write_port =
       { Ram.Write_port.write_clock = i.clock
-      ; write_address = used
+      ; write_address = lsbs used
       ; write_data = M.Of_signal.pack i.wr_data
       ; write_enable = push_actual
       }
