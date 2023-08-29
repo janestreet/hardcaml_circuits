@@ -46,7 +46,7 @@ module Make_tagged (Arg : Arg) = struct
     ; insertion_index : Signal.t
     ; deletion_index : Signal.t
     }
-  [@@deriving fields]
+  [@@deriving fields ~getters]
 
   type op =
     { slot : Signal.t

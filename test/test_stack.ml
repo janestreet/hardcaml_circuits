@@ -5,7 +5,7 @@ open Bits
 
 let width = 4
 
-module Int4 = Hardcaml.Scalar.Make (struct
+module Int4 = Types.Scalar (struct
     let port_name = "int4"
     let port_width = width
   end)

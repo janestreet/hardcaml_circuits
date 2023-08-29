@@ -72,7 +72,7 @@ module Compare_and_swap = struct
     ; input1 : Wire.t
     ; input2 : Wire.t
     }
-  [@@deriving compare, fields]
+  [@@deriving compare]
 
   let sexp_of_t { id; depth = _; input1; input2 } =
     [%message "compare_and_swap" ~_:(id : int) (input1 : Wire.t) (input2 : Wire.t)]

@@ -14,7 +14,7 @@ module Make (Arg : Arg) = struct
     { vec_size : int
     ; regs : Signal.t Arg.Interface.t array
     }
-  [@@deriving fields]
+  [@@deriving fields ~getters]
 
   type op =
     { slot : Signal.t

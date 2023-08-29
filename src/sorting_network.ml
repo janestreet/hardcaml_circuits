@@ -55,7 +55,7 @@ struct
 
      The bitonic sort procedure takes an unsorted list in, divides it into 2 and recurses
      to the base case.  The lower half is sorted in ascending order, while the upper half
-     is sorted in descending order.  Concatentation of these lists lead to a bitonic
+     is sorted in descending order.  Concatentation of these lists leads to a bitonic
      sequence that can be fully sorted with the bitonic merge operation. *)
 
   type dirn =
