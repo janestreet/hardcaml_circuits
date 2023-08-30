@@ -2,10 +2,10 @@ open Core
 open Hardcaml
 
 let create_circuit
-      (type params)
-      scope
-      (module Component : Component_intf.S with type Params.t = params)
-      (params : params)
+  (type params)
+  scope
+  (module Component : Component_intf.S with type Params.t = params)
+  (params : params)
   =
   let module I_data = struct
     module Pre = struct
@@ -80,22 +80,22 @@ let create_mega_circuit scope (circuits : Circuit.t list) =
       circuit_names
       data_inputs
       ~f:(fun circuit circuit_name data_inputs ->
-        let circuit_data_input_names = List.map ~f:name_exn (circuit_data_inputs circuit) in
-        let inputs =
-          let clock_input = "clock", clock in
-          let data_inputs =
-            List.map2_exn circuit_data_input_names data_inputs ~f:(fun a b -> a, b)
-          in
-          clock_input :: data_inputs
+      let circuit_data_input_names = List.map ~f:name_exn (circuit_data_inputs circuit) in
+      let inputs =
+        let clock_input = "clock", clock in
+        let data_inputs =
+          List.map2_exn circuit_data_input_names data_inputs ~f:(fun a b -> a, b)
         in
-        let outputs =
-          List.map (Circuit.outputs circuit) ~f:(fun s -> name_exn s, Signal.width s)
-        in
-        let output_names = List.map ~f:fst outputs in
-        let inst = Instantiation.create ~name:circuit_name ~inputs ~outputs () in
-        List.map output_names ~f:(fun name ->
-          Int.incr i;
-          Signal.output (sprintf "data_out_%d" !i) (Map.find_exn inst name)))
+        clock_input :: data_inputs
+      in
+      let outputs =
+        List.map (Circuit.outputs circuit) ~f:(fun s -> name_exn s, Signal.width s)
+      in
+      let output_names = List.map ~f:fst outputs in
+      let inst = Instantiation.create ~name:circuit_name ~inputs ~outputs () in
+      List.map output_names ~f:(fun name ->
+        Int.incr i;
+        Signal.output (sprintf "data_out_%d" !i) (Map.find_exn inst name)))
     |> List.concat
   in
   Circuit.create_exn ~name:"top" outputs

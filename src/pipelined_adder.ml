@@ -49,11 +49,11 @@ module Short_latency = struct
   [@@deriving sexp_of]
 
   let partial_sums
-        (type a)
-        (module Comb : Comb.S with type t = a)
-        ~part_width
-        (a : a)
-        (b : a)
+    (type a)
+    (module Comb : Comb.S with type t = a)
+    ~part_width
+    (a : a)
+    (b : a)
     =
     let open Comb in
     let build_sums a b =
@@ -84,11 +84,11 @@ module Short_latency = struct
   ;;
 
   let final_sums
-        (type a)
-        (module Comb : Comb.S with type t = a)
-        (partial_sums : a sums list)
-        (cac : a list)
-        (c_in : a)
+    (type a)
+    (module Comb : Comb.S with type t = a)
+    (partial_sums : a sums list)
+    (cac : a list)
+    (c_in : a)
     =
     let open Comb in
     let rec f partial_sums cac c_in =

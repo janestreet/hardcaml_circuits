@@ -220,12 +220,12 @@ module Op = struct
 end
 
 let create
-      (type a)
-      ?(config = Config.Galois)
-      ?(counterpart_taps = false)
-      ?(op = Op.Xor)
-      ((module B) : a comb)
-      d
+  (type a)
+  ?(config = Config.Galois)
+  ?(counterpart_taps = false)
+  ?(op = Op.Xor)
+  ((module B) : a comb)
+  d
   =
   let open B in
   let xor a b =

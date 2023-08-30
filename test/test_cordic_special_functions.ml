@@ -4,9 +4,9 @@ module Rect = Test_cordic_reference.Rect
 module Polar = Test_cordic_reference.Polar
 
 module Cordic = Cordic_special_functions.Make (struct
-    let width = 32
-    let fractional_width = 16
-  end)
+  let width = 32
+  let fractional_width = 16
+end)
 
 open Cordic
 

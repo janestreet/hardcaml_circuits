@@ -407,8 +407,8 @@ let%expect_test "rect to polar" =
       ~steps:4
       ~f_cordic:(Cordic_reference.rect_to_polar ~iterations:16)
       ~f:(fun x y ->
-        let { magnitude; phase } = Rect.to_polar { x; y } in
-        magnitude, phase)
+      let { magnitude; phase } = Rect.to_polar { x; y } in
+      magnitude, phase)
   in
   print_s [%message "" (errors : (float * float * (log10 * log10)) array array)];
   [%expect
@@ -449,8 +449,8 @@ let%expect_test "polar to rect" =
       ~steps:4
       ~f_cordic:(Cordic_reference.polar_to_rect ~iterations:16)
       ~f:(fun magnitude phase ->
-        let { Rect.x; y } = Polar.to_rect { magnitude; phase } in
-        x, y)
+      let { Rect.x; y } = Polar.to_rect { magnitude; phase } in
+      x, y)
   in
   print_s [%message "" (errors : (float * float * (log10 * log10)) array array)];
   [%expect

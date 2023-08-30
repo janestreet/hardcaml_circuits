@@ -30,10 +30,10 @@ let halve l = List.split_n l (List.length l / 2)
 type 'a compare_and_swap = 'a -> 'a -> 'a Min_max.t
 
 module Make (S : sig
-    type t
+  type t
 
-    val compare_and_swap : t compare_and_swap
-  end) =
+  val compare_and_swap : t compare_and_swap
+end) =
 struct
   open S
 

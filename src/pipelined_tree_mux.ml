@@ -53,11 +53,11 @@ let pipelined_tree_mux ~cycles ~reg ~selector state =
 ;;
 
 let pipelined_tree_priority_select
-      ?(trace_reductions = false)
-      ?(pipelined_enable = Signal.vdd)
-      ~cycles
-      ~(reg : ?enable:Signal.t -> Signal.t -> Signal.t)
-      data
+  ?(trace_reductions = false)
+  ?(pipelined_enable = Signal.vdd)
+  ~cycles
+  ~(reg : ?enable:Signal.t -> Signal.t -> Signal.t)
+  data
   =
   if cycles < 0
   then

@@ -82,9 +82,9 @@ let%expect_test "sort by bottom 2 bits" =
     create
       Bitonic_sort
       (fun a b ->
-         let open Bits in
-         let sel = select a 1 0 <: select b 1 0 in
-         { min = mux2 sel a b; max = mux2 sel b a })
+        let open Bits in
+        let sel = select a 1 0 <: select b 1 0 in
+        { min = mux2 sel a b; max = mux2 sel b a })
       inputs
   in
   print_s [%message "" (inputs : Bits.t list) (sorted : Bits.t list)];

@@ -2,9 +2,9 @@ open! Core
 module Synth = Hardcaml_xilinx_reports
 
 module Make (Bits : sig
-    val data_width : int
-    val num_sources : int
-  end) =
+  val data_width : int
+  val num_sources : int
+end) =
 struct
   let log2_num_sources = Int.ceil_log2 Bits.num_sources
 

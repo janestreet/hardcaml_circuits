@@ -6,21 +6,21 @@ open Bits
 let width = 4
 
 module Int4 = Types.Scalar (struct
-    let port_name = "int4"
-    let port_width = width
-  end)
+  let port_name = "int4"
+  let port_width = width
+end)
 
 module Make_test (C : sig
-    val capacity : int
-  end) =
+  val capacity : int
+end) =
 struct
   open C
 
   module Stack = Hardcaml_circuits.Stack.Make (struct
-      module M = Int4
+    module M = Int4
 
-      let capacity = capacity
-    end)
+    let capacity = capacity
+  end)
 
   open Stack
   module Sim = Cyclesim.With_interface (I) (O)
@@ -119,8 +119,8 @@ end
 let default_capacity = 8
 
 module Default_test = Make_test (struct
-    let capacity = default_capacity
-  end)
+  let capacity = default_capacity
+end)
 
 open Default_test
 

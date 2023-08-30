@@ -5,10 +5,10 @@ let valids (d : _ With_valid.t list) = List.map d ~f:(fun v -> v.valid)
 let values (d : _ With_valid.t list) = List.map d ~f:(fun v -> v.value)
 
 let rotate_by_index
-      (type a)
-      (module Bits : Comb.S with type t = a)
-      ~(index : a)
-      ~(data : a With_valid.t list)
+  (type a)
+  (module Bits : Comb.S with type t = a)
+  ~(index : a)
+  ~(data : a With_valid.t list)
   =
   let open Bits in
   (* rotate by the index *)
@@ -58,10 +58,10 @@ module Index = struct
 end
 
 let select_next_with_clz
-      (type a)
-      (module Bits : Comb.S with type t = a)
-      ~(index : a Index.t)
-      (valid : a)
+  (type a)
+  (module Bits : Comb.S with type t = a)
+  ~(index : a Index.t)
+  (valid : a)
   =
   let open Bits in
   let num_sources = width valid in
@@ -85,10 +85,10 @@ module Round_robin_with_priority = struct
 
   module Log_shift = struct
     let combinational
-          (type a)
-          (module Bits : Comb.S with type t = a)
-          ~(index : a Index.t)
-          ~(data : a With_valid.t list)
+      (type a)
+      (module Bits : Comb.S with type t = a)
+      ~(index : a Index.t)
+      ~(data : a With_valid.t list)
       =
       rotate_by_index (module Bits) ~index:(Index.to_count (module Bits) ~index) ~data
       |> Bits.priority_select
@@ -105,10 +105,10 @@ module Round_robin_with_priority = struct
 
   module Count_zeros = struct
     let combinational
-          (type a)
-          (module Bits : Comb.S with type t = a)
-          ~(index : a Index.t)
-          ~(data : a With_valid.t list)
+      (type a)
+      (module Bits : Comb.S with type t = a)
+      ~(index : a Index.t)
+      ~(data : a With_valid.t list)
       =
       let open Bits in
       let valids = valids data |> concat_lsb in
@@ -128,10 +128,10 @@ module Round_robin_with_priority = struct
 
   module Onehot_cleaner = struct
     let onehot_selector
-          (type a)
-          (module Bits : Comb.S with type t = a)
-          ~(index : a Index.t)
-          ~(data : a With_valid.t list)
+      (type a)
+      (module Bits : Comb.S with type t = a)
+      ~(index : a Index.t)
+      ~(data : a With_valid.t list)
       =
       let open Bits in
       let valid = valids data |> concat_lsb in
@@ -144,10 +144,10 @@ module Round_robin_with_priority = struct
     ;;
 
     let onehot_data_mux
-          (type a)
-          (module Bits : Comb.S with type t = a)
-          onehot_selector
-          data
+      (type a)
+      (module Bits : Comb.S with type t = a)
+      onehot_selector
+      data
       =
       let open Bits in
       List.map2_exn onehot_selector data ~f:(fun valid { With_valid.valid = _; value } ->
@@ -156,10 +156,10 @@ module Round_robin_with_priority = struct
     ;;
 
     let combinational
-          (type a)
-          (module Bits : Comb.S with type t = a)
-          ~(index : a Index.t)
-          ~(data : a With_valid.t list)
+      (type a)
+      (module Bits : Comb.S with type t = a)
+      ~(index : a Index.t)
+      ~(data : a With_valid.t list)
       =
       let is_onehot, onehot_selector = onehot_selector (module Bits) ~index ~data in
       let value = onehot_data_mux (module Bits) onehot_selector data in
@@ -194,11 +194,11 @@ module Round_robin_with_priority = struct
   ;;
 
   let combinational
-        (type a)
-        ?(arch = Architecture.default)
-        (module Bits : Comb.S with type t = a)
-        ~(index : a Index.t)
-        ~(data : a With_valid.t list)
+    (type a)
+    ?(arch = Architecture.default)
+    (module Bits : Comb.S with type t = a)
+    ~(index : a Index.t)
+    ~(data : a With_valid.t list)
     =
     let module A = (val get_arch arch data) in
     A.combinational (module Bits) ~index ~data

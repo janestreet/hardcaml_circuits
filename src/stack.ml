@@ -3,10 +3,10 @@ open Hardcaml
 open Signal
 
 module Make (Config : sig
-    module M : Hardcaml.Interface.S
+  module M : Hardcaml.Interface.S
 
-    val capacity : int
-  end) =
+  val capacity : int
+end) =
 struct
   open Config
 
@@ -31,7 +31,7 @@ struct
       ; full : 'a
       ; empty : 'a
       ; used : 'a [@bits bits_for_addr + 1]
-      (* We need 1 more bit for [used] to encode values up to and including [capacity] *)
+          (* We need 1 more bit for [used] to encode values up to and including [capacity] *)
       }
     [@@deriving sexp_of, hardcaml]
   end

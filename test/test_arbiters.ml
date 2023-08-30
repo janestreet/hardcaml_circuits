@@ -165,11 +165,11 @@ let%expect_test "select next with clz" =
 ;;
 
 module Test_round_robin_comb (X : sig
-    val round_robin
-      :  index:Bits.t Arbiters.Index.t
-      -> data:Bits.t With_valid.t list
-      -> Bits.t With_valid.t
-  end) =
+  val round_robin
+    :  index:Bits.t Arbiters.Index.t
+    -> data:Bits.t With_valid.t list
+    -> Bits.t With_valid.t
+end) =
 struct
   let%expect_test "round robin with priority" =
     let open Bits in
@@ -196,9 +196,9 @@ struct
     in
     [ "0000"; "0001"; "0010"; "0100"; "1000"; "1110"; "1010"; "1111"; "1010110" ]
     |> List.iter ~f:(fun valids ->
-      print_s [%message (valids : string)];
-      test (of_string valids);
-      Stdio.printf "\n");
+         print_s [%message (valids : string)];
+         test (of_string valids);
+         Stdio.printf "\n");
     [%expect
       {|
       (valids 0000)
@@ -261,22 +261,22 @@ struct
 end
 
 module _ = Test_round_robin_comb (struct
-    let round_robin =
-      Arbiters.Round_robin_with_priority.Log_shift.combinational (module Bits)
-    ;;
-  end)
+  let round_robin =
+    Arbiters.Round_robin_with_priority.Log_shift.combinational (module Bits)
+  ;;
+end)
 
 module _ = Test_round_robin_comb (struct
-    let round_robin =
-      Arbiters.Round_robin_with_priority.Count_zeros.combinational (module Bits)
-    ;;
-  end)
+  let round_robin =
+    Arbiters.Round_robin_with_priority.Count_zeros.combinational (module Bits)
+  ;;
+end)
 
 module _ = Test_round_robin_comb (struct
-    let round_robin =
-      Arbiters.Round_robin_with_priority.Onehot_cleaner.combinational (module Bits)
-    ;;
-  end)
+  let round_robin =
+    Arbiters.Round_robin_with_priority.Onehot_cleaner.combinational (module Bits)
+  ;;
+end)
 
 let display_rules =
   let re x = Re.Posix.(compile (re x)) in
@@ -289,13 +289,13 @@ let display_rules =
 ;;
 
 module Test_round_robin_seq (F : sig
-    val round_robin
-      :  clock:Signal.t
-      -> clear:Signal.t
-      -> index:Signal.t Arbiters.Index.t
-      -> data:Signal.t With_valid.t list
-      -> Signal.t With_valid.t
-  end) =
+  val round_robin
+    :  clock:Signal.t
+    -> clear:Signal.t
+    -> index:Signal.t Arbiters.Index.t
+    -> data:Signal.t With_valid.t list
+    -> Signal.t With_valid.t
+end) =
 struct
   let%expect_test "testbench" =
     let open Signal in
@@ -413,16 +413,16 @@ struct
 end
 
 module _ = Test_round_robin_seq (struct
-    let round_robin = Arbiters.Round_robin_with_priority.Log_shift.sequential
-  end)
+  let round_robin = Arbiters.Round_robin_with_priority.Log_shift.sequential
+end)
 
 module _ = Test_round_robin_seq (struct
-    let round_robin = Arbiters.Round_robin_with_priority.Count_zeros.sequential
-  end)
+  let round_robin = Arbiters.Round_robin_with_priority.Count_zeros.sequential
+end)
 
 module _ = Test_round_robin_seq (struct
-    let round_robin = Arbiters.Round_robin_with_priority.Onehot_cleaner.sequential
-  end)
+  let round_robin = Arbiters.Round_robin_with_priority.Onehot_cleaner.sequential
+end)
 
 (* Prove combinational architectures are the same *)
 open Hardcaml_verify

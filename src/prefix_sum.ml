@@ -98,12 +98,12 @@ let network = function
 let eval ~config ~operator inputs = network config operator inputs
 
 let create
-      (type t)
-      (module Bits : Hardcaml.Comb.S with type t = t)
-      ~config
-      ~input1
-      ~input2
-      ~carry_in
+  (type t)
+  (module Bits : Hardcaml.Comb.S with type t = t)
+  ~config
+  ~input1
+  ~input2
+  ~carry_in
   =
   let open Bits in
   let module A = Add.Make (Bits) in

@@ -27,16 +27,16 @@ module Make_tagged (Arg : Arg) = struct
   (* Construct the vec. The indexes need special values written when the table is reset.
      The tag reset value is up to the user. *)
   module Vec = Vec.Make (struct
-      module Interface = Interface
+    module Interface = Interface
 
-      (* Initialize the indexes with [0,1,2,3,4, ...].  Tags are up to the user. *)
-      let spec ~index spec =
-        { Interface.index =
-            Reg_spec.override spec ~clear_to:(of_int ~width:log_vec_size index)
-        ; tag = Arg.spec ~index spec
-        }
-      ;;
-    end)
+    (* Initialize the indexes with [0,1,2,3,4, ...].  Tags are up to the user. *)
+    let spec ~index spec =
+      { Interface.index =
+          Reg_spec.override spec ~clear_to:(of_int ~width:log_vec_size index)
+      ; tag = Arg.spec ~index spec
+      }
+    ;;
+  end)
 
   type t =
     { vec : Vec.t
@@ -133,16 +133,16 @@ module Make_tagged (Arg : Arg) = struct
 end
 
 module Make (Arg : sig
-    val vec_size : int
-  end) =
+  val vec_size : int
+end) =
 struct
   module Tagged = Make_tagged (struct
-      let vec_size = Arg.vec_size
+    let vec_size = Arg.vec_size
 
-      module Tag = Interface.Empty
+    module Tag = Interface.Empty
 
-      let spec ~index:_ _spec = Interface.Empty.None
-    end)
+    let spec ~index:_ _spec = Interface.Empty.None
+  end)
 
   include Tagged
 

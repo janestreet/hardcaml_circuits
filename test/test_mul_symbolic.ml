@@ -103,7 +103,7 @@ let%expect_test _ =
                    (module Signal)
                    (Input { name = "a"; width = a_width })
                    (Input { name = "b"; width = b_width })
-                 : Signal.t)])
+                  : Signal.t)])
     done
   done;
   [%expect

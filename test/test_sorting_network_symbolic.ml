@@ -123,7 +123,7 @@ let%expect_test _ =
                    config
                    Wire.create_compare_and_swap
                    (List.map inputs ~f:Wire.create_input))
-               : outputs Or_error.t)]));
+                : outputs Or_error.t)]));
   [%expect
     {|
     ((config Bitonic_sort)
