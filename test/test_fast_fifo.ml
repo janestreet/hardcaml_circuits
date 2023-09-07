@@ -12,10 +12,10 @@ end
 
 module Fast_fifo = Fast_fifo.Make (Foo)
 
-let create_sim ?(capacity = 2) () =
+let create_sim ?(capacity = 2) ?(cut_through = true) () =
   let scope = Scope.create ~flatten_design:true () in
   let module Sim = Cyclesim.With_interface (Fast_fifo.I) (Fast_fifo.O) in
-  let sim = Sim.create (Fast_fifo.create ~cut_through:true ~capacity scope) in
+  let sim = Sim.create (Fast_fifo.create ~cut_through ~capacity scope) in
   let waves, sim = Hardcaml_waveterm.Waveform.create sim in
   let inputs = Cyclesim.inputs sim in
   inputs.clear := Bits.vdd;
@@ -169,6 +169,60 @@ let%expect_test "read and write at the same cycle when underlying fifo not empty
     │                  ││──────┘                       └─────                            │
     └──────────────────┘└────────────────────────────────────────────────────────────────┘
     57e438bfa5b572acaa0e2e4820657947 |}]
+;;
+
+let%expect_test "read and write at the same cycle when empty" =
+  let waves, sim = create_sim ~cut_through:false () in
+  let inputs = Cyclesim.inputs sim in
+  inputs.wr_enable := Bits.vdd;
+  inputs.wr_data.hello := Bits.of_int ~width:16 0x123;
+  inputs.wr_data.world := Bits.of_int ~width:16 0x456;
+  inputs.rd_enable := Bits.vdd;
+  Cyclesim.cycle sim;
+  inputs.wr_enable := Bits.vdd;
+  inputs.wr_data.hello := Bits.of_int ~width:16 0xabc;
+  inputs.wr_data.world := Bits.of_int ~width:16 0xdef;
+  inputs.rd_enable := Bits.vdd;
+  Cyclesim.cycle sim;
+  inputs.wr_enable := Bits.gnd;
+  inputs.rd_enable := Bits.gnd;
+  Cyclesim.cycle sim;
+  inputs.rd_enable := Bits.vdd;
+  Cyclesim.cycle sim;
+  inputs.rd_enable := Bits.gnd;
+  Cyclesim.cycle sim;
+  expect waves;
+  [%expect
+    {|
+    ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────┐
+    │clock             ││┌──┐  ┌──┐  ┌──┐  ┌──┐  ┌──┐  ┌──┐  ┌──┐  ┌──┐  ┌──┐  ┌──┐  ┌──┐│
+    │                  ││   └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └│
+    │clear             ││──────┐                                                         │
+    │                  ││      └─────────────────────────────                            │
+    │rd_enable         ││      ┌───────────┐     ┌─────┐                                 │
+    │                  ││──────┘           └─────┘     └─────                            │
+    │                  ││──────┬─────┬───────────────────────                            │
+    │wr$hello          ││ 0000 │0123 │0ABC                                               │
+    │                  ││──────┴─────┴───────────────────────                            │
+    │                  ││──────┬─────┬───────────────────────                            │
+    │wr$world          ││ 0000 │0456 │0DEF                                               │
+    │                  ││──────┴─────┴───────────────────────                            │
+    │wr_enable         ││      ┌───────────┐                                             │
+    │                  ││──────┘           └─────────────────                            │
+    │full              ││                                                                │
+    │                  ││────────────────────────────────────                            │
+    │one_from_full     ││                                                                │
+    │                  ││────────────────────────────────────                            │
+    │                  ││────────────┬─────┬───────────┬─────                            │
+    │rd$hello          ││ 0000       │0123 │0ABC       │0000                             │
+    │                  ││────────────┴─────┴───────────┴─────                            │
+    │                  ││────────────┬─────┬───────────┬─────                            │
+    │rd$world          ││ 0000       │0456 │0DEF       │0000                             │
+    │                  ││────────────┴─────┴───────────┴─────                            │
+    │rd_valid          ││            ┌─────────────────┐                                 │
+    │                  ││────────────┘                 └─────                            │
+    └──────────────────┘└────────────────────────────────────────────────────────────────┘
+    f524cf7e20a622219a610b11a9e7ffa7 |}]
 ;;
 
 let%expect_test "write when full will not be registered" =

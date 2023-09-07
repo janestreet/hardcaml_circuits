@@ -38,6 +38,7 @@ module Make (M : Hardcaml.Interface.S) : sig
 
   val hierarchical
     :  ?instance:string
+    -> ?name:string
     -> cut_through:bool
     -> capacity:int
     -> Scope.t
