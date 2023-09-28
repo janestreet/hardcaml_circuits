@@ -2,4 +2,4 @@
  (libraries base expect_test_helpers_core.expect_test_helpers_base hardcaml
   hardcaml_verify hardcaml_circuits hardcaml_step_testbench hardcaml_waveterm
   stdio)
- (preprocess (pps ppx_deriving_hardcaml ppx_jane)))
+ (preprocess (pps ppx_hardcaml ppx_jane)))
