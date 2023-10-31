@@ -23,7 +23,7 @@ let create_circuit
       { clock : 'a
       ; i_data : 'a I_data.t [@rtlprefix "i_data_"]
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
   in
   let module O = struct

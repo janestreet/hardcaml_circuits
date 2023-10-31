@@ -24,7 +24,7 @@ module Make (Config : Config) = struct
       ; set_remainder : 'a [@bits remainder_bits]
       ; incr : 'a
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
 
   module O = struct
@@ -32,7 +32,7 @@ module Make (Config : Config) = struct
       { quotient : 'a [@bits quotient_bits]
       ; remainder : 'a [@bits remainder_bits]
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
 
   let create _scope ({ clock; clear; set; set_quotient; set_remainder; incr } : _ I.t)

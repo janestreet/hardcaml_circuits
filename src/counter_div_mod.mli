@@ -35,7 +35,7 @@ module Make (Config : Config) : sig
       ; set_remainder : 'a
       ; incr : 'a
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
 
   module O : sig
@@ -43,7 +43,7 @@ module Make (Config : Config) : sig
       { quotient : 'a
       ; remainder : 'a
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
 
   val create : Scope.t -> Signal.t I.t -> Signal.t O.t

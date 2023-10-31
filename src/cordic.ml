@@ -138,7 +138,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
       ; y : 'a [@bits Fixnum.width]
       ; z : 'a [@bits Fixnum.width]
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
 
   module O = struct
@@ -147,7 +147,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
       ; yo : 'a [@bits Fixnum.width]
       ; zo : 'a [@bits Fixnum.width]
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
 
   let create (config : Config.t) (i : Signal.t I.t) =

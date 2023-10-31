@@ -13,7 +13,7 @@ struct
       { valid : 'a
       ; value : 'a [@bits Bits.data_width]
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
 
   module I = struct
@@ -21,7 +21,7 @@ struct
       { index : 'a [@bits log2_num_sources]
       ; data : 'a With_valid.t list [@length Bits.num_sources]
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
 
   module O = With_valid

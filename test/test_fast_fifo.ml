@@ -7,7 +7,7 @@ module Foo = struct
     { hello : 'a [@bits 16]
     ; world : 'a [@bits 16]
     }
-  [@@deriving sexp_of, hardcaml]
+  [@@deriving hardcaml]
 end
 
 module Fast_fifo = Fast_fifo.Make (Foo)

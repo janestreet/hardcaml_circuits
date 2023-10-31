@@ -12,7 +12,7 @@ module Make (Spec : Spec) = struct
       ; denominator : 'a [@bits Spec.width]
       ; start : 'a
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
 
   module O = struct
@@ -21,7 +21,7 @@ module Make (Spec : Spec) = struct
       ; remainder : 'a [@bits Spec.width]
       ; valid : 'a
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
 
   (*
@@ -63,7 +63,7 @@ module Make (Spec : Spec) = struct
       ; running : 'a
       ; quot_mask : 'a [@bits Spec.width]
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
 
     let create_next_stage scope ?(pipe = Fn.id) t i =
       let ( -- ) = Scope.naming scope in

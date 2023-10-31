@@ -11,7 +11,7 @@ module Make (M : Hardcaml.Interface.S) : sig
       ; wr_enable : 'a
       ; rd_enable : 'a
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
 
   module O : sig
@@ -21,7 +21,7 @@ module Make (M : Hardcaml.Interface.S) : sig
       ; full : 'a
       ; one_from_full : 'a
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
 
   (** Creates a combinational, showahead fifo. Namely, [rd_valid] will be asserted on the

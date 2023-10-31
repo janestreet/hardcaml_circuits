@@ -18,7 +18,7 @@ struct
       ; push : 'a
       ; pop : 'a
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
 
   module M_with_valid = With_valid.Wrap.Make (M)
@@ -33,7 +33,7 @@ struct
       ; used : 'a [@bits bits_for_addr + 1]
           (* We need 1 more bit for [used] to encode values up to and including [capacity] *)
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
 
   let create ?(read_latency = 1) (scope : Scope.t) (i : _ I.t) =

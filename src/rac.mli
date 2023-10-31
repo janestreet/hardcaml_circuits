@@ -64,11 +64,11 @@ module Make (Config : Config) : sig
       ; addsub : 'a (* High on the msb (if input data is signed).  *)
       ; x : 'a array
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
 
   module O : sig
-    type 'a t = { q : 'a } [@@deriving sexp_of, hardcaml]
+    type 'a t = { q : 'a } [@@deriving hardcaml]
   end
 
   (** Create the Rom-accumulator. *)

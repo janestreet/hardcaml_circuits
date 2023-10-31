@@ -15,7 +15,7 @@ end) : sig
       ; push : 'a
       ; pop : 'a
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
 
   module M_with_valid : Interface.S with type 'a t = ('a, 'a Config.M.t) With_valid.t2
@@ -27,7 +27,7 @@ end) : sig
       ; empty : 'a
       ; used : 'a
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
 
   (** A stack read latency of at least 1. It provides write-before-read semantics, so if

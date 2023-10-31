@@ -466,7 +466,7 @@ let%expect_test "test tagging - show that the tags move (and change) with insert
   =
   let log_vec_size = 2 in
   let module Tag = struct
-    type 'a t = { value : 'a [@bits 4] } [@@deriving sexp_of, hardcaml]
+    type 'a t = { value : 'a [@bits 4] } [@@deriving hardcaml]
   end
   in
   let module IVec =

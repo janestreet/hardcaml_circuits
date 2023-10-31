@@ -21,7 +21,7 @@ module Make_tagged (Arg : Arg) = struct
       { index : 'a [@bits log_vec_size]
       ; tag : 'a Arg.Tag.t
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
 
   (* Construct the vec. The indexes need special values written when the table is reset.

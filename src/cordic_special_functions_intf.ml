@@ -23,7 +23,7 @@ module type Function = sig
       ; ld : 'a
       ; args : 'a Args.t
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
 
   module O : Interface.S
@@ -47,11 +47,11 @@ module type Cordic_special_functions = sig
   module Make (Fixnum_spec : Fixnum.Spec) : sig
     module Atan : sig
       module Args : sig
-        type 'a t = { arg : 'a } [@@deriving sexp_of, hardcaml]
+        type 'a t = { arg : 'a } [@@deriving hardcaml]
       end
 
       module Results : sig
-        type 'a t = { angle : 'a } [@@deriving compare, sexp_of, hardcaml]
+        type 'a t = { angle : 'a } [@@deriving compare, hardcaml]
       end
 
       include Function with module Args := Args with module Results := Results
@@ -63,11 +63,11 @@ module type Cordic_special_functions = sig
           { x : 'a
           ; y : 'a
           }
-        [@@deriving sexp_of, hardcaml]
+        [@@deriving hardcaml]
       end
 
       module Results : sig
-        type 'a t = { angle : 'a } [@@deriving compare, sexp_of, hardcaml]
+        type 'a t = { angle : 'a } [@@deriving compare, hardcaml]
       end
 
       include Function with module Args := Args with module Results := Results
@@ -75,11 +75,11 @@ module type Cordic_special_functions = sig
 
     module Atanh : sig
       module Args : sig
-        type 'a t = { arg : 'a } [@@deriving sexp_of, hardcaml]
+        type 'a t = { arg : 'a } [@@deriving hardcaml]
       end
 
       module Results : sig
-        type 'a t = { angle : 'a } [@@deriving compare, sexp_of, hardcaml]
+        type 'a t = { angle : 'a } [@@deriving compare, hardcaml]
       end
 
       include Function with module Args := Args with module Results := Results
@@ -87,7 +87,7 @@ module type Cordic_special_functions = sig
 
     module Cos_sin : sig
       module Args : sig
-        type 'a t = { angle : 'a } [@@deriving sexp_of, hardcaml]
+        type 'a t = { angle : 'a } [@@deriving hardcaml]
       end
 
       module Results : sig
@@ -95,7 +95,7 @@ module type Cordic_special_functions = sig
           { cos : 'a
           ; sin : 'a
           }
-        [@@deriving compare, sexp_of, hardcaml]
+        [@@deriving compare, hardcaml]
       end
 
       include Function with module Args := Args with module Results := Results
@@ -103,7 +103,7 @@ module type Cordic_special_functions = sig
 
     module Cosh_sinh : sig
       module Args : sig
-        type 'a t = { angle : 'a } [@@deriving sexp_of, hardcaml]
+        type 'a t = { angle : 'a } [@@deriving hardcaml]
       end
 
       module Results : sig
@@ -111,7 +111,7 @@ module type Cordic_special_functions = sig
           { cosh : 'a
           ; sinh : 'a
           }
-        [@@deriving compare, sexp_of, hardcaml]
+        [@@deriving compare, hardcaml]
       end
 
       include Function with module Args := Args with module Results := Results
@@ -123,11 +123,11 @@ module type Cordic_special_functions = sig
           { a : 'a
           ; b : 'a
           }
-        [@@deriving sexp_of, hardcaml]
+        [@@deriving hardcaml]
       end
 
       module Results : sig
-        type 'a t = { quotient : 'a } [@@deriving compare, sexp_of, hardcaml]
+        type 'a t = { quotient : 'a } [@@deriving compare, hardcaml]
       end
 
       include Function with module Args := Args with module Results := Results
@@ -139,11 +139,11 @@ module type Cordic_special_functions = sig
           { a : 'a
           ; b : 'a
           }
-        [@@deriving sexp_of, hardcaml]
+        [@@deriving hardcaml]
       end
 
       module Results : sig
-        type 'a t = { product : 'a } [@@deriving compare, sexp_of, hardcaml]
+        type 'a t = { product : 'a } [@@deriving compare, hardcaml]
       end
 
       include Function with module Args := Args with module Results := Results
@@ -155,7 +155,7 @@ module type Cordic_special_functions = sig
           { magnitude : 'a
           ; phase : 'a
           }
-        [@@deriving sexp_of, hardcaml]
+        [@@deriving hardcaml]
       end
 
       module Results : sig
@@ -163,7 +163,7 @@ module type Cordic_special_functions = sig
           { x : 'a
           ; y : 'a
           }
-        [@@deriving compare, sexp_of, hardcaml]
+        [@@deriving compare, hardcaml]
       end
 
       include Function with module Args := Args with module Results := Results
@@ -175,7 +175,7 @@ module type Cordic_special_functions = sig
           { x : 'a
           ; y : 'a
           }
-        [@@deriving sexp_of, hardcaml]
+        [@@deriving hardcaml]
       end
 
       module Results : sig
@@ -183,7 +183,7 @@ module type Cordic_special_functions = sig
           { magnitude : 'a
           ; phase : 'a
           }
-        [@@deriving compare, sexp_of, hardcaml]
+        [@@deriving compare, hardcaml]
       end
 
       include Function with module Args := Args with module Results := Results
@@ -196,7 +196,7 @@ module type Cordic_special_functions = sig
           ; y : 'a
           ; angle : 'a
           }
-        [@@deriving sexp_of, hardcaml]
+        [@@deriving hardcaml]
       end
 
       module Results : sig
@@ -204,7 +204,7 @@ module type Cordic_special_functions = sig
           { xo : 'a
           ; yo : 'a
           }
-        [@@deriving compare, sexp_of, hardcaml]
+        [@@deriving compare, hardcaml]
       end
 
       include Function with module Args := Args with module Results := Results

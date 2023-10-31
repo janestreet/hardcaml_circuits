@@ -63,11 +63,11 @@ module Make (Config : Config) = struct
       ; addsub : 'a [@bits 1]
       ; x : 'a array [@length num_coefs] [@bits data_bits]
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
 
   module O = struct
-    type 'a t = { q : 'a [@bits accumulator_bits] } [@@deriving sexp_of, hardcaml]
+    type 'a t = { q : 'a [@bits accumulator_bits] } [@@deriving hardcaml]
   end
 
   let rac reg_spec ~en ~ld ~addsub ~romcoefs ~x =

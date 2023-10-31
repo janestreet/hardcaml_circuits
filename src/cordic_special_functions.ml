@@ -46,7 +46,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
         ; ld : 'a
         ; args : 'a Args.t
         }
-      [@@deriving sexp_of, hardcaml]
+      [@@deriving hardcaml]
     end
 
     let configure_input config { I.clk; clr; enable; ld; args } =
@@ -121,7 +121,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
       let mode = Mode.Vectoring
 
       module Args = struct
-        type 'a t = { arg : 'a [@bits Fixnum.width] } [@@deriving sexp_of, hardcaml]
+        type 'a t = { arg : 'a [@bits Fixnum.width] } [@@deriving hardcaml]
 
         let to_generic { arg } _ : _ Generic_args.t =
           { x = Fixnum.signal_constf 1.; y = arg; z = Fixnum.signal_constf 0. }
@@ -129,8 +129,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
       end
 
       module Results = struct
-        type 'a t = { angle : 'a [@bits Fixnum.width] }
-        [@@deriving compare, sexp_of, hardcaml]
+        type 'a t = { angle : 'a [@bits Fixnum.width] } [@@deriving compare, hardcaml]
 
         let create _ ~xo:_ ~yo:_ ~zo = { angle = zo }
       end
@@ -150,7 +149,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
           { x : 'a [@bits Fixnum.width]
           ; y : 'a [@bits Fixnum.width]
           }
-        [@@deriving sexp_of, hardcaml]
+        [@@deriving hardcaml]
 
         let to_generic { x; y } _ : _ Generic_args.t =
           { x = y; y = x; z = Fixnum.signal_constf 0. }
@@ -158,8 +157,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
       end
 
       module Results = struct
-        type 'a t = { angle : 'a [@bits Fixnum.width] }
-        [@@deriving compare, sexp_of, hardcaml]
+        type 'a t = { angle : 'a [@bits Fixnum.width] } [@@deriving compare, hardcaml]
 
         let create _ ~xo:_ ~yo:_ ~zo = { angle = zo }
       end
@@ -175,7 +173,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
       let mode = Mode.Vectoring
 
       module Args = struct
-        type 'a t = { arg : 'a [@bits Fixnum.width] } [@@deriving sexp_of, hardcaml]
+        type 'a t = { arg : 'a [@bits Fixnum.width] } [@@deriving hardcaml]
 
         let to_generic { arg } _ : _ Generic_args.t =
           { x = Fixnum.signal_constf 1.; y = arg; z = Fixnum.signal_constf 0. }
@@ -183,8 +181,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
       end
 
       module Results = struct
-        type 'a t = { angle : 'a [@bits Fixnum.width] }
-        [@@deriving compare, sexp_of, hardcaml]
+        type 'a t = { angle : 'a [@bits Fixnum.width] } [@@deriving compare, hardcaml]
 
         let create _ ~xo:_ ~yo:_ ~zo = { angle = zo }
       end
@@ -200,7 +197,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
       let mode = Mode.Rotation
 
       module Args = struct
-        type 'a t = { angle : 'a [@bits Fixnum.width] } [@@deriving sexp_of, hardcaml]
+        type 'a t = { angle : 'a [@bits Fixnum.width] } [@@deriving hardcaml]
 
         let to_generic { angle } config : _ Generic_args.t =
           { x = Fixnum.signal_constf (1. /. gain config)
@@ -215,7 +212,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
           { cos : 'a [@bits Fixnum.width]
           ; sin : 'a [@bits Fixnum.width]
           }
-        [@@deriving compare, sexp_of, hardcaml]
+        [@@deriving compare, hardcaml]
 
         let create _ ~xo ~yo ~zo:_ = { cos = xo; sin = yo }
       end
@@ -231,7 +228,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
       let mode = Mode.Rotation
 
       module Args = struct
-        type 'a t = { angle : 'a [@bits Fixnum.width] } [@@deriving sexp_of, hardcaml]
+        type 'a t = { angle : 'a [@bits Fixnum.width] } [@@deriving hardcaml]
 
         let to_generic { angle } config : _ Generic_args.t =
           { x = Fixnum.signal_constf (1. /. gainh config)
@@ -246,7 +243,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
           { cosh : 'a [@bits Fixnum.width]
           ; sinh : 'a [@bits Fixnum.width]
           }
-        [@@deriving compare, sexp_of, hardcaml]
+        [@@deriving compare, hardcaml]
 
         let create _ ~xo ~yo ~zo:_ = { cosh = xo; sinh = yo }
       end
@@ -266,7 +263,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
           { a : 'a [@bits Fixnum.width]
           ; b : 'a [@bits Fixnum.width]
           }
-        [@@deriving sexp_of, hardcaml]
+        [@@deriving hardcaml]
 
         let to_generic { a; b } _ : _ Generic_args.t =
           { x = b; y = a; z = Fixnum.signal_constf 0. }
@@ -274,8 +271,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
       end
 
       module Results = struct
-        type 'a t = { quotient : 'a [@bits Fixnum.width] }
-        [@@deriving compare, sexp_of, hardcaml]
+        type 'a t = { quotient : 'a [@bits Fixnum.width] } [@@deriving compare, hardcaml]
 
         let create _ ~xo:_ ~yo:_ ~zo = { quotient = zo }
       end
@@ -295,7 +291,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
           { a : 'a [@bits Fixnum.width]
           ; b : 'a [@bits Fixnum.width]
           }
-        [@@deriving sexp_of, hardcaml]
+        [@@deriving hardcaml]
 
         let to_generic { a; b } _ : _ Generic_args.t =
           { x = a; y = Fixnum.signal_constf 0.; z = b }
@@ -303,8 +299,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
       end
 
       module Results = struct
-        type 'a t = { product : 'a [@bits Fixnum.width] }
-        [@@deriving compare, sexp_of, hardcaml]
+        type 'a t = { product : 'a [@bits Fixnum.width] } [@@deriving compare, hardcaml]
 
         let create _ ~xo:_ ~yo ~zo:_ = { product = yo }
       end
@@ -324,7 +319,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
           { magnitude : 'a [@bits Fixnum.width]
           ; phase : 'a [@bits Fixnum.width]
           }
-        [@@deriving sexp_of, hardcaml]
+        [@@deriving hardcaml]
 
         let to_generic { magnitude; phase } config : _ Generic_args.t =
           { x = Fixnum.signal_mul magnitude (Fixnum.signal_constf (1. /. gain config))
@@ -339,7 +334,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
           { x : 'a [@bits Fixnum.width]
           ; y : 'a [@bits Fixnum.width]
           }
-        [@@deriving compare, sexp_of, hardcaml]
+        [@@deriving compare, hardcaml]
 
         let create _ ~xo ~yo ~zo:_ = { x = xo; y = yo }
       end
@@ -359,7 +354,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
           { x : 'a [@bits Fixnum.width]
           ; y : 'a [@bits Fixnum.width]
           }
-        [@@deriving sexp_of, hardcaml]
+        [@@deriving hardcaml]
 
         let to_generic { x; y } _ : _ Generic_args.t =
           { x; y; z = Fixnum.signal_constf 0. }
@@ -371,7 +366,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
           { magnitude : 'a [@bits Fixnum.width]
           ; phase : 'a [@bits Fixnum.width]
           }
-        [@@deriving compare, sexp_of, hardcaml]
+        [@@deriving compare, hardcaml]
 
         let create config ~xo ~yo:_ ~zo =
           { magnitude = Fixnum.signal_mul xo (Fixnum.signal_constf (1. /. gain config))
@@ -396,7 +391,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
           ; y : 'a [@bits Fixnum.width]
           ; angle : 'a [@bits Fixnum.width]
           }
-        [@@deriving sexp_of, hardcaml]
+        [@@deriving hardcaml]
 
         let to_generic { x; y; angle } _ : _ Generic_args.t = { x; y; z = angle }
       end
@@ -406,7 +401,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
           { xo : 'a [@bits Fixnum.width]
           ; yo : 'a [@bits Fixnum.width]
           }
-        [@@deriving compare, sexp_of, hardcaml]
+        [@@deriving compare, hardcaml]
 
         let create config ~xo ~yo ~zo:_ =
           let igain = 1. /. gain config in

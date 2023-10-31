@@ -24,7 +24,7 @@ module type Divider = sig
         ; denominator : 'a
         ; start : 'a
         }
-      [@@deriving sexp_of, hardcaml]
+      [@@deriving hardcaml]
     end
 
     module O : sig
@@ -33,7 +33,7 @@ module type Divider = sig
         ; remainder : 'a
         ; valid : 'a
         }
-      [@@deriving sexp_of, hardcaml]
+      [@@deriving hardcaml]
     end
 
     module State : sig
@@ -46,7 +46,7 @@ module type Divider = sig
         ; running : 'a
         ; quot_mask : 'a
         }
-      [@@deriving sexp_of, hardcaml]
+      [@@deriving hardcaml]
     end
 
     (** Creates a non-restoring divider with config specified in [Spec]. The width of the

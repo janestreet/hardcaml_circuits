@@ -31,7 +31,7 @@ module type S = sig
       ; y : 'a
       ; z : 'a
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
 
   module O : sig
@@ -40,7 +40,7 @@ module type S = sig
       ; yo : 'a
       ; zo : 'a
       }
-    [@@deriving sexp_of, hardcaml]
+    [@@deriving hardcaml]
   end
 
   val create : Config.t -> Signal.t I.t -> Signal.t O.t

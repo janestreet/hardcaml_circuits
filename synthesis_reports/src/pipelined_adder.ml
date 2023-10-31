@@ -54,11 +54,11 @@ module Input = struct
     { lhs : 'a
     ; rhs : 'a
     }
-  [@@deriving sexp_of, hardcaml]
+  [@@deriving hardcaml]
 end
 
 module Output = struct
-  type 'a t = { result : 'a } [@@deriving sexp_of, hardcaml]
+  type 'a t = { result : 'a } [@@deriving hardcaml]
 end
 
 let input_port_names_and_width (params : Params.t) =
