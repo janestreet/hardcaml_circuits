@@ -132,7 +132,7 @@ module Make_test (Spec : Spec) = struct
   let random_test_unrolled ?(pipe_depth = Spec.width - 1) ~n_tests ~pvalid () =
     let (_ : Waveform.t), sim, inputs, outputs = quickcheck_test_setup in
     let gen_sequence = quickcheck_gen pvalid in
-    let random = Splittable_random.State.of_int 0 in
+    let random = Splittable_random.of_int 0 in
     let input_queue = Queue.create ~capacity:pipe_depth () in
     for i = 0 to n_tests do
       let i_stim = Generator.generate gen_sequence ~size:n_tests ~random in
