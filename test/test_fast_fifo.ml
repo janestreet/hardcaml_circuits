@@ -69,7 +69,7 @@ let%expect_test "combinational read/write" =
     │rd_valid          ││      ┌─────┐                                                   │
     │                  ││──────┘     └─────                                              │
     └──────────────────┘└────────────────────────────────────────────────────────────────┘
-    af5bc98dfbf6793bc560d9296dce719e |}]
+    de447d24f72f2a8b5ec95ec3ef6048b7 |}]
 ;;
 
 let%expect_test "read exact one-cycle after write" =
@@ -115,7 +115,7 @@ let%expect_test "read exact one-cycle after write" =
     │rd_valid          ││      ┌───────────┐                                             │
     │                  ││──────┘           └─────                                        │
     └──────────────────┘└────────────────────────────────────────────────────────────────┘
-    371846e3a268398984b86ecb224a9406 |}]
+    46fb6adba25232f37777aa8c9cbcd792 |}]
 ;;
 
 let%expect_test "read and write at the same cycle when underlying fifo not empty" =
@@ -168,7 +168,7 @@ let%expect_test "read and write at the same cycle when underlying fifo not empty
     │rd_valid          ││      ┌───────────────────────┐                                 │
     │                  ││──────┘                       └─────                            │
     └──────────────────┘└────────────────────────────────────────────────────────────────┘
-    57e438bfa5b572acaa0e2e4820657947 |}]
+    8a7c5f3e1def34159e70e7e009282add |}]
 ;;
 
 let%expect_test "read and write at the same cycle when empty" =
@@ -222,7 +222,7 @@ let%expect_test "read and write at the same cycle when empty" =
     │rd_valid          ││            ┌─────────────────┐                                 │
     │                  ││────────────┘                 └─────                            │
     └──────────────────┘└────────────────────────────────────────────────────────────────┘
-    f524cf7e20a622219a610b11a9e7ffa7 |}]
+    68b0f5d98279b9693ae208d0434e556f |}]
 ;;
 
 let%expect_test "write when full will not be registered" =
@@ -279,7 +279,7 @@ let%expect_test "write when full will not be registered" =
     │rd_valid          ││      ┌─────────────────────────────────────────┐               │
     │                  ││──────┘                                         └───────────────│
     └──────────────────┘└────────────────────────────────────────────────────────────────┘
-    124d22cfcc680b49e42fb3131cecb36b |}]
+    df8a3e1f51076507ae217ec91f666548 |}]
 ;;
 
 let%expect_test "demonstrate [rd_enable=1], [rd_valid=0], until data is really available."
@@ -327,5 +327,5 @@ let%expect_test "demonstrate [rd_enable=1], [rd_valid=0], until data is really a
     │rd_valid          ││                        ┌─────┐                                 │
     │                  ││────────────────────────┘     └─────                            │
     └──────────────────┘└────────────────────────────────────────────────────────────────┘
-    118f152a56c7c6aa84cadb78081dfaa6 |}]
+    711dcff48a3624d70f5606109032ca2d |}]
 ;;

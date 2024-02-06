@@ -368,16 +368,16 @@ let%expect_test "connect to a table and insert and delete characters to form a s
   done;
   [%expect
     {|
-    [______owrdleohll] [helloworld______] helloworld [10]
-    [______owrdleohl_] [heloworld_______] heloworld [9]
-    [______owrd_eohl_] [heloword________] heloword [8]
-    [______owrd_eoh__] [heoword_________] heoword [7]
-    [______ow_d_eoh__] [heowod__________] heowod [6]
-    [______o__d_eoh__] [heood___________] heood [5]
-    [_________d_eoh__] [heod____________] heod [4]
-    [___________eoh__] [heo_____________] heo [3]
-    [____________oh__] [ho______________] ho [2]
-    [____________o___] [o_______________] o [1]
+    [_____ owrdleo_ll] [ello world______] ello world [10]
+    [______owrdleo_ll] [elloworld_______] elloworld [9]
+    [______o_rdleo_ll] [elloorld________] elloorld [8]
+    [______o_rd_eo_ll] [elloord_________] elloord [7]
+    [______o__d_eo_ll] [ellood__________] ellood [6]
+    [______o____eo_ll] [elloo___________] elloo [5]
+    [______o_____o_ll] [lloo____________] lloo [4]
+    [______o_____o__l] [loo_____________] loo [3]
+    [______o________l] [lo______________] lo [2]
+    [______o_________] [o_______________] o [1]
     [________________] [________________]  [0] |}];
   (* If we build it again, we end up with the characters in different places in the table,
      but the same result. This is because it doesn't really matter what order the 'free'
@@ -385,7 +385,7 @@ let%expect_test "connect to a table and insert and delete characters to form a s
   List.iter insertions ~f:(fun (slot, data) -> insert ~slot data);
   show ();
   [%expect {|
-    [_____ eldowhllro] [hello world_____] hello world [11] |}];
+    [_____olwdlreh ol] [hello world_____] hello world [11] |}];
   (* Remove again until empty *)
   for i = 0 to 10 do
     let slot = Random.int (11 - i) in

@@ -22,8 +22,8 @@ let%expect_test "sort integers" =
   print_s [%message "" (inputs : int list) (sorted : int list)];
   [%expect
     {|
-    ((inputs (3 91 20 36 55 16 88 49 3 22 63 83 90 68 32 74))
-     (sorted (3 3 16 20 22 32 36 49 55 63 68 74 83 88 90 91))) |}]
+    ((inputs (53 42 0 84 36 78 84 61 93 0 35 35 66 97 84 39))
+     (sorted (0 0 35 35 36 39 42 53 61 66 78 84 84 84 93 97))) |}]
 ;;
 
 let sort_ascending_unsigned : Bits.t compare_and_swap =
@@ -38,8 +38,8 @@ let%expect_test "bitonic, unsigned, ascending" =
   let sorted = create Bitonic_sort sort_ascending_unsigned inputs in
   print_s [%message "" (inputs : Bits.t list) (sorted : Bits.t list)];
   [%expect {|
-    ((inputs (0010 0100 1100 1110))
-     (sorted (0010 0100 1100 1110))) |}]
+    ((inputs (1110 0101 1000 0011))
+     (sorted (0011 0101 1000 1110))) |}]
 ;;
 
 let sort_descending_signed : Bits.t compare_and_swap =
@@ -54,8 +54,8 @@ let%expect_test "bitonic, signed, descending" =
   let sorted = create Bitonic_sort sort_descending_signed inputs in
   print_s [%message "" (inputs : Bits.t list) (sorted : Bits.t list)];
   [%expect {|
-    ((inputs (0010 0100 1100 1110))
-     (sorted (0100 0010 1110 1100))) |}]
+    ((inputs (1110 0101 1000 0011))
+     (sorted (0101 0011 1110 1000))) |}]
 ;;
 
 let%expect_test "odd_even_merge, unsigned, ascending" =
@@ -63,8 +63,8 @@ let%expect_test "odd_even_merge, unsigned, ascending" =
   let sorted = create Odd_even_merge_sort sort_ascending_unsigned inputs in
   print_s [%message "" (inputs : Bits.t list) (sorted : Bits.t list)];
   [%expect {|
-    ((inputs (0010 0100 1100 1110))
-     (sorted (0010 0100 1100 1110))) |}]
+    ((inputs (1110 0101 1000 0011))
+     (sorted (0011 0101 1000 1110))) |}]
 ;;
 
 let%expect_test "odd_even_merge, signed, descending" =
@@ -72,8 +72,8 @@ let%expect_test "odd_even_merge, signed, descending" =
   let sorted = create Odd_even_merge_sort sort_descending_signed inputs in
   print_s [%message "" (inputs : Bits.t list) (sorted : Bits.t list)];
   [%expect {|
-    ((inputs (0010 0100 1100 1110))
-     (sorted (0100 0010 1110 1100))) |}]
+    ((inputs (1110 0101 1000 0011))
+     (sorted (0101 0011 1110 1000))) |}]
 ;;
 
 let%expect_test "sort by bottom 2 bits" =
@@ -90,8 +90,8 @@ let%expect_test "sort by bottom 2 bits" =
   print_s [%message "" (inputs : Bits.t list) (sorted : Bits.t list)];
   [%expect
     {|
-    ((inputs (0011 0110 0111 0111 0010 0100 1100 1110))
-     (sorted (1100 0100 0010 1110 0110 0111 0111 0011))) |}]
+    ((inputs (1101 1100 1111 0011 1110 0101 1000 0011))
+     (sorted (1000 1100 1101 0101 1110 0011 1111 0011))) |}]
 ;;
 
 let%expect_test "check all possible zero-one inputs" =

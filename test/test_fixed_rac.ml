@@ -41,50 +41,50 @@ let%expect_test "precisions" =
   [%expect
     {|
     ((coefs (
-       0.43630556398799153
-       0.96035328719918678
-       0.56883568253605243
-       0.45062527388924589))
+       0.63535141231675607
+       0.78255046724687982
+       0.77208758810861389
+       0.48715518185429985))
      (data_in (
-       0.64030838064885942
-       0.14207889800896825
-       0.26565242651667725
-       0.11359872617230203))) |}];
+       0.55401752229333867
+       0.088701617893937754
+       0.68236915472644311
+       0.0278013320652886))) |}];
   test_fixed () ~coefs ~data_in ~coef_prec:3 ~data_prec:3;
   [%expect
     {|
     ((precision (3 3))
-     (result       18)
-     (ref_result   0.61811908233962443)
-     (float_result 0.5625)) |}];
+     (result       28)
+     (ref_result   0.96180162561626825)
+     (float_result 0.875)) |}];
   test_fixed () ~coefs ~data_in ~coef_prec:5 ~data_prec:5;
   [%expect
     {|
     ((precision (5 5))
-     (result       326)
-     (ref_result   0.61811908233962443)
-     (float_result 0.63671875)) |}];
+     (result       500)
+     (ref_result   0.96180162561626825)
+     (float_result 0.9765625)) |}];
   test_fixed () ~coefs ~data_in ~coef_prec:7 ~data_prec:7;
   [%expect
     {|
     ((precision (7 7))
-     (result       5079)
-     (ref_result   0.61811908233962443)
-     (float_result 0.6199951171875)) |}];
+     (result       7856)
+     (ref_result   0.96180162561626825)
+     (float_result 0.958984375)) |}];
   test_fixed () ~coefs ~data_in ~coef_prec:3 ~data_prec:5;
   [%expect
     {|
     ((precision (3 5))
-     (result       80)
-     (ref_result   0.61811908233962443)
-     (float_result 0.625)) |}];
+     (result       122)
+     (ref_result   0.96180162561626825)
+     (float_result 0.953125)) |}];
   test_fixed () ~coefs ~data_in ~coef_prec:5 ~data_prec:3;
   [%expect
     {|
     ((precision (5 3))
-     (result       75)
-     (ref_result   0.61811908233962443)
-     (float_result 0.5859375)) |}]
+     (result       115)
+     (ref_result   0.96180162561626825)
+     (float_result 0.8984375)) |}]
 ;;
 
 let%expect_test "signed" =
@@ -94,22 +94,22 @@ let%expect_test "signed" =
   [%expect
     {|
     ((coefs (
-       -0.12738887202401694
-       0.92070657439837356
-       0.13767136507210487
-       -0.098749452221508216))
+       0.27070282463351214
+       0.56510093449375964
+       0.54417517621722777
+       -0.025689636291400308))
      (data_in (
-       0.28061676129771884
-       -0.71584220398206355
-       -0.46869514696664549
-       -0.77280254765539591))) |}];
+       0.10803504458667734
+       -0.82259676421212446
+       0.36473830945288621
+       -0.94439733586942276))) |}];
   test_fixed () ~coefs ~data_in ~coef_prec:6 ~data_prec:6;
   [%expect
     {|
     ((precision (6 6))
-     (result       -1417)
-     (ref_result   -0.68304014856006923)
-     (float_result -0.69189453125)) |}]
+     (result       -432)
+     (ref_result   -0.21286205054604246)
+     (float_result -0.2109375)) |}]
 ;;
 
 let%expect_test "utilization" =

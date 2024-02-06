@@ -3,7 +3,10 @@ open! Import
 module Make (Config : Rac.Config) : sig
   module Rac : module type of Rac.Make (Config)
   module Circuit : module type of Circuit.With_interface (Rac.I) (Rac.O)
-  module Step : module type of Hardcaml_step_testbench.Make (Rac.I) (Rac.O)
+
+  module Step :
+      module type of Hardcaml_step_testbench.Functional.Cyclesim.Make (Rac.I) (Rac.O)
+
   module Sim : module type of Cyclesim.With_interface (Rac.I) (Rac.O)
 
   val create_sim : coefs:int array -> Sim.t

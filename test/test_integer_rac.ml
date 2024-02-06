@@ -4,7 +4,7 @@ open Hardcaml_waveterm
 module Make (Config : Rac.Config) = struct
   module Rac = Rac.Make (Config)
   module Circuit = Circuit.With_interface (Rac.I) (Rac.O)
-  module Step = Hardcaml_step_testbench.Make (Rac.I) (Rac.O)
+  module Step = Hardcaml_step_testbench.Functional.Cyclesim.Make (Rac.I) (Rac.O)
   module Sim = Cyclesim.With_interface (Rac.I) (Rac.O)
 
   let testbench ~data_in _ =
@@ -118,7 +118,7 @@ let%expect_test "simulation example" =
     │                  ││────────────────────────────────────────────────┴─────┴─────┴─────┴─────                          │
     │                  ││                                                                                                  │
     └──────────────────┘└──────────────────────────────────────────────────────────────────────────────────────────────────┘
-    c9c8c3cbb6be329ef2dd1fbd04750459
+    d2ae5bacae9add968e82b39c76f6dd3e
     (result 30) |}]
 ;;
 

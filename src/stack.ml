@@ -59,17 +59,14 @@ struct
     full <== reg spec full_next;
     (* ram instantiation *)
     let write_port =
-      { Ram.Write_port.write_clock = i.clock
+      { Write_port.write_clock = i.clock
       ; write_address = lsbs used
       ; write_data = M.Of_signal.pack i.wr_data
       ; write_enable = push_actual
       }
     in
     let read_port =
-      { Ram.Read_port.read_clock = i.clock
-      ; read_address = used_minus_1
-      ; read_enable = vdd
-      }
+      { Read_port.read_clock = i.clock; read_address = used_minus_1; read_enable = vdd }
     in
     let ram =
       let ram_arr =
