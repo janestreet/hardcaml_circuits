@@ -55,14 +55,18 @@ module Make_tagged (Arg : Arg) = struct
     ; deletion_tag : Signal.t Arg.Tag.t option
     }
 
-  let create ~tag_next spec op =
+  let create ?index_next ~tag_next spec op =
     let insertion_index = Interface.Of_signal.wires () in
     let deletion_index = Interface.Of_signal.wires () in
     let vec =
       Vec.create
         spec
         ~vec_size
-        ~next:(fun ~index d -> { index = d.index; tag = tag_next ~index d.tag })
+        ~next:(fun ~index d ->
+          { index =
+              Option.value_map index_next ~default:d.index ~f:(fun f -> f ~index d.index)
+          ; tag = tag_next ~index d.tag
+          })
         { slot = op.slot
         ; op = op.op
         ; insert_data = insertion_index
@@ -151,9 +155,10 @@ struct
     ; op : Signal.t
     }
 
-  let create spec op =
+  let create ?index_next spec op =
     Tagged.create
       ~tag_next:(fun ~index:_ -> Fn.id)
+      ?index_next
       spec
       { Tagged.slot = op.slot; op = op.op; insertion_tag = None; deletion_tag = None }
   ;;

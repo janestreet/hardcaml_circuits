@@ -116,7 +116,8 @@ module type Index_vec = sig
         argument provided to [reg_fb] - it takes the current value and optionally modifies
         it to produce the next value). *)
     val create
-      :  tag_next:(index:int -> Signal.t Arg.Tag.t -> Signal.t Arg.Tag.t)
+      :  ?index_next:(index:int -> Signal.t -> Signal.t)
+      -> tag_next:(index:int -> Signal.t Arg.Tag.t -> Signal.t Arg.Tag.t)
       -> Reg_spec.t
       -> op
       -> t
@@ -134,7 +135,11 @@ module type Index_vec = sig
       ; op : Signal.t (** Operation type (insert, remove or nothing) *)
       }
 
-    (** Create the vec with the given size. *)
-    val create : Reg_spec.t -> op -> t
+    (** Create the vec with the given size.
+
+        [index_next] is an optional function that can be used to update the index values
+        themselves in cycles which no insertion or deletion is taking place. This is
+        useful for multiplexing vector operations over data stored in RAM. *)
+    val create : ?index_next:(index:int -> Signal.t -> Signal.t) -> Reg_spec.t -> op -> t
   end
 end
