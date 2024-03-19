@@ -12,7 +12,8 @@ let%expect_test "running sum" =
     ((config Serial) (outpus (2 7 10 11)))
     ((config Sklansky) (outpus (2 7 10 11)))
     ((config Brent_kung) (outpus (2 7 10 11)))
-    ((config Kogge_stone) (outpus (2 7 10 11))) |}]
+    ((config Kogge_stone) (outpus (2 7 10 11)))
+    |}]
 ;;
 
 let%expect_test "parallel prefix adder" =
@@ -68,7 +69,8 @@ let%expect_test "parallel prefix adder" =
     (14 + 3 + 1 = 18)
     (7 + 30 + 1 = 38)
     (19 + 2 + 1 = 22)
-    (28 + 12 + 0 = 40) |}]
+    (28 + 12 + 0 = 40)
+    |}]
 ;;
 
 let%expect_test "utilization" =
@@ -96,7 +98,8 @@ let%expect_test "utilization" =
       (constants     ((count 1)  (total_bits 1)))
       (wires         ((count 3)  (total_bits 49)))
       (concatenation ((count 1)  (total_bits 17)))
-      (part_selects  ((count 32) (total_bits 32))))) |}];
+      (part_selects  ((count 32) (total_bits 32)))))
+    |}];
   print_s [%message (utilization Sklansky 16 : Circuit_utilization.t)];
   [%expect
     {|
@@ -108,7 +111,8 @@ let%expect_test "utilization" =
       (constants     ((count 1)  (total_bits 1)))
       (wires         ((count 3)  (total_bits 49)))
       (concatenation ((count 1)  (total_bits 17)))
-      (part_selects  ((count 32) (total_bits 32))))) |}];
+      (part_selects  ((count 32) (total_bits 32)))))
+    |}];
   print_s [%message (utilization Brent_kung 16 : Circuit_utilization.t)];
   [%expect
     {|
@@ -120,7 +124,8 @@ let%expect_test "utilization" =
       (constants     ((count 1)  (total_bits 1)))
       (wires         ((count 3)  (total_bits 49)))
       (concatenation ((count 1)  (total_bits 17)))
-      (part_selects  ((count 32) (total_bits 32))))) |}];
+      (part_selects  ((count 32) (total_bits 32)))))
+    |}];
   print_s [%message (utilization Kogge_stone 16 : Circuit_utilization.t)];
   [%expect
     {|
@@ -132,5 +137,6 @@ let%expect_test "utilization" =
       (constants     ((count 1)  (total_bits 1)))
       (wires         ((count 3)  (total_bits 49)))
       (concatenation ((count 1)  (total_bits 17)))
-      (part_selects  ((count 32) (total_bits 32))))) |}]
+      (part_selects  ((count 32) (total_bits 32)))))
+    |}]
 ;;

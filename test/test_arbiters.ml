@@ -116,7 +116,8 @@ let%expect_test "select next with clz" =
       offset = 0, next = 0
       offset = 1, next = 1
       offset = 2, next = 2
-      offset = 3, next = 3 |}];
+      offset = 3, next = 3
+    |}];
   (* try some random examples *)
   (* A single bit input - not really possible as we cannot express the index value *)
   require_does_raise [%here] (fun () -> test (Bits.of_string "1"));
@@ -124,12 +125,15 @@ let%expect_test "select next with clz" =
     {|
     ("Width of constant must be greater than zero"
      (width 0)
-     (const 0)) |}];
+     (const 0))
+    |}];
   test (Bits.of_string "01");
-  [%expect {|
+  [%expect
+    {|
     (valids 01)
       offset = 0, next = 0
-      offset = 1, next = 0 |}];
+      offset = 1, next = 0
+    |}];
   test (Bits.of_string "10110");
   [%expect
     {|
@@ -138,7 +142,8 @@ let%expect_test "select next with clz" =
       offset = 1, next = 1
       offset = 2, next = 2
       offset = 3, next = 4
-      offset = 4, next = 4 |}];
+      offset = 4, next = 4
+    |}];
   test (Bits.of_string "1011001101000100110");
   [%expect
     {|
@@ -161,7 +166,8 @@ let%expect_test "select next with clz" =
       offset = 15, next = 15
       offset = 16, next = 16
       offset = 17, next = 18
-      offset = 18, next = 18 |}]
+      offset = 18, next = 18
+    |}]
 ;;
 
 module Test_round_robin_comb (X : sig
@@ -256,7 +262,8 @@ struct
         offset = 3, active = (4)
         offset = 4, active = (4)
         offset = 5, active = (6)
-        offset = 6, active = (6) |}]
+        offset = 6, active = (6)
+      |}]
   ;;
 end
 
@@ -384,7 +391,8 @@ struct
       │               ││                                                   │
       │               ││                                                   │
       └───────────────┘└───────────────────────────────────────────────────┘
-      2e2932e173d8209aeaaf01d084e347e9 |}];
+      2e2932e173d8209aeaaf01d084e347e9
+      |}];
     test ~use_mask:true F.round_robin;
     [%expect
       {|
@@ -408,7 +416,8 @@ struct
       │               ││                                                   │
       │               ││                                                   │
       └───────────────┘└───────────────────────────────────────────────────┘
-      2e2932e173d8209aeaaf01d084e347e9 |}]
+      2e2932e173d8209aeaaf01d084e347e9
+      |}]
   ;;
 end
 
@@ -488,7 +497,8 @@ let%expect_test "prove the combinational architectures are equivalent" =
       / __ \  / ____/ __ \
      / / / / / __/ / / / /
     / /_/ / / /___/ /_/ /
-    \___\_\/_____/_____/ |}];
+    \___\_\/_____/_____/
+    |}];
   prove balanced small;
   [%expect
     {|
@@ -503,7 +513,8 @@ let%expect_test "prove the combinational architectures are equivalent" =
       / __ \  / ____/ __ \
      / / / / / __/ / / / /
     / /_/ / / /___/ /_/ /
-    \___\_\/_____/_____/ |}];
+    \___\_\/_____/_____/
+    |}];
   prove small fast;
   [%expect
     {|
@@ -518,7 +529,8 @@ let%expect_test "prove the combinational architectures are equivalent" =
       / __ \  / ____/ __ \
      / / / / / __/ / / / /
     / /_/ / / /___/ /_/ /
-    \___\_\/_____/_____/ |}];
+    \___\_\/_____/_____/
+    |}];
   let index = input "index" log_size in
   let mask =
     Arbiters.Index.Mask
@@ -542,7 +554,8 @@ let%expect_test "prove the combinational architectures are equivalent" =
       / __ \  / ____/ __ \
      / / / / / __/ / / / /
     / /_/ / / /___/ /_/ /
-    \___\_\/_____/_____/ |}];
+    \___\_\/_____/_____/
+    |}];
   prove balanced small;
   [%expect
     {|
@@ -557,7 +570,8 @@ let%expect_test "prove the combinational architectures are equivalent" =
       / __ \  / ____/ __ \
      / / / / / __/ / / / /
     / /_/ / / /___/ /_/ /
-    \___\_\/_____/_____/ |}];
+    \___\_\/_____/_____/
+    |}];
   prove small fast;
   [%expect
     {|
@@ -572,5 +586,6 @@ let%expect_test "prove the combinational architectures are equivalent" =
       / __ \  / ____/ __ \
      / / / / / __/ / / / /
     / /_/ / / /___/ /_/ /
-    \___\_\/_____/_____/ |}]
+    \___\_\/_____/_____/
+    |}]
 ;;

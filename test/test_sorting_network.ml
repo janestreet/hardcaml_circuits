@@ -8,7 +8,8 @@ let%expect_test "power of 2 length" =
     {|
     ("Sorting networks require their input length to be a power of 2"
      (config Bitonic_sort)
-     (length 3)) |}]
+     (length 3))
+    |}]
 ;;
 
 let%expect_test "sort integers" =
@@ -23,7 +24,8 @@ let%expect_test "sort integers" =
   [%expect
     {|
     ((inputs (53 42 0 84 36 78 84 61 93 0 35 35 66 97 84 39))
-     (sorted (0 0 35 35 36 39 42 53 61 66 78 84 84 84 93 97))) |}]
+     (sorted (0 0 35 35 36 39 42 53 61 66 78 84 84 84 93 97)))
+    |}]
 ;;
 
 let sort_ascending_unsigned : Bits.t compare_and_swap =
@@ -37,9 +39,11 @@ let%expect_test "bitonic, unsigned, ascending" =
   let inputs = List.init 4 ~f:(fun _ -> Bits.random ~width:4) in
   let sorted = create Bitonic_sort sort_ascending_unsigned inputs in
   print_s [%message "" (inputs : Bits.t list) (sorted : Bits.t list)];
-  [%expect {|
+  [%expect
+    {|
     ((inputs (1110 0101 1000 0011))
-     (sorted (0011 0101 1000 1110))) |}]
+     (sorted (0011 0101 1000 1110)))
+    |}]
 ;;
 
 let sort_descending_signed : Bits.t compare_and_swap =
@@ -53,27 +57,33 @@ let%expect_test "bitonic, signed, descending" =
   let inputs = List.init 4 ~f:(fun _ -> Bits.random ~width:4) in
   let sorted = create Bitonic_sort sort_descending_signed inputs in
   print_s [%message "" (inputs : Bits.t list) (sorted : Bits.t list)];
-  [%expect {|
+  [%expect
+    {|
     ((inputs (1110 0101 1000 0011))
-     (sorted (0101 0011 1110 1000))) |}]
+     (sorted (0101 0011 1110 1000)))
+    |}]
 ;;
 
 let%expect_test "odd_even_merge, unsigned, ascending" =
   let inputs = List.init 4 ~f:(fun _ -> Bits.random ~width:4) in
   let sorted = create Odd_even_merge_sort sort_ascending_unsigned inputs in
   print_s [%message "" (inputs : Bits.t list) (sorted : Bits.t list)];
-  [%expect {|
+  [%expect
+    {|
     ((inputs (1110 0101 1000 0011))
-     (sorted (0011 0101 1000 1110))) |}]
+     (sorted (0011 0101 1000 1110)))
+    |}]
 ;;
 
 let%expect_test "odd_even_merge, signed, descending" =
   let inputs = List.init 4 ~f:(fun _ -> Bits.random ~width:4) in
   let sorted = create Odd_even_merge_sort sort_descending_signed inputs in
   print_s [%message "" (inputs : Bits.t list) (sorted : Bits.t list)];
-  [%expect {|
+  [%expect
+    {|
     ((inputs (1110 0101 1000 0011))
-     (sorted (0101 0011 1110 1000))) |}]
+     (sorted (0101 0011 1110 1000)))
+    |}]
 ;;
 
 let%expect_test "sort by bottom 2 bits" =
@@ -91,7 +101,8 @@ let%expect_test "sort by bottom 2 bits" =
   [%expect
     {|
     ((inputs (1101 1100 1111 0011 1110 0101 1000 0011))
-     (sorted (1000 1100 1101 0101 1110 0011 1111 0011))) |}]
+     (sorted (1000 1100 1101 0101 1110 0011 1111 0011)))
+    |}]
 ;;
 
 let%expect_test "check all possible zero-one inputs" =

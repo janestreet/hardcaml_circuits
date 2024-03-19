@@ -81,7 +81,8 @@ let%expect_test "3 pipelined stages" =
     │                  ││                                                          │
     │                  ││                                                          │
     └──────────────────┘└──────────────────────────────────────────────────────────┘
-    dd1cc976f7161fd8b7f4682ea1019fe1 |}]
+    dd1cc976f7161fd8b7f4682ea1019fe1
+    |}]
 ;;
 
 let%expect_test "only 1 argument" =
@@ -102,7 +103,8 @@ let%expect_test "only 1 argument" =
     │                  ││                                                          │
     │                  ││                                                          │
     └──────────────────┘└──────────────────────────────────────────────────────────┘
-    0aad4d2cef873c61ff0be33625947486 |}]
+    0aad4d2cef873c61ff0be33625947486
+    |}]
 ;;
 
 let%expect_test "less than arity, but more than 1" =
@@ -123,5 +125,6 @@ let%expect_test "less than arity, but more than 1" =
     │                  ││                                                          │
     │                  ││                                                          │
     └──────────────────┘└──────────────────────────────────────────────────────────┘
-    aecb274d7018587b09658a5b2119d04b |}]
+    aecb274d7018587b09658a5b2119d04b
+    |}]
 ;;

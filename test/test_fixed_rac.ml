@@ -49,42 +49,48 @@ let%expect_test "precisions" =
        0.55401752229333867
        0.088701617893937754
        0.68236915472644311
-       0.0278013320652886))) |}];
+       0.0278013320652886)))
+    |}];
   test_fixed () ~coefs ~data_in ~coef_prec:3 ~data_prec:3;
   [%expect
     {|
     ((precision (3 3))
      (result       28)
      (ref_result   0.96180162561626825)
-     (float_result 0.875)) |}];
+     (float_result 0.875))
+    |}];
   test_fixed () ~coefs ~data_in ~coef_prec:5 ~data_prec:5;
   [%expect
     {|
     ((precision (5 5))
      (result       500)
      (ref_result   0.96180162561626825)
-     (float_result 0.9765625)) |}];
+     (float_result 0.9765625))
+    |}];
   test_fixed () ~coefs ~data_in ~coef_prec:7 ~data_prec:7;
   [%expect
     {|
     ((precision (7 7))
      (result       7856)
      (ref_result   0.96180162561626825)
-     (float_result 0.958984375)) |}];
+     (float_result 0.958984375))
+    |}];
   test_fixed () ~coefs ~data_in ~coef_prec:3 ~data_prec:5;
   [%expect
     {|
     ((precision (3 5))
      (result       122)
      (ref_result   0.96180162561626825)
-     (float_result 0.953125)) |}];
+     (float_result 0.953125))
+    |}];
   test_fixed () ~coefs ~data_in ~coef_prec:5 ~data_prec:3;
   [%expect
     {|
     ((precision (5 3))
      (result       115)
      (ref_result   0.96180162561626825)
-     (float_result 0.8984375)) |}]
+     (float_result 0.8984375))
+    |}]
 ;;
 
 let%expect_test "signed" =
@@ -102,14 +108,16 @@ let%expect_test "signed" =
        0.10803504458667734
        -0.82259676421212446
        0.36473830945288621
-       -0.94439733586942276))) |}];
+       -0.94439733586942276)))
+    |}];
   test_fixed () ~coefs ~data_in ~coef_prec:6 ~data_prec:6;
   [%expect
     {|
     ((precision (6 6))
      (result       -432)
      (ref_result   -0.21286205054604246)
-     (float_result -0.2109375)) |}]
+     (float_result -0.2109375))
+    |}]
 ;;
 
 let%expect_test "utilization" =
@@ -148,5 +156,6 @@ let%expect_test "utilization" =
       (constants     ((count 32) (total_bits 198)))
       (wires         ((count 24) (total_bits 146)))
       (concatenation ((count 12) (total_bits 126)))
-      (part_selects  ((count 12) (total_bits 67))))) |}]
+      (part_selects  ((count 12) (total_bits 67)))))
+    |}]
 ;;

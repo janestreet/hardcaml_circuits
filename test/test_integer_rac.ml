@@ -119,31 +119,37 @@ let%expect_test "simulation example" =
     │                  ││                                                                                                  │
     └──────────────────┘└──────────────────────────────────────────────────────────────────────────────────────────────────┘
     d2ae5bacae9add968e82b39c76f6dd3e
-    (result 30) |}]
+    (result 30)
+    |}]
 ;;
 
 let%expect_test "tests" =
   test () ~coefs:[| 3; 6; 1; 2 |] ~data_in:[| 7; 9; 3; 5 |];
   [%expect {|
     (expected 88)
-    (result 88) |}];
+    (result 88)
+    |}];
   test () ~coefs:[| 33; 26; 61; 12 |] ~data_in:[| 17; 39; 43; 15 |];
   [%expect {|
     (expected 4378)
-    (result 4378) |}];
+    (result 4378)
+    |}];
   (* signed data *)
   test () ~coefs:[| 33; 26; 61; 12 |] ~data_in:[| 17; -39; 43; 15 |];
   [%expect {|
     (expected 2350)
-    (result 2350) |}];
+    (result 2350)
+    |}];
   (* signed coefficient *)
   test () ~coefs:[| 33; 26; -61; 12 |] ~data_in:[| 17; 39; 43; 15 |];
   [%expect {|
     (expected -868)
-    (result -868) |}];
+    (result -868)
+    |}];
   (* signed data and coefficients *)
   test () ~coefs:[| -33; 26; -61; 12 |] ~data_in:[| 17; 39; -43; -15 |];
   [%expect {|
     (expected 2896)
-    (result 2896) |}]
+    (result 2896)
+    |}]
 ;;

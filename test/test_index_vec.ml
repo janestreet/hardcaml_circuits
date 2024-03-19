@@ -101,7 +101,8 @@ let%expect_test "fill and remove from start" =
     │length            ││ 0    │1    │2    │3    │4    │3    │2    │1    │0              │
     │                  ││──────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────          │
     │gnd               ││                                                                │
-    └──────────────────┘└────────────────────────────────────────────────────────────────┘ |}]
+    └──────────────────┘└────────────────────────────────────────────────────────────────┘
+    |}]
 ;;
 
 let%expect_test "fill and remove from end" =
@@ -159,7 +160,8 @@ let%expect_test "fill and remove from end" =
     │length            ││ 0    │1    │2    │3    │4    │3    │2    │1    │0              │
     │                  ││──────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────          │
     │gnd               ││                                                                │
-    └──────────────────┘└────────────────────────────────────────────────────────────────┘ |}]
+    └──────────────────┘└────────────────────────────────────────────────────────────────┘
+    |}]
 ;;
 
 let%expect_test "fill at end and remove from start" =
@@ -217,7 +219,8 @@ let%expect_test "fill at end and remove from start" =
     │length            ││ 0    │1    │2    │3    │4    │3    │2    │1    │0              │
     │                  ││──────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────          │
     │gnd               ││                                                                │
-    └──────────────────┘└────────────────────────────────────────────────────────────────┘ |}]
+    └──────────────────┘└────────────────────────────────────────────────────────────────┘
+    |}]
 ;;
 
 let%expect_test "fill at start and remove from end" =
@@ -275,7 +278,8 @@ let%expect_test "fill at start and remove from end" =
     │length            ││ 0    │1    │2    │3    │4    │3    │2    │1    │0              │
     │                  ││──────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────          │
     │gnd               ││                                                                │
-    └──────────────────┘└────────────────────────────────────────────────────────────────┘ |}]
+    └──────────────────┘└────────────────────────────────────────────────────────────────┘
+    |}]
 ;;
 
 let create_sim log_vec_size =
@@ -359,7 +363,8 @@ let%expect_test "connect to a table and insert and delete characters to form a s
     [________rdleohll] [hellorld________] hellorld [8]
     [_______wrdleohll] [hellworld_______] hellworld [9]
     [______owrdleohll] [helloworld______] helloworld [10]
-    [_____ owrdleohll] [hello world_____] hello world [11] |}];
+    [_____ owrdleohll] [hello world_____] hello world [11]
+    |}];
   (* Randomly remove characters until empty *)
   for i = 0 to 10 do
     let slot = Random.int (11 - i) in
@@ -378,14 +383,14 @@ let%expect_test "connect to a table and insert and delete characters to form a s
     [______o_____o__l] [loo_____________] loo [3]
     [______o________l] [lo______________] lo [2]
     [______o_________] [o_______________] o [1]
-    [________________] [________________]  [0] |}];
+    [________________] [________________]  [0]
+    |}];
   (* If we build it again, we end up with the characters in different places in the table,
      but the same result. This is because it doesn't really matter what order the 'free'
      indexes are, and they got shuffled by the previous operation. *)
   List.iter insertions ~f:(fun (slot, data) -> insert ~slot data);
   show ();
-  [%expect {|
-    [_____olwdlreh ol] [hello world_____] hello world [11] |}];
+  [%expect {| [_____olwdlreh ol] [hello world_____] hello world [11] |}];
   (* Remove again until empty *)
   for i = 0 to 10 do
     let slot = Random.int (11 - i) in
@@ -619,5 +624,6 @@ let%expect_test "test tagging - show that the tags move (and change) with insert
     │gnd               ││                                                                │
     │                  ││──────────────────────────────────────────────────────          │
     │vdd               ││──────────────────────────────────────────────────────          │
-    └──────────────────┘└────────────────────────────────────────────────────────────────┘ |}]
+    └──────────────────┘└────────────────────────────────────────────────────────────────┘
+    |}]
 ;;

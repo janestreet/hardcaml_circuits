@@ -161,7 +161,8 @@ let%expect_test "basic stack test - push a couple, push and pop, pop and underfl
     │           ││────────┴───┴───────┴───┴─────────── │
     │stack$cut_t││            ┌───┐                    │
     │           ││────────────┘   └─────────────────── │
-    └───────────┘└─────────────────────────────────────┘ |}]
+    └───────────┘└─────────────────────────────────────┘
+    |}]
 ;;
 
 let%expect_test "basic stack test - fill up, overflow, push and pop, pop everything" =
@@ -200,7 +201,8 @@ let%expect_test "basic stack test - fill up, overflow, push and pop, pop everyth
     │                  ││────────┴───┴───┴───┴───┴───┴───┴───┴───────────┴───┴───┴───┴───┴───┴───┴───┴───│
     │stack$cut_through ││                                        ┌───┐                                   │
     │                  ││────────────────────────────────────────┘   └───────────────────────────────────│
-    └──────────────────┘└────────────────────────────────────────────────────────────────────────────────┘ |}]
+    └──────────────────┘└────────────────────────────────────────────────────────────────────────────────┘
+    |}]
 ;;
 
 let%expect_test "stack test with read latency 2: fill, overflow, push and pop, pop all" =
@@ -239,7 +241,8 @@ let%expect_test "stack test with read latency 2: fill, overflow, push and pop, p
     │                  ││────────┴───┴───┴───┴───┴───┴───┴───┴───────────┴───┴───┴───┴───┴───┴───┴───┴───│
     │stack$cut_through ││                                        ┌───┐                                   │
     │                  ││────────────────────────────────────────┘   └───────────────────────────────────│
-    └──────────────────┘└────────────────────────────────────────────────────────────────────────────────┘ |}]
+    └──────────────────┘└────────────────────────────────────────────────────────────────────────────────┘
+    |}]
 ;;
 
 let%expect_test "stack test with read latency 3: fill, overflow, push and pop, pop all" =
@@ -278,7 +281,8 @@ let%expect_test "stack test with read latency 3: fill, overflow, push and pop, p
     │                  ││────────┴───┴───┴───┴───┴───┴───┴───┴───────────┴───┴───┴───┴───┴───┴───┴───┴───│
     │stack$cut_through ││                                        ┌───┐                                   │
     │                  ││────────────────────────────────────────┘   └───────────────────────────────────│
-    └──────────────────┘└────────────────────────────────────────────────────────────────────────────────┘ |}]
+    └──────────────────┘└────────────────────────────────────────────────────────────────────────────────┘
+    |}]
 ;;
 
 let%expect_test "non-pow2 stack test - fill up, overflow, push_pop, pop all, underflow" =
@@ -303,5 +307,6 @@ let%expect_test "non-pow2 stack test - fill up, overflow, push_pop, pop all, und
     (popped (valid true) (value 2))
     (popped (valid true) (value 1))
     (popped (valid true) (value 0))
-    (popped (valid false) (value 0)) |}]
+    (popped (valid false) (value 0))
+    |}]
 ;;

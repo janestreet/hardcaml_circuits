@@ -40,7 +40,8 @@ let%expect_test "msb first" =
      (any_bit_set 1))
     ((input       0011)
      (data        0010)
-     (any_bit_set 1)) |}]
+     (any_bit_set 1))
+    |}]
 ;;
 
 let%expect_test "lsb first" =
@@ -84,5 +85,6 @@ let%expect_test "lsb first" =
      (any_bit_set 1))
     ((input       1010)
      (data        0010)
-     (any_bit_set 1)) |}]
+     (any_bit_set 1))
+    |}]
 ;;

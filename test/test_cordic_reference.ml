@@ -43,7 +43,8 @@ let%expect_test "cos x, converges when |x| < 1.74" =
       (1.4  1E-4.6)
       (1.6  1E-4.9)
       (1.8  1E-1.3)
-      (2.   1E-0.61))) |}]
+      (2.   1E-0.61)))
+    |}]
 ;;
 
 let%expect_test "sin x, converges when |x| < 1.74" =
@@ -79,7 +80,8 @@ let%expect_test "sin x, converges when |x| < 1.74" =
       (1.4  1E-5.4)
       (1.6  1E-6.4)
       (1.8  1E-1.9)
-      (2.   1E-1.1))) |}]
+      (2.   1E-1.1)))
+    |}]
 ;;
 
 let%expect_test "accuracy of cos for different numbers of iterations" =
@@ -119,7 +121,8 @@ let%expect_test "accuracy of cos for different numbers of iterations" =
       (22 1E-6.8)
       (23 1E-7.7)
       (24 1E-7.2)
-      (25 1E-7.7))) |}]
+      (25 1E-7.7)))
+    |}]
 ;;
 
 let%expect_test "cosh x, converges when |x| < 1.12" =
@@ -155,7 +158,8 @@ let%expect_test "cosh x, converges when |x| < 1.12" =
       (1.4  1E-0.34)
       (1.6  1E-0.053)
       (1.8  1E0.15)
-      (2.   1E0.32))) |}]
+      (2.   1E0.32)))
+    |}]
 ;;
 
 let%expect_test "sinh x, converges when |x| < 1.12" =
@@ -191,7 +195,8 @@ let%expect_test "sinh x, converges when |x| < 1.12" =
       (1.4  1E-0.27)
       (1.6  1E0.0041)
       (1.8  1E0.2)
-      (2.   1E0.35))) |}]
+      (2.   1E0.35)))
+    |}]
 ;;
 
 let%expect_test "atan x - no particular convergence requirements" =
@@ -227,7 +232,8 @@ let%expect_test "atan x - no particular convergence requirements" =
       (7.   1E-5.2)
       (8.   1E-4.9)
       (9.   1E-4.8)
-      (10.  1E-4.7))) |}]
+      (10.  1E-4.7)))
+    |}]
 ;;
 
 let%expect_test "atanh x, converges when |x| < 0.82" =
@@ -265,7 +271,8 @@ let%expect_test "atanh x, converges when |x| < 0.82" =
       (0.7  1E-5.5)
       (0.8  1E-4.5)
       (0.9  1E-0.45)
-      (1.   1Einf))) |}]
+      (1.   1Einf)))
+    |}]
 ;;
 
 let%expect_test "asin x, converges when |x| < 0.99, but not terribly stable." =
@@ -304,7 +311,8 @@ let%expect_test "asin x, converges when |x| < 0.99, but not terribly stable." =
       (0.7  1E-5.2)
       (0.8  1E-4.8)
       (0.9  1E-4.6)
-      (1.   1E-0.76))) |}]
+      (1.   1E-0.76)))
+    |}]
 ;;
 
 let error_2 (a, b) (c, d) = error a c, error b d
@@ -363,7 +371,8 @@ let%expect_test "atan2, no particular convergence range" =
        (2. -1. 1E-0.54)
        (2. 0.  1E-4.8)
        (2. 1.  1E-4.9)
-       (2. 2.  1E-4.8)))) |}]
+       (2. 2.  1E-4.8))))
+    |}]
 ;;
 
 module Rect0 = struct
@@ -438,7 +447,8 @@ let%expect_test "rect to polar" =
        (2. 0.5 (1E-10. 1E-5.))
        (2. 1.  (1E-9.8 1E-4.9))
        (2. 1.5 (1E-9.4 1E-4.8))
-       (2. 2.  (1E-9.5 1E-4.8))))) |}]
+       (2. 2.  (1E-9.5 1E-4.8)))))
+    |}]
 ;;
 
 let%expect_test "polar to rect" =
@@ -480,7 +490,8 @@ let%expect_test "polar to rect" =
        (2. 0.5 (1E-5.   1E-4.7))
        (2. 1.  (1E-4.7  1E-4.9))
        (2. 1.5 (1E-4.3  1E-5.4))
-       (2. 2.  (1E-0.31 1E-0.82))))) |}]
+       (2. 2.  (1E-0.31 1E-0.82)))))
+    |}]
 ;;
 
 (* [|a| < 3.4], [|b| < 2.] *)
@@ -497,7 +508,8 @@ let%expect_test "mul" =
     ("mul (-0.3) 0.5" -5.)
     ("mul 2.3 1.9" -4.9)
     ("mul (-3.2) 1.9" -4.7)
-    ("mul (-3.2) (-1.9)" -4.7) |}];
+    ("mul (-3.2) (-1.9)" -4.7)
+    |}];
   (* [b] > 2. doesn't converge. *)
   print_s [%message "" (mul 1.3 2.1 : float)];
   [%expect {| ("mul 1.3 2.1" -0.89) |}]
@@ -513,7 +525,8 @@ let%expect_test "div" =
     {|
     ("div 0.3 0.5" -5.2)
     ("div (-0.3) 0.5" -5.2)
-    ("div 1.8 0.9" -4.5) |}];
+    ("div 1.8 0.9" -4.5)
+    |}];
   (* doesn't converge. *)
   print_s [%message "" (div 1.9 0.9 : float)];
   [%expect {| ("div 1.9 0.9" -0.95) |}]

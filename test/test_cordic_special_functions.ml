@@ -24,7 +24,8 @@ let%expect_test "combinational" =
   [%expect {|
     ((angle 0.4)
      (cos   0.92)
-     (sin   0.39)) |}]
+     (sin   0.39))
+    |}]
 ;;
 
 let%expect_test "pipelined" =
@@ -32,7 +33,8 @@ let%expect_test "pipelined" =
   [%expect {|
     ((angle 0.4)
      (cos   0.92)
-     (sin   0.39)) |}]
+     (sin   0.39))
+    |}]
 ;;
 
 let%expect_test "iterative" =
@@ -40,7 +42,8 @@ let%expect_test "iterative" =
   [%expect {|
     ((angle 0.4)
      (cos   0.92)
-     (sin   0.39)) |}]
+     (sin   0.39))
+    |}]
 ;;
 
 module Test (Function : Cordic_special_functions.Function) = struct
@@ -75,11 +78,13 @@ let%expect_test "[Polar_to_rect]" =
   [%expect
     {|
     (((magnitude 1.)   (phase 0.79))
-     ((x         0.71) (y     0.71))) |}];
+     ((x         0.71) (y     0.71)))
+    |}];
   Test.test { magnitude = 2.; phase = Float.pi /. 2. };
   [%expect {|
     (((magnitude 2.) (phase 1.6))
-     ((x         0.) (y     2.))) |}]
+     ((x         0.) (y     2.)))
+    |}]
 ;;
 
 let%expect_test "Atan" =
@@ -93,12 +98,14 @@ let%expect_test "Atan" =
   [%expect {|
     (((arg   0.4))
      ((angle 0.38)))
-    (atan 0.38) |}];
+    (atan 0.38)
+    |}];
   test 0.9;
   [%expect {|
     (((arg   0.9))
      ((angle 0.73)))
-    (atan 0.73) |}]
+    (atan 0.73)
+    |}]
 ;;
 
 let%expect_test "Atan2" =
@@ -113,13 +120,15 @@ let%expect_test "Atan2" =
     (((x 0.4)
       (y 0.5))
      ((angle 0.67)))
-    (atan 0.67) |}];
+    (atan 0.67)
+    |}];
   test 1.3 2.2;
   [%expect {|
     (((x 1.3)
       (y 2.2))
      ((angle 0.53)))
-    (atan 0.53) |}]
+    (atan 0.53)
+    |}]
 ;;
 
 let%expect_test "Rect_to_polar" =
@@ -135,14 +144,16 @@ let%expect_test "Rect_to_polar" =
     (((x         1.) (y     0.))
      ((magnitude 1.) (phase -1.5e-05)))
     ((magnitude 1.)
-     (phase     0.)) |}];
+     (phase     0.))
+    |}];
   test 0.7 0.7;
   [%expect
     {|
     (((x         0.7)  (y     0.7))
      ((magnitude 0.99) (phase 0.79)))
     ((magnitude 0.99)
-     (phase     0.79)) |}]
+     (phase     0.79))
+    |}]
 ;;
 
 let%expect_test "Mul" =
@@ -157,7 +168,8 @@ let%expect_test "Mul" =
     (((a 0.5)
       (b 0.5))
      ((product 0.25)))
-    (mul 0.25) |}]
+    (mul 0.25)
+    |}]
 ;;
 
 let%expect_test "Div" =
@@ -168,11 +180,13 @@ let%expect_test "Div" =
     print_s [%message "" (div : float)]
   in
   test 0.21 0.47;
-  [%expect {|
+  [%expect
+    {|
     (((a 0.21)
       (b 0.47))
      ((quotient 0.45)))
-    (div 0.45) |}]
+    (div 0.45)
+    |}]
 ;;
 
 let%expect_test "Cosh_sinh" =
@@ -189,7 +203,8 @@ let%expect_test "Cosh_sinh" =
      ((cosh 1.)
       (sinh 0.3)))
     ((cosh 1.)
-     (sinh 0.3)) |}];
+     (sinh 0.3))
+    |}];
   test 0.7;
   [%expect
     {|
@@ -197,7 +212,8 @@ let%expect_test "Cosh_sinh" =
      ((cosh 1.3)
       (sinh 0.76)))
     ((cosh 1.3)
-     (sinh 0.76)) |}]
+     (sinh 0.76))
+    |}]
 ;;
 
 let%expect_test "Atanh" =
@@ -212,17 +228,20 @@ let%expect_test "Atanh" =
   [%expect {|
     (((arg   0.8))
      ((angle 1.1)))
-    (atanh 1.1) |}];
+    (atanh 1.1)
+    |}];
   test 0.5;
   [%expect {|
     (((arg   0.5))
      ((angle 0.55)))
-    (atanh 0.55) |}];
+    (atanh 0.55)
+    |}];
   test 0.1;
   [%expect {|
     (((arg   0.1))
      ((angle 0.1)))
-    (atanh 0.1) |}]
+    (atanh 0.1)
+    |}]
 ;;
 
 let%expect_test "Rotate_vector" =
@@ -245,7 +264,8 @@ let%expect_test "Rotate_vector" =
      ((xo 0.71)
       (yo 0.71)))
     ((x 0.71)
-     (y 0.71)) |}];
+     (y 0.71))
+    |}];
   test 0.707 0.707 (Float.pi /. 4.);
   [%expect
     {|
@@ -255,7 +275,8 @@ let%expect_test "Rotate_vector" =
      ((xo -1.5e-05)
       (yo 1.)))
     ((x 1.1e-16)
-     (y 1.)) |}];
+     (y 1.))
+    |}];
   test 0.33 0.89 0.87;
   [%expect
     {|
@@ -265,5 +286,6 @@ let%expect_test "Rotate_vector" =
      ((xo -0.47)
       (yo 0.83)))
     ((x -0.47)
-     (y 0.83)) |}]
+     (y 0.83))
+    |}]
 ;;

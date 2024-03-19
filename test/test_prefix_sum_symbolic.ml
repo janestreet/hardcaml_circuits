@@ -520,5 +520,6 @@ let%expect_test _ =
            ((expanded_sum (i0 i1 i2 i3 i4 i5 i6 i7))
             (adder 17
               (adder 9)
-              (adder 13)))))))))) |}]
+              (adder 13))))))))))
+    |}]
 ;;

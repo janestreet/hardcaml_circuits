@@ -377,5 +377,6 @@ let%expect_test _ =
              (input2 (compare_and_swap 16 Max)))
            (compare_and_swap 19
              (input1 (compare_and_swap 13 Max))
-             (input2 (compare_and_swap 14 Max)))))))))) |}]
+             (input2 (compare_and_swap 14 Max))))))))))
+    |}]
 ;;

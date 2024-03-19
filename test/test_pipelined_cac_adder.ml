@@ -25,7 +25,8 @@ let%expect_test "cac truthtable" =
       (4 (100 011))
       (5 (101 100))
       (6 (110 100))
-      (7 (111 101)))) |}]
+      (7 (111 101))))
+    |}]
 ;;
 
 let exhaustive_test_bits ~width ~part_width =
@@ -85,7 +86,8 @@ let%expect_test "prove 64 bit variants" =
       / __ \  / ____/ __ \
      / / / / / __/ / / / /
     / /_/ / / /___/ /_/ /
-    \___\_\/_____/_____/ |}];
+    \___\_\/_____/_____/
+    |}];
   prove ~part_width:8;
   [%expect
     {|
@@ -93,7 +95,8 @@ let%expect_test "prove 64 bit variants" =
       / __ \  / ____/ __ \
      / / / / / __/ / / / /
     / /_/ / / /___/ /_/ /
-    \___\_\/_____/_____/ |}];
+    \___\_\/_____/_____/
+    |}];
   prove ~part_width:13;
   [%expect
     {|
@@ -101,7 +104,8 @@ let%expect_test "prove 64 bit variants" =
       / __ \  / ____/ __ \
      / / / / / __/ / / / /
     / /_/ / / /___/ /_/ /
-    \___\_\/_____/_____/ |}]
+    \___\_\/_____/_____/
+    |}]
 ;;
 
 (* Simulate the pipeline. *)

@@ -16,7 +16,8 @@ let%expect_test "sum stages" =
       ((input 6) (output 7))
       ((input 7) (output 8))
       ((input 8) (output 9))
-      ((input 9) (output 10)))) |}];
+      ((input 9) (output 10))))
+    |}];
   let stages = Stages.create 10 ~init:0 ~f:(fun i x -> x + i) in
   print_s [%message (stages : int Stages.t array)];
   [%expect
@@ -31,7 +32,8 @@ let%expect_test "sum stages" =
       ((input 15) (output 21))
       ((input 21) (output 28))
       ((input 28) (output 36))
-      ((input 36) (output 45)))) |}]
+      ((input 36) (output 45))))
+    |}]
 ;;
 
 let%expect_test "pipeline" =
@@ -71,7 +73,8 @@ let%expect_test "pipeline" =
     │q                 ││ 00               │05   │06   │07   │08   │09   │00           │
     │                  ││──────────────────┴─────┴─────┴─────┴─────┴─────┴─────        │
     └──────────────────┘└──────────────────────────────────────────────────────────────┘
-    19fb3fdb863d6393440c3174fc641f00 |}]
+    19fb3fdb863d6393440c3174fc641f00
+    |}]
 ;;
 
 let%expect_test "pipeline with enable" =
@@ -127,5 +130,6 @@ let%expect_test "pipeline with enable" =
     │                  ││──────────────────┘           └─────┘     └─────              │
     │                  ││                                                              │
     └──────────────────┘└──────────────────────────────────────────────────────────────┘
-    80d601d312c1a1050d63faaab6f39939 |}]
+    80d601d312c1a1050d63faaab6f39939
+    |}]
 ;;

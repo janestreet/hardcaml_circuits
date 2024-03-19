@@ -500,5 +500,6 @@ let%expect_test _ =
             ((a0 &: b1) &: (a1 &: b0)))
            gnd
            gnd
-           gnd)))))) |}]
+           gnd))))))
+    |}]
 ;;

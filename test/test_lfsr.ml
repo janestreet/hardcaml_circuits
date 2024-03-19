@@ -123,7 +123,8 @@ let%expect_test "3 bit galois, xor" =
     (state 110)
     (state 100)
     (state 000)
-    (num_computed_states 7) |}]
+    (num_computed_states 7)
+    |}]
 ;;
 
 (* Test a few different sizes, random configs, but nothing too big *)
@@ -161,7 +162,7 @@ let%expect_test "all supported lengths work" =
     require_does_not_raise [%here] (fun () ->
       ignore (create (module Bits) (Bits.zero length) : Bits.t))
   done;
-  [%expect {||}]
+  [%expect {| |}]
 ;;
 
 let%expect_test "utilization" =
@@ -178,7 +179,8 @@ let%expect_test "utilization" =
       (xor_gates     ((count 3) (total_bits 3)))
       (wires         ((count 2) (total_bits 32)))
       (concatenation ((count 2) (total_bits 31)))
-      (part_selects  ((count 7) (total_bits 16))))) |}];
+      (part_selects  ((count 7) (total_bits 16)))))
+    |}];
   print_s [%message (utilization 111 : Circuit_utilization.t)];
   [%expect
     {|
@@ -187,5 +189,6 @@ let%expect_test "utilization" =
       (xor_gates     ((count 1) (total_bits 1)))
       (wires         ((count 2) (total_bits 222)))
       (concatenation ((count 2) (total_bits 221)))
-      (part_selects  ((count 4) (total_bits 111))))) |}]
+      (part_selects  ((count 4) (total_bits 111)))))
+    |}]
 ;;

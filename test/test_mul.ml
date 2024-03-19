@@ -81,7 +81,8 @@ let%expect_test "shift" =
      (dadda   01000000000))
     ((shift   10)
      (wallace 010000000000)
-     (dadda   010000000000)) |}]
+     (dadda   010000000000))
+    |}]
 ;;
 
 let%expect_test "max" =
@@ -133,7 +134,8 @@ let%expect_test "max" =
     ((x       3)
      (y       3)
      (wallace 110001)
-     (dadda   110001)) |}]
+     (dadda   110001))
+    |}]
 ;;
 
 let%expect_test "utilization" =
@@ -164,7 +166,8 @@ let%expect_test "utilization" =
       (constants     ((count 3)    (total_bits 14)))
       (wires         ((count 3)    (total_bits 80)))
       (concatenation ((count 2)    (total_bits 90)))
-      (part_selects  ((count 770)  (total_bits 848))))) |}];
+      (part_selects  ((count 770)  (total_bits 848)))))
+    |}];
   print_s [%message (utilization Dadda 16 24 : Circuit_utilization.t)];
   [%expect
     {|
@@ -180,5 +183,6 @@ let%expect_test "utilization" =
       (constants     ((count 5)    (total_bits 16)))
       (wires         ((count 3)    (total_bits 80)))
       (concatenation ((count 2)    (total_bits 90)))
-      (part_selects  ((count 770)  (total_bits 848))))) |}]
+      (part_selects  ((count 770)  (total_bits 848)))))
+    |}]
 ;;

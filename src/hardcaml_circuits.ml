@@ -2,6 +2,7 @@ module Arbiters = Arbiters
 module Cordic = Cordic
 module Cordic_reference = Cordic_reference
 module Cordic_special_functions = Cordic_special_functions
+module Datapath_register = Datapath_register
 module Divider = Divider
 module Counter_div_mod = Counter_div_mod
 module Fast_fifo = Fast_fifo

@@ -30,7 +30,8 @@ let%expect_test "modulo by pow 2" =
     (utilization (
       (name modulo_pow2)
       (wires        ((count 2) (total_bits 6)))
-      (part_selects ((count 1) (total_bits 2))))) |}]
+      (part_selects ((count 1) (total_bits 2)))))
+    |}]
 ;;
 
 let%expect_test "modulo by non-pow 2" =
@@ -61,7 +62,8 @@ let%expect_test "modulo by non-pow 2" =
           (count                   3))))))
       (constants    ((count 6) (total_bits 22)))
       (wires        ((count 2) (total_bits 6)))
-      (part_selects ((count 2) (total_bits 5))))) |}]
+      (part_selects ((count 2) (total_bits 5)))))
+    |}]
 ;;
 
 let%expect_test "random tests" =
