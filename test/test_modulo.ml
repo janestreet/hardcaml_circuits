@@ -88,7 +88,7 @@ let%expect_test "random tests" =
 ;;
 
 let%expect_test "mod 0 raises" =
-  require_does_raise [%here] (fun () ->
+  require_does_raise (fun () ->
     Modulo.unsigned_by_constant (module Bits) (Bits.of_int ~width:10 10) 0);
   [%expect {| "Cannot perform mod 0" |}]
 ;;

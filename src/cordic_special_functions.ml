@@ -19,21 +19,21 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
   end
 
   module Make_function (M : sig
-    val system : System.t
-    val mode : Mode.t
+      val system : System.t
+      val mode : Mode.t
 
-    module Args : sig
-      include Interface.S
+      module Args : sig
+        include Interface.S
 
-      val to_generic : Signal.t t -> Config.t -> Signal.t Generic_args.t
-    end
+        val to_generic : Signal.t t -> Config.t -> Signal.t Generic_args.t
+      end
 
-    module Results : sig
-      include Interface.S
+      module Results : sig
+        include Interface.S
 
-      val create : Config.t -> xo:Signal.t -> yo:Signal.t -> zo:Signal.t -> Signal.t t
-    end
-  end) =
+        val create : Config.t -> xo:Signal.t -> yo:Signal.t -> zo:Signal.t -> Signal.t t
+      end
+    end) =
   struct
     open M
     module Cordic = Cordic

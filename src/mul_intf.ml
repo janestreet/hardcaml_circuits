@@ -5,10 +5,10 @@ module type Gen = sig
   include Add.Gen
 
   val width : t -> int
-  val bit : t -> int -> bit
+  val bit : t -> pos:int -> bit
   val gnd : bit
   val ( +: ) : t -> t -> t
-  val uresize : t -> int -> t
+  val uresize : t -> width:int -> t
 end
 
 module type Mul = sig

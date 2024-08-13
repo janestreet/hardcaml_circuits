@@ -36,7 +36,7 @@ let pipelined_tree_mux ~cycles ~reg ~selector state =
         then sel, Signal.empty
         else if Signal.width sel = bits
         then Signal.empty, sel
-        else Signal.drop_bottom sel bits, Signal.sel_bottom sel bits
+        else Signal.drop_bottom sel ~width:bits, Signal.sel_bottom sel ~width:bits
       in
       let l = List.chunks_of data ~length:(1 lsl bits) in
       f

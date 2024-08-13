@@ -102,10 +102,10 @@ module type Index_vec = sig
       { slot : Signal.t (** Slot to perform operation at *)
       ; op : Signal.t (** Operation type (insert, remove or nothing) *)
       ; insertion_tag : Signal.t Arg.Tag.t option
-          (** Value to set tag to on insertion. If [None] the value associated with the free
+      (** Value to set tag to on insertion. If [None] the value associated with the free
           slot moving in is kept *)
       ; deletion_tag : Signal.t Arg.Tag.t option
-          (** Value to set the tag to on deletion. If [None] the value associated with the
+      (** Value to set the tag to on deletion. If [None] the value associated with the
           slot being kicked out is kept *)
       }
 
@@ -125,8 +125,8 @@ module type Index_vec = sig
 
   (** Index vector circuit with tracks indexes. *)
   module Make (X : sig
-    val vec_size : int
-  end) : sig
+      val vec_size : int
+    end) : sig
     include S with type tag := Signal.t Interface.Empty.t
 
     (** Operation performed on the [vec] circuit. *)

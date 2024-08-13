@@ -5,9 +5,9 @@ open Pipelined_adder
 let%expect_test "cac truthtable" =
   let open Bits in
   let cac c =
-    let a = gnd @: gnd @: bit c 0 in
-    let b = gnd @: vdd @: bit c 1 in
-    a +: b +: uresize (bit c 2) 3
+    let a = gnd @: gnd @: c.:(0) in
+    let b = gnd @: vdd @: c.:(1) in
+    a +: b +: uresize c.:(2) ~width:3
   in
   let cacs =
     List.init 8 ~f:(fun i ->
@@ -123,8 +123,8 @@ let simulate ~part_width =
   let prev_result = ref 0 in
   for i = 0 to (16 * 16) - 1 do
     let x = Bits.of_int ~width:8 i in
-    a := Bits.select x 3 0;
-    b := Bits.select x 7 4;
+    a := x.Bits.:[3, 0];
+    b := x.Bits.:[7, 4];
     Cyclesim.cycle sim;
     if i > 0
     then if Bits.to_int !sum <> !prev_result then Stdio.printf "%i\n" (Bits.to_int !sum);

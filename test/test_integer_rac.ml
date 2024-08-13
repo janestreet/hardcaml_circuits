@@ -37,7 +37,7 @@ module Make (Config : Rac.Config) = struct
        clock edge, otherwise below.  Either way we need to final step to display the data
        in the waveform. *)
     let%bind _ = Step.cycle i in
-    return (Bits.to_sint (Step.O_data.after_edge o).q)
+    return (Bits.to_signed_int (Step.O_data.after_edge o).q)
   ;;
 
   let run ~simulator ~testbench ~data_in =
@@ -125,30 +125,35 @@ let%expect_test "simulation example" =
 
 let%expect_test "tests" =
   test () ~coefs:[| 3; 6; 1; 2 |] ~data_in:[| 7; 9; 3; 5 |];
-  [%expect {|
+  [%expect
+    {|
     (expected 88)
     (result 88)
     |}];
   test () ~coefs:[| 33; 26; 61; 12 |] ~data_in:[| 17; 39; 43; 15 |];
-  [%expect {|
+  [%expect
+    {|
     (expected 4378)
     (result 4378)
     |}];
   (* signed data *)
   test () ~coefs:[| 33; 26; 61; 12 |] ~data_in:[| 17; -39; 43; 15 |];
-  [%expect {|
+  [%expect
+    {|
     (expected 2350)
     (result 2350)
     |}];
   (* signed coefficient *)
   test () ~coefs:[| 33; 26; -61; 12 |] ~data_in:[| 17; 39; 43; 15 |];
-  [%expect {|
+  [%expect
+    {|
     (expected -868)
     (result -868)
     |}];
   (* signed data and coefficients *)
   test () ~coefs:[| -33; 26; -61; 12 |] ~data_in:[| 17; 39; -43; -15 |];
-  [%expect {|
+  [%expect
+    {|
     (expected 2896)
     (result 2896)
     |}]

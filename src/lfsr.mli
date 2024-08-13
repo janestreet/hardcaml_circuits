@@ -17,6 +17,8 @@ module Op : sig
   [@@deriving enumerate, sexp_of]
 end
 
+val max_lfsr_width : int
+
 (** Create the update logic for a lfsr.  Used in conjuction with [reg_fb] to construct
     a complete [lfsr].
 

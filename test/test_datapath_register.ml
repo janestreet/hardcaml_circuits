@@ -5,9 +5,9 @@ open Hardcaml_waveterm
 open Bits
 
 module Data = Types.Value (struct
-  let port_name = "data"
-  let port_width = 16
-end)
+    let port_name = "data"
+    let port_width = 16
+  end)
 
 open Datapath_register.Make (Data)
 module Sim = Cyclesim.With_interface (I) (IO)

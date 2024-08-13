@@ -33,7 +33,7 @@ let%expect_test "parallel prefix adder" =
             ~carry_in:(if carry = 1 then Bits.vdd else Bits.gnd)
           |> Bits.to_int
         in
-        require_equal [%here] (module Int) (input1 + input2 + carry) output;
+        require_equal (module Int) (input1 + input2 + carry) output;
         print_s
           [%message
             ""

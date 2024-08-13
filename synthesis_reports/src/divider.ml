@@ -14,10 +14,10 @@ end
 let name = "divider"
 
 module Div = Hardcaml_circuits.Divider.Make (struct
-  let width = 32
-  let signedness = Hardcaml.Signedness.Signed
-  let architecture = Architecture.Pipelined
-end)
+    let width = 32
+    let signedness = Hardcaml.Signedness.Signed
+    let architecture = Architecture.Pipelined
+  end)
 
 include Div
 module Input = I

@@ -13,9 +13,11 @@ depends: [
   "ocaml" {>= "5.1.0"}
   "base"
   "hardcaml"
+  "hardcaml_fixed_point"
   "ppx_hardcaml"
   "ppx_jane"
-  "dune"         {>= "3.11.0"}
+  "stdio"
+  "dune"                 {>= "3.11.0"}
 ]
 available: arch != "arm32" & arch != "x86_32"
 synopsis: "Hardcaml Circuits"

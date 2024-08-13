@@ -11,7 +11,7 @@ let unsigned_by_constant' (type a) (module S : Comb.S with type t = a) (x : a) (
     else (
       let x = build (y lsl 1) in
       let res = S.mux2 S.(x >=:. y) S.(x -:. y) x in
-      S.uresize res (Bits.num_bits_to_represent y))
+      S.uresize res ~width:(Bits.num_bits_to_represent y))
   in
   build y
 ;;
@@ -22,6 +22,6 @@ let unsigned_by_constant (type a) (module S : Comb.S with type t = a) (x : a) (y
   else if y = 1
   then S.zero (S.width x)
   else if Int.is_pow2 y
-  then S.select x (Int.ceil_log2 y - 1) 0
+  then x.S.:[Int.ceil_log2 y - 1, 0]
   else unsigned_by_constant' (module S) x y
 ;;

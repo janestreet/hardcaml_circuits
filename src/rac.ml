@@ -31,7 +31,7 @@ let make_rom coefs =
   in
   let rom = List.map (rom (zero n_coefs)) ~f:narrow in
   let max_width = List.fold (List.map rom ~f:width) ~init:0 ~f:max in
-  List.map rom ~f:(fun s -> sresize s max_width)
+  List.map rom ~f:(fun s -> sresize s ~width:max_width)
 ;;
 
 open Signal
@@ -76,10 +76,12 @@ module Make (Config : Config) = struct
       match mode with
       | Fixed ->
         lsb
-          (reg_fb reg_spec ~enable:en ~width:data_bits ~f:(fun d -> mux2 ld xi (srl d 1)))
+          (reg_fb reg_spec ~enable:en ~width:data_bits ~f:(fun d ->
+             mux2 ld xi (srl d ~by:1)))
       | Integer ->
         msb
-          (reg_fb reg_spec ~enable:en ~width:data_bits ~f:(fun d -> mux2 ld xi (sll d 1)))
+          (reg_fb reg_spec ~enable:en ~width:data_bits ~f:(fun d ->
+             mux2 ld xi (sll d ~by:1)))
     in
     (* rom address *)
     let addr = concat_lsb (List.map x ~f:piso) -- "piso_addr" in
@@ -92,9 +94,9 @@ module Make (Config : Config) = struct
          | Fixed -> sra
          | Integer -> sll)
           acc
-          1
+          ~by:1
       in
-      let coef = sll (sresize coef accumulator_bits) rom_shift in
+      let coef = sll (sresize coef ~width:accumulator_bits) ~by:rom_shift in
       mux2 ld (zero accumulator_bits) (mux2 addsub (acc -: coef) (acc +: coef)))
   ;;
 

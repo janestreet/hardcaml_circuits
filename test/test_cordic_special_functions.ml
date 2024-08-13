@@ -4,9 +4,9 @@ module Rect = Test_cordic_reference.Rect
 module Polar = Test_cordic_reference.Polar
 
 module Cordic = Cordic_special_functions.Make (struct
-  let width = 32
-  let fractional_width = 16
-end)
+    let width = 32
+    let fractional_width = 16
+  end)
 
 open Cordic
 
@@ -21,7 +21,8 @@ let test_cos_sin architecture doit =
 let%expect_test "combinational" =
   test_cos_sin Combinational (fun ~iterations:_ ~sim arg ->
     Cos_sin.Test.combinational ~sim arg);
-  [%expect {|
+  [%expect
+    {|
     ((angle 0.4)
      (cos   0.92)
      (sin   0.39))
@@ -30,7 +31,8 @@ let%expect_test "combinational" =
 
 let%expect_test "pipelined" =
   test_cos_sin Pipelined Cos_sin.Test.pipelined;
-  [%expect {|
+  [%expect
+    {|
     ((angle 0.4)
      (cos   0.92)
      (sin   0.39))
@@ -39,7 +41,8 @@ let%expect_test "pipelined" =
 
 let%expect_test "iterative" =
   test_cos_sin Pipelined Cos_sin.Test.iterative;
-  [%expect {|
+  [%expect
+    {|
     ((angle 0.4)
      (cos   0.92)
      (sin   0.39))
@@ -60,7 +63,6 @@ module Test (Function : Cordic_special_functions.Function) = struct
     let sim = create_sim Iterative in
     let iter_results = Function.Test.iterative ~iterations ~sim args in
     require_equal
-      [%here]
       (module struct
         type t = float Results.t [@@deriving compare, sexp_of]
 
@@ -81,7 +83,8 @@ let%expect_test "[Polar_to_rect]" =
      ((x         0.71) (y     0.71)))
     |}];
   Test.test { magnitude = 2.; phase = Float.pi /. 2. };
-  [%expect {|
+  [%expect
+    {|
     (((magnitude 2.) (phase 1.6))
      ((x         0.) (y     2.)))
     |}]
@@ -95,13 +98,15 @@ let%expect_test "Atan" =
     print_s [%message "" (atan : float)]
   in
   test 0.4;
-  [%expect {|
+  [%expect
+    {|
     (((arg   0.4))
      ((angle 0.38)))
     (atan 0.38)
     |}];
   test 0.9;
-  [%expect {|
+  [%expect
+    {|
     (((arg   0.9))
      ((angle 0.73)))
     (atan 0.73)
@@ -116,14 +121,16 @@ let%expect_test "Atan2" =
     print_s [%message "" (atan : float)]
   in
   test 0.4 0.5;
-  [%expect {|
+  [%expect
+    {|
     (((x 0.4)
       (y 0.5))
      ((angle 0.67)))
     (atan 0.67)
     |}];
   test 1.3 2.2;
-  [%expect {|
+  [%expect
+    {|
     (((x 1.3)
       (y 2.2))
      ((angle 0.53)))
@@ -164,7 +171,8 @@ let%expect_test "Mul" =
     print_s [%message "" (mul : float)]
   in
   test 0.5 0.5;
-  [%expect {|
+  [%expect
+    {|
     (((a 0.5)
       (b 0.5))
      ((product 0.25)))
@@ -225,19 +233,22 @@ let%expect_test "Atanh" =
     print_s [%message "" (atanh : float)]
   in
   test 0.8;
-  [%expect {|
+  [%expect
+    {|
     (((arg   0.8))
      ((angle 1.1)))
     (atanh 1.1)
     |}];
   test 0.5;
-  [%expect {|
+  [%expect
+    {|
     (((arg   0.5))
      ((angle 0.55)))
     (atanh 0.55)
     |}];
   test 0.1;
-  [%expect {|
+  [%expect
+    {|
     (((arg   0.1))
      ((angle 0.1)))
     (atanh 0.1)

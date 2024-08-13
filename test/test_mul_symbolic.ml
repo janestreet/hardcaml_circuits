@@ -75,9 +75,9 @@ module Signal = struct
   let ( ^: ) t1 t2 = Xor (t1, t2)
   let ( ~: ) t = Not t
   let concat_msb bits = Concat bits
-  let bit input index = Bit { input; index }
+  let bit input ~pos:index = Bit { input; index }
 
-  let uresize input to_width =
+  let uresize input ~width:to_width =
     if width input = to_width then input else Uresize { input; width = to_width }
   ;;
 
@@ -103,7 +103,7 @@ let%expect_test _ =
                    (module Signal)
                    (Input { name = "a"; width = a_width })
                    (Input { name = "b"; width = b_width })
-                  : Signal.t)])
+                 : Signal.t)])
     done
   done;
   [%expect

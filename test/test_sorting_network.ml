@@ -2,8 +2,7 @@ open! Import
 open! Sorting_network
 
 let%expect_test "power of 2 length" =
-  require_does_raise [%here] (fun () ->
-    create Bitonic_sort (fun _ _ -> assert false) [ 1; 2; 3 ]);
+  require_does_raise (fun () -> create Bitonic_sort (fun _ _ -> assert false) [ 1; 2; 3 ]);
   [%expect
     {|
     ("Sorting networks require their input length to be a power of 2"
@@ -93,7 +92,7 @@ let%expect_test "sort by bottom 2 bits" =
       Bitonic_sort
       (fun a b ->
         let open Bits in
-        let sel = select a 1 0 <: select b 1 0 in
+        let sel = a.:[1, 0] <: b.:[1, 0] in
         { min = mux2 sel a b; max = mux2 sel b a })
       inputs
   in
@@ -112,7 +111,6 @@ let%expect_test "check all possible zero-one inputs" =
         let inputs = Bits.bits_msb (Bits.of_int ~width:num_inputs i) in
         let sorted = create config sort_ascending_unsigned inputs in
         require
-          [%here]
           (List.is_sorted sorted ~compare:(fun b1 b2 ->
              if Bits.equal (Bits.( <: ) b1 b2) Bits.vdd
              then -1

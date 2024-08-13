@@ -44,7 +44,7 @@ let%expect_test "shift" =
     in
     let wallace = mul Wallace in
     let dadda = mul Dadda in
-    require_equal [%here] (module Bits) wallace dadda;
+    require_equal (module Bits) wallace dadda;
     print_s [%message "" (shift : int) (wallace : Bits.t) (dadda : Bits.t)]
   done;
   [%expect
@@ -93,7 +93,7 @@ let%expect_test "max" =
       in
       let wallace = mul Wallace in
       let dadda = mul Dadda in
-      require_equal [%here] (module Bits) wallace dadda;
+      require_equal (module Bits) wallace dadda;
       print_s [%message "" (x : int) (y : int) (wallace : Bits.t) (dadda : Bits.t)]
     done
   done;

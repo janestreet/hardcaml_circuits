@@ -64,8 +64,8 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
           mux system (List.map e ~f:(fun e -> B.of_bit_string (e.(i) |> Fixnum.constb)))
         in
         let d = mux mode [ z <+. 0; y >=+. 0; y >=+ c ] in
-        let xsft = mux2 is_hyper (sra x ih) (sra x i) in
-        let ysft = mux2 is_hyper (sra y ih) (sra y i) in
+        let xsft = mux2 is_hyper (sra x ~by:ih) (sra x ~by:i) in
+        let ysft = mux2 is_hyper (sra y ~by:ih) (sra y ~by:i) in
         let x, y, z = step ~x ~xsft ~y ~ysft ~z ~d ~m ~e in
         pipe x, pipe y, pipe z)
     ;;
@@ -88,7 +88,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
               ~enable
               (mux2 ld (of_int ~width:(width t) init) (mux2 repeat t f))
       in
-      upd k ~init:4 (k +: sll k 1 +:. 1) k;
+      upd k ~init:4 (k +: sll k ~by:1 +:. 1) k;
       upd iterh ~init:1 iterh (iterh +:. 1);
       mux2 is_hyper iterh iter -- "iter_sel"
     ;;
@@ -113,8 +113,8 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
       let e = mux system [ atan; atanh; t ] -- "e" in
       let d = mux mode [ zw <+. 0; yw >=+. 0; yw >=+ c ] in
       let iter = hyper_iter ~reg_spec ~enable ~ld ~system ~iter in
-      let xsft = log_shift sra xw iter in
-      let ysft = log_shift sra yw iter in
+      let xsft = log_shift ~f:sra xw ~by:iter in
+      let ysft = log_shift ~f:sra yw ~by:iter in
       let xs, ys, zs = C.step ~x:xw ~xsft ~y:yw ~ysft ~z:zw ~d ~m ~e in
       xw <== reg reg_spec ~enable (mux2 ld x xs);
       yw <== reg reg_spec ~enable (mux2 ld y ys);

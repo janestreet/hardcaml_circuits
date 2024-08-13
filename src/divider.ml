@@ -69,13 +69,14 @@ module Make (Spec : Spec) = struct
       let ( -- ) = Scope.naming scope in
       let rem_pos = ~:(msb t.rem) -- [%string "remainder_pos-s%{i#Int}"] in
       let denom = pipe t.denom -- [%string "denom-s%{i#Int}"] in
-      let rem_x2 = sll t.rem 1 in
+      let rem_x2 = sll t.rem ~by:1 in
       let rem =
         pipe (mux2 rem_pos (rem_x2 -: t.denom) (rem_x2 +: t.denom))
         -- [%string "rem-s%{i#Int}"]
       in
       let quot_mask =
-        (sll (of_int ~width:Spec.width 1) i |> reverse) -- [%string "quot_mask-s%{i#Int}"]
+        (sll (of_int ~width:Spec.width 1) ~by:i |> reverse)
+        -- [%string "quot_mask-s%{i#Int}"]
       in
       let quot =
         pipe (mux2 (rem_pos &: t.valid) (t.quot |: quot_mask) t.quot)
@@ -143,15 +144,15 @@ module Make (Spec : Spec) = struct
           @@ elif
                state.running.value
                [ state.count <-- state.count.value -:. 1
-               ; state.quot_mask <-- srl state.quot_mask.value 1
+               ; state.quot_mask <-- srl state.quot_mask.value ~by:1
                ; state.running <-- (state.count.value <>:. 0)
                ; state.valid <-- (state.count.value ==:. 0)
                ; if_
                    remainder_pos
                    [ state.quot <-- (state.quot.value |: state.quot_mask.value)
-                   ; state.rem <-- sll state.rem.value 1 -: state.denom.value
+                   ; state.rem <-- sll state.rem.value ~by:1 -: state.denom.value
                    ]
-                   [ state.rem <-- sll state.rem.value 1 +: state.denom.value ]
+                   [ state.rem <-- sll state.rem.value ~by:1 +: state.denom.value ]
                ]
                []
         ]);

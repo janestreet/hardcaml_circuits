@@ -13,9 +13,12 @@ let rotate_by_index
   let open Bits in
   (* rotate by the index *)
   let data_width = width (List.hd_exn data).value in
-  let valid_list = log_shift rotr (valids data |> concat_lsb) index in
+  let valid_list = log_shift ~f:rotr (valids data |> concat_lsb) ~by:index in
   let value_list =
-    log_shift (fun d n -> rotr d (n * data_width)) (values data |> concat_lsb) index
+    log_shift
+      ~f:(fun d ~by:n -> rotr d ~by:(n * data_width))
+      (values data |> concat_lsb)
+      ~by:index
   in
   List.map2_exn
     (bits_lsb valid_list)
@@ -38,7 +41,7 @@ module Index = struct
     in
     match index with
     | Offset index ->
-      let mask : t = log_shift sll (ones num_sources) index in
+      let mask : t = log_shift ~f:sll (ones num_sources) ~by:index in
       create mask
     | Mask mask -> create mask
   ;;
@@ -53,7 +56,7 @@ module Index = struct
     let open Signal in
     if width mask = 1
     then vdd
-    else mux2 (bit mask (width mask - 2)) (sll mask 1) (ones (width mask))
+    else mux2 mask.:(width mask - 2) (sll mask ~by:1) (ones (width mask))
   ;;
 end
 

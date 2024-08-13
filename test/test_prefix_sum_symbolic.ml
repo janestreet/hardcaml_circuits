@@ -96,7 +96,7 @@ let%expect_test _ =
                    ~config
                    ~operator:Wire.add
                    (List.map inputs ~f:(fun i -> Wire.Input i)))
-                : outputs Or_error.t)]));
+               : outputs Or_error.t)]));
   [%expect
     {|
     ((config Serial)

@@ -47,12 +47,11 @@ module Make_test (Spec : Spec) = struct
     in
     let bits_to_int =
       match Spec.signedness with
-      | Signed -> Bits.to_sint
+      | Signed -> Bits.to_signed_int
       | Unsigned -> Bits.to_int
     in
     require_equal
       ~message:("(Failed Valid) " ^ msg_inputs)
-      [%here]
       (module Bits)
       !(outputs.valid)
       (Bits.of_bool inputs.start);
@@ -60,13 +59,11 @@ module Make_test (Spec : Spec) = struct
     then (
       require_equal
         ~message:("(Failed Quotient) " ^ msg_inputs)
-        [%here]
         (module Int)
         (bits_to_int !(outputs.quotient))
         (inputs.n / inputs.d);
       require_equal
         ~message:("(Failed Remainder) " ^ msg_inputs)
-        [%here]
         (module Int)
         (bits_to_int !(outputs.remainder))
         (inputs.n mod inputs.d))

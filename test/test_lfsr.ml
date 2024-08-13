@@ -159,7 +159,7 @@ let%expect_test "invalid length exns" =
 
 let%expect_test "all supported lengths work" =
   for length = 2 to 168 do
-    require_does_not_raise [%here] (fun () ->
+    require_does_not_raise (fun () ->
       ignore (create (module Bits) (Bits.zero length) : Bits.t))
   done;
   [%expect {| |}]

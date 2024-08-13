@@ -57,7 +57,7 @@ module Make_gen (B : Gen) = struct
 end
 
 module Make (B : Comb.S) = Make_gen (struct
-  include B
+    include B
 
-  type bit = t [@@deriving sexp_of]
-end)
+    type bit = t [@@deriving sexp_of]
+  end)

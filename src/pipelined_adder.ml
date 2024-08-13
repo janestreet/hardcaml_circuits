@@ -28,7 +28,7 @@ let create ~part_width ~clock ?clear ?(c_in = gnd) a b =
     | [], [] -> prev
     | a :: at, b :: bt ->
       (* assuming that the synthesizer will perform the carry addition for 'free' *)
-      let c = reg (ue a +: ue b +: uresize carry (width a + 1)) in
+      let c = reg (ue a +: ue b +: uresize carry ~width:(width a + 1)) in
       f (lsbs c :: regs prev) (regs at) (regs bt) (msb c)
     | _ -> raise_s [%message "pipelined adder arguments are not the same width"]
   in
@@ -80,7 +80,7 @@ module Short_latency = struct
     in
     let cac_sum = s0 +: s1 in
     List.mapi partial_sums ~f:(fun i partial_sum ->
-      if i = 0 then ~:(partial_sum.sum0.c_out) else bit cac_sum ((i * 2) + 1))
+      if i = 0 then ~:(partial_sum.sum0.c_out) else cac_sum.:((i * 2) + 1))
   ;;
 
   let final_sums
@@ -94,7 +94,8 @@ module Short_latency = struct
     let rec f partial_sums cac c_in =
       match partial_sums, cac with
       | [], [] -> []
-      | p :: pt, c :: ct -> (p.sum0.sum +: uresize c_in (width p.sum0.sum)) :: f pt ct ~:c
+      | p :: pt, c :: ct ->
+        (p.sum0.sum +: uresize c_in ~width:(width p.sum0.sum)) :: f pt ct ~:c
       | _ -> assert false
     in
     f partial_sums cac c_in

@@ -40,7 +40,7 @@ module Make (Arg : Arg) = struct
       Array.init vec_size ~f:(fun index ->
         if index = vec_size - 1 then op.delete_data else regs.(index + 1))
     in
-    let shift = log_shift sll (ones vec_size) op.slot in
+    let shift = log_shift ~f:sll (ones vec_size) ~by:op.slot in
     for index = 0 to vec_size - 1 do
       let shift = shift.:(index) in
       Arg.Interface.iter2

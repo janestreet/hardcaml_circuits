@@ -1,4 +1,5 @@
 module Arbiters = Arbiters
+module Catmull_rom_spline = Catmull_rom_spline
 module Cordic = Cordic
 module Cordic_reference = Cordic_reference
 module Cordic_special_functions = Cordic_special_functions

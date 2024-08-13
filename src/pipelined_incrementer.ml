@@ -8,7 +8,7 @@ let create ~part_width ~clock ~clear ~(set : Signal.t With_valid.t) ~increment =
   let spec = Reg_spec.create ~clock ~clear () in
   let reg = reg spec ~enable:vdd in
   let set_value =
-    uresize set.value (Int.round_up ~to_multiple_of:part_width width)
+    uresize set.value ~width:(Int.round_up ~to_multiple_of:part_width width)
     |> split_lsb ~part_width
   in
   let rec f incr parts set_valid set_value =

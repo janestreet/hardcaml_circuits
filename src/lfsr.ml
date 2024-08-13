@@ -175,6 +175,8 @@ let taps =
   |]
 ;;
 
+let max_lfsr_width = Array.length taps - 1
+
 let counterpart =
   let counterpart = function
     | [] -> []
@@ -189,19 +191,23 @@ type 'a comb = (module Hardcaml.Comb.S with type t = 'a)
 
 let galois (type a) ((module B) : a comb) xor taps state =
   let open B in
-  let bit0 = bit state 0 in
+  let bit0 = state.:(0) in
   let rec f taps ~hi =
     match taps with
-    | [] -> [ select_e state hi 1 ]
+    | [] -> [ With_zero_width.select (Some state) ~high:hi ~low:1 ]
     | tap :: taps ->
-      select_e state hi (tap + 1) :: xor bit0 (bit state tap) :: f taps ~hi:(tap - 1)
+      With_zero_width.select (Some state) ~high:hi ~low:(tap + 1)
+      :: Some (xor bit0 state.:(tap))
+      :: f taps ~hi:(tap - 1)
   in
-  bit0 @: concat_msb_e (f (List.tl_exn taps) ~hi:(width state - 1))
+  bit0
+  @: With_zero_width.(
+       concat_msb (f (List.tl_exn taps) ~hi:(width state - 1)) |> to_non_zero_width)
 ;;
 
 let fibonacci (type a) ((module B) : a comb) xor taps state =
   let open B in
-  let tap_bits = List.map taps ~f:(fun i -> bit state (i - 1)) in
+  let tap_bits = List.map taps ~f:(fun i -> state.:(i - 1)) in
   lsbs state @: List.reduce_exn tap_bits ~f:xor
 ;;
 
