@@ -12,8 +12,8 @@ module type Arg = sig
   (** Tag associated with each index.  Set to [Hardcaml.Interface.None] to disable. *)
   module Tag : Interface.S
 
-  (** Register spec associated with tag values. *)
-  val spec : index:int -> Reg_spec.t -> Reg_spec.t Tag.t
+  (** Value associated with tag values. *)
+  val spec : index:int -> Signal.t Tag.t
 
   (** Size of the vec. *)
   val vec_size : int

@@ -27,29 +27,50 @@ let min_sequence_sums_to ~value ~in_num_steps =
    difference is that the registers are balanced throughout the multiplexer tree. *)
 let pipelined_tree_mux ~cycles ~reg ~selector state =
   let rec f sel data = function
-    | [] -> raise_s [%message "[mux_state] no steps"]
+    | [] -> raise_s [%message "[pipelined_tree_mux] no steps"]
     | [ _ ] ->
-      if List.length data = 1 then reg (List.hd_exn data) else Signal.mux sel data |> reg
+      if List.length data = 1
+      then reg (List.hd_exn data)
+      else (
+        match sel with
+        | None -> raise_s [%message "[pipelined_tree_mux] No select bits"]
+        | Some sel -> Signal.mux sel data |> reg)
     | bits :: bs ->
       let sel_hi, sel_lo =
-        if bits = 0
-        then sel, Signal.empty
-        else if Signal.width sel = bits
-        then Signal.empty, sel
-        else Signal.drop_bottom sel ~width:bits, Signal.sel_bottom sel ~width:bits
+        match sel with
+        | None -> None, None
+        | Some sel ->
+          if bits = 0
+          then Some sel, None
+          else if Signal.width sel = bits
+          then None, Some sel
+          else
+            ( Some (Signal.drop_bottom sel ~width:bits)
+            , Some (Signal.sel_bottom sel ~width:bits) )
       in
       let l = List.chunks_of data ~length:(1 lsl bits) in
       f
-        (reg sel_hi)
+        (Option.map sel_hi ~f:reg)
         (List.map l ~f:(fun l ->
            match l with
            | [ hd ] -> reg hd
-           | l -> Signal.mux sel_lo l |> reg))
+           | l ->
+             (match sel_lo with
+              | None -> raise_s [%message "No select low bits"]
+              | Some sel_lo -> Signal.mux sel_lo l |> reg)))
         bs
   in
-  let bits = Int.ceil_log2 (List.length state) in
+  let num_data = List.length state in
+  if num_data = 0 then raise_s [%message "[pipelined_tree_mux] no data elements"];
+  let range_selector = 1 lsl Signal.width selector in
+  if num_data > range_selector
+  then
+    raise_s
+      [%message
+        "[pipeline_tree_mux] not all data elements can be indexed by the selector"];
+  let bits = Int.ceil_log2 num_data in
   let steps = min_sequence_sums_to ~value:bits ~in_num_steps:cycles in
-  f selector state steps
+  f (Some selector) state steps
 ;;
 
 let pipelined_tree_priority_select

@@ -8,7 +8,7 @@ module type Arg = sig
   module Interface : Interface.S
 
   (** Construct a register spec for each field in the interface based on index. *)
-  val spec : index:int -> Reg_spec.t -> Reg_spec.t Interface.t
+  val spec : index:int -> Signal.t Interface.t
 end
 
 module type S = sig

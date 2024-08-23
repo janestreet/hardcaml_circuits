@@ -54,7 +54,7 @@ struct
     used <== reg spec used_next;
     used_minus_1 <== reg spec (lsbs (used_next -:. 1));
     let empty_next = used_next ==:. 0 in
-    empty <== reg (Reg_spec.override spec ~clear_to:vdd ~reset_to:vdd) empty_next;
+    empty <== reg spec ~clear_to:vdd ~reset_to:vdd empty_next;
     let full_next = used_next ==:. capacity in
     full <== reg spec full_next;
     (* ram instantiation *)

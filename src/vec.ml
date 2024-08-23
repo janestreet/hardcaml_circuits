@@ -29,7 +29,11 @@ module Make (Arg : Arg) = struct
     let reg_wires = Array.init vec_size ~f:(fun _ -> Arg.Interface.Of_signal.wires ()) in
     let regs =
       Array.init vec_size ~f:(fun index ->
-        Arg.Interface.map2 (Arg.spec ~index spec) reg_wires.(index) ~f:(reg ~enable:vdd))
+        Arg.Interface.map2 (Arg.spec ~index) reg_wires.(index) ~f:(fun value d ->
+          (* Including [reset_to] here would be slightly more general. However, we only
+             really use sync clears, and it changes rtl_checksums (due to uid labelling,
+             not actual logic differences) so we avoid it for now. *)
+          reg ~clear_to:value ~enable:vdd spec d))
     in
     let op_index_1h = binary_to_onehot op.slot in
     let shifted_up =
