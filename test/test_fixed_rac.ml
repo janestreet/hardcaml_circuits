@@ -153,7 +153,7 @@ let%expect_test "utilization" =
            (total_bits              64)
            (count                   1))))))
       (registers     ((count 5)  (total_bits 52)))
-      (constants     ((count 32) (total_bits 198)))
+      (constants     ((count 27) (total_bits 146)))
       (wires         ((count 24) (total_bits 146)))
       (concatenation ((count 12) (total_bits 126)))
       (part_selects  ((count 12) (total_bits 67)))))

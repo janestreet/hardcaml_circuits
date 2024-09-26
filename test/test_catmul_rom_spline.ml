@@ -44,29 +44,29 @@ let test
     done
   done;
   let avg_error = Float.(!total_error / of_int !count) in
-  Stdio.print_s [%message (!max_error : float) (avg_error : float)]
+  printf "max_error = %.7e avg_error = %.7e\n" !max_error avg_error
 ;;
 
 let%expect_test "sin in various ranges and precisions" =
   let f x = Float.(sin (x / pi)) in
   test ~log_control_points:2 ~log_interpolation_points:4 ~range:(0., 3.) f;
-  [%expect {| ((!max_error 0.00021746193890873067) (avg_error 0.00012070261498895748)) |}];
+  [%expect {| max_error = 2.1746194e-04 avg_error = 1.2070261e-04 |}];
   test ~log_control_points:2 ~log_interpolation_points:8 ~range:(0., 1.) f;
-  [%expect {| ((!max_error 8.09016140875668E-06) (avg_error 5.1570944398865843E-06)) |}];
+  [%expect {| max_error = 8.0901614e-06 avg_error = 5.1570944e-06 |}];
   test ~log_control_points:3 ~log_interpolation_points:2 ~range:(0., 4.) f;
-  [%expect {| ((!max_error 6.3513933793168942E-05) (avg_error 2.5651781583135467E-05)) |}];
+  [%expect {| max_error = 6.3513934e-05 avg_error = 2.5651782e-05 |}];
   test ~log_control_points:4 ~log_interpolation_points:6 ~range:(0., 3.) f;
-  [%expect {| ((!max_error 3.4083087427812242E-06) (avg_error 1.8925391336770437E-06)) |}]
+  [%expect {| max_error = 3.4083087e-06 avg_error = 1.8925391e-06 |}]
 ;;
 
 let%expect_test "tanh, [0..4]" =
   let f x = Float.(tanh x) in
   test ~verbose:false ~log_control_points:8 ~log_interpolation_points:7 ~range:(0., 4.) f;
-  [%expect {| ((!max_error 1.2239537077428364E-07) (avg_error 1.5308288367911493E-08)) |}];
+  [%expect {| max_error = 1.2239537e-07 avg_error = 1.5308288e-08 |}];
   test ~verbose:false ~log_control_points:6 ~log_interpolation_points:6 ~range:(0., 4.) f;
-  [%expect {| ((!max_error 7.8662356154095975E-06) (avg_error 1.0069331418377019E-06)) |}];
+  [%expect {| max_error = 7.8662356e-06 avg_error = 1.0069331e-06 |}];
   test ~verbose:false ~log_control_points:2 ~log_interpolation_points:4 ~range:(0., 4.) f;
-  [%expect {| ((!max_error 0.048271308398020074) (avg_error 0.009347720697612881)) |}]
+  [%expect {| max_error = 4.8271308e-02 avg_error = 9.3477207e-03 |}]
 ;;
 
 open Hardcaml

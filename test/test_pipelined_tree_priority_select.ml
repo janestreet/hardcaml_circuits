@@ -16,7 +16,7 @@ let init ~cycles num_data =
     Pipelined_tree_mux.pipelined_tree_priority_select
       ~trace_reductions:true
       ~cycles
-      ~reg:(reg (Reg_spec.create ~clock ~clear ()))
+      ~reg:(fun ?enable d -> reg ?enable (Reg_spec.create ~clock ~clear ()) d)
       data
   in
   let valid = output "valid" valid in

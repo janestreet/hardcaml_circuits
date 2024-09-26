@@ -30,11 +30,8 @@ module Make_tagged (Arg : Arg) = struct
       module Interface = Interface
 
       (* Initialize the indexes with [0,1,2,3,4, ...].  Tags are up to the user. *)
-      let spec ~index spec =
-        { Interface.index =
-            Reg_spec.override spec ~clear_to:(of_int ~width:log_vec_size index)
-        ; tag = Arg.spec ~index spec
-        }
+      let spec ~index =
+        { Interface.index = of_int ~width:log_vec_size index; tag = Arg.spec ~index }
       ;;
     end)
 
@@ -145,7 +142,7 @@ struct
 
       module Tag = Interface.Empty
 
-      let spec ~index:_ _spec = Interface.Empty.None
+      let spec ~index:_ = Interface.Empty.None
     end)
 
   include Tagged

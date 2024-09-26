@@ -480,7 +480,7 @@ let%expect_test "test tagging - show that the tags move (and change) with insert
       module Tag = Tag
 
       let vec_size = 1 lsl log_vec_size
-      let spec ~index:_ spec = { Tag.value = spec }
+      let spec ~index:_ = Tag.Of_signal.of_int 0
     end)
   in
   let clock = Signal.input "clock" 1 in
@@ -623,7 +623,7 @@ let%expect_test "test tagging - show that the tags move (and change) with insert
     │                  ││────────────────────────┴───────────┴─────────────────          │
     │gnd               ││                                                                │
     │                  ││──────────────────────────────────────────────────────          │
-    │vdd               ││──────────────────────────────────────────────────────          │
+    │                  ││                                                                │
     └──────────────────┘└────────────────────────────────────────────────────────────────┘
     |}]
 ;;
