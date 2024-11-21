@@ -12,6 +12,7 @@ build: [
 depends: [
   "ocaml" {>= "5.1.0"}
   "base"
+  "bignum"
   "hardcaml"
   "hardcaml_fixed_point"
   "ppx_hardcaml"
