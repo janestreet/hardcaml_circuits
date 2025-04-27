@@ -48,7 +48,7 @@ module Make_test (Spec : Spec) = struct
     let bits_to_int =
       match Spec.signedness with
       | Signed -> Bits.to_signed_int
-      | Unsigned -> Bits.to_int
+      | Unsigned -> Bits.to_int_trunc
     in
     require_equal
       ~message:("(Failed Valid) " ^ msg_inputs)
@@ -76,7 +76,7 @@ module Make_test (Spec : Spec) = struct
     | Unsigned -> 0, Int.((2 ** Spec.width) - 1)
   ;;
 
-  let ( <-. ) a b = a := Bits.of_int ~width:(Bits.width !a) b
+  let ( <--. ) = Bits.( <--. )
 
   let apply_input_stim (i_stim : I_stim.t) (inputs : _ I.t) =
     let min_input, max_input = get_input_range in
@@ -84,8 +84,8 @@ module Make_test (Spec : Spec) = struct
       (not i_stim.start)
       || (i_stim.d <> 0 && i_stim.d >= min_input && i_stim.d <= max_input));
     assert ((not i_stim.start) || (i_stim.n >= min_input && i_stim.n <= max_input));
-    inputs.numerator <-. i_stim.n;
-    inputs.denominator <-. i_stim.d;
+    inputs.numerator <--. i_stim.n;
+    inputs.denominator <--. i_stim.d;
     inputs.start := if i_stim.start then Bits.vdd else Bits.gnd
   ;;
 
@@ -122,11 +122,14 @@ module Make_test (Spec : Spec) = struct
 
   let quickcheck_div_test () =
     let _, sim, inputs, outputs = quickcheck_test_setup in
-    Quickcheck.test (quickcheck_gen 1.0) ~sexp_of:[%sexp_of: I_stim.t] ~f:(fun i_stim ->
-      quickcheck_div_iterative sim inputs outputs i_stim)
+    Quickcheck.test
+      ~trials:50000
+      (quickcheck_gen 1.0)
+      ~sexp_of:[%sexp_of: I_stim.t]
+      ~f:(fun i_stim -> quickcheck_div_iterative sim inputs outputs i_stim)
   ;;
 
-  let random_test_unrolled ?(pipe_depth = Spec.width - 1) ~n_tests ~pvalid () =
+  let random_test_unrolled ~pipe_depth ~n_tests ~pvalid () =
     let (_ : Waveform.t), sim, inputs, outputs = quickcheck_test_setup in
     let gen_sequence = quickcheck_gen pvalid in
     let random = Splittable_random.of_int 0 in
@@ -150,14 +153,14 @@ module Make_test (Spec : Spec) = struct
   let start_division ~numerator ~denominator =
     let waves, sim = create () in
     let inputs = Cyclesim.inputs sim in
-    inputs.numerator <-. numerator;
-    inputs.denominator <-. denominator;
+    inputs.numerator <--. numerator;
+    inputs.denominator <--. denominator;
     inputs.start := Bits.vdd;
     sim, waves, inputs
   ;;
 end
 
-let print waves = Waveform.print ~wave_width:1 ~display_height:25 ~display_width:80 waves
+let print waves = Waveform.print ~wave_width:1 ~display_width:80 waves
 
 let%expect_test "Wavetest, 7 divided by 2, width 8, unsigned, combinational" =
   let open Make_test ((val spec 8 Unsigned Combinational)) in
@@ -186,13 +189,6 @@ let%expect_test "Wavetest, 7 divided by 2, width 8, unsigned, combinational" =
     │                  ││────────────────────────────────────────────              │
     │valid             ││────┐                                                     │
     │                  ││    └───────────────────────────────────────              │
-    │                  ││                                                          │
-    │                  ││                                                          │
-    │                  ││                                                          │
-    │                  ││                                                          │
-    │                  ││                                                          │
-    │                  ││                                                          │
-    │                  ││                                                          │
     └──────────────────┘└──────────────────────────────────────────────────────────┘
     |}]
 ;;
@@ -217,20 +213,13 @@ let%expect_test "Wavetest, -9 divided by 4, width 8, signed, combinational" =
     │start             ││────┐                                                     │
     │                  ││    └───────────────────────────────────────              │
     │                  ││────┬───────────────────────────────────────              │
-    │quotient          ││ FE │00                                                   │
+    │quotient          ││ 1FE│000                                                  │
     │                  ││────┴───────────────────────────────────────              │
     │                  ││────────────────────────────────────────────              │
-    │remainder         ││ FF                                                       │
+    │remainder         ││ 1FF                                                      │
     │                  ││────────────────────────────────────────────              │
     │valid             ││────┐                                                     │
     │                  ││    └───────────────────────────────────────              │
-    │                  ││                                                          │
-    │                  ││                                                          │
-    │                  ││                                                          │
-    │                  ││                                                          │
-    │                  ││                                                          │
-    │                  ││                                                          │
-    │                  ││                                                          │
     └──────────────────┘└──────────────────────────────────────────────────────────┘
     |}]
 ;;
@@ -266,9 +255,6 @@ let%expect_test "Wavetest, 7 divided by 2, width 8, unsigned, iterative" =
     │                  ││────────────────────────────┴───────────────              │
     │valid             ││                                    ┌───────              │
     │                  ││────────────────────────────────────┘                     │
-    │                  ││                                                          │
-    │                  ││                                                          │
-    │                  ││                                                          │
     └──────────────────┘└──────────────────────────────────────────────────────────┘
     |}]
 ;;
@@ -279,8 +265,8 @@ let%expect_test "Wavetest, -9 divided by 4, width 8, signed, iterative" =
   for _ = 0 to Div.I.port_widths.numerator + 4 do
     Cyclesim.cycle sim;
     inputs.start := Bits.gnd;
-    inputs.numerator <-. 0;
-    inputs.denominator <-. 0
+    inputs.numerator <--. 0;
+    inputs.denominator <--. 0
   done;
   print waves;
   [%expect
@@ -298,17 +284,14 @@ let%expect_test "Wavetest, -9 divided by 4, width 8, signed, iterative" =
     │                  ││────┴───────────────────────────────────────────────      │
     │start             ││────┐                                                     │
     │                  ││    └───────────────────────────────────────────────      │
-    │                  ││────┬───┬───────────────────────┬───┬───────────────      │
-    │quotient          ││ 01 │FF │00                     │FF │FE                   │
-    │                  ││────┴───┴───────────────────────┴───┴───────────────      │
-    │                  ││────────────────────────┬───┬───┬───┬───────────────      │
-    │remainder         ││ 00                     │FF │FE │00 │FF                   │
-    │                  ││────────────────────────┴───┴───┴───┴───────────────      │
-    │valid             ││                                    ┌───────────────      │
-    │                  ││────────────────────────────────────┘                     │
-    │                  ││                                                          │
-    │                  ││                                                          │
-    │                  ││                                                          │
+    │                  ││────┬───┬───────────────────────────┬───┬───────────      │
+    │quotient          ││ 001│1FF│000                        │1FF│1FE              │
+    │                  ││────┴───┴───────────────────────────┴───┴───────────      │
+    │                  ││────────────────────────────┬───┬───┬───┬───────────      │
+    │remainder         ││ 000                        │1FF│1FE│000│1FF              │
+    │                  ││────────────────────────────┴───┴───┴───┴───────────      │
+    │valid             ││                                        ┌───────────      │
+    │                  ││────────────────────────────────────────┘                 │
     └──────────────────┘└──────────────────────────────────────────────────────────┘
     |}]
 ;;
@@ -317,7 +300,7 @@ let%expect_test "Wavetest, 81 divided in loop, width 8, unsigned, pipelined" =
   let open Make_test ((val spec 8 Unsigned Pipelined)) in
   let sim, waves, inputs = start_division ~numerator:81 ~denominator:0 in
   for i = 1 to 2 * Div.I.port_widths.numerator do
-    inputs.denominator <-. i;
+    inputs.denominator <--. i;
     Cyclesim.cycle sim;
     if i = 3 then inputs.start := Bits.gnd else inputs.start := Bits.vdd
   done;
@@ -345,9 +328,6 @@ let%expect_test "Wavetest, 81 divided in loop, width 8, unsigned, pipelined" =
     │                  ││────────────────────────────────────┴───┴───┴───────┴───┴─│
     │valid             ││                                ┌───────────┐   ┌─────────│
     │                  ││────────────────────────────────┘           └───┘         │
-    │                  ││                                                          │
-    │                  ││                                                          │
-    │                  ││                                                          │
     └──────────────────┘└──────────────────────────────────────────────────────────┘
     |}]
 ;;
@@ -356,7 +336,7 @@ let%expect_test "Wavetest, -81 divided in loop, width 8, signed, pipelined" =
   let open Make_test ((val spec 8 Signed Pipelined)) in
   let sim, waves, inputs = start_division ~numerator:(-81) ~denominator:0 in
   for i = 1 to 2 * Div.I.port_widths.numerator do
-    inputs.denominator <-. i;
+    inputs.denominator <--. i;
     Cyclesim.cycle sim;
     if i = 3 then inputs.start := Bits.gnd else inputs.start := Bits.vdd
   done;
@@ -376,17 +356,14 @@ let%expect_test "Wavetest, -81 divided in loop, width 8, signed, pipelined" =
     │                  ││──────────────────────────────────────────────────────────│
     │start             ││────────────┐   ┌─────────────────────────────────────────│
     │                  ││            └───┘                                         │
-    │                  ││────────────────────────────────┬───┬───┬───┬───┬───┬───┬─│
-    │quotient          ││ 01                             │AF │D8 │E5 │00 │F0 │F3 │F│
-    │                  ││────────────────────────────────┴───┴───┴───┴───┴───┴───┴─│
-    │                  ││────────────────────────────────────┬───┬───┬───────┬───┬─│
-    │remainder         ││ 00                                 │FF │00 │FF     │FD │F│
-    │                  ││────────────────────────────────────┴───┴───┴───────┴───┴─│
-    │valid             ││                                ┌───────────┐   ┌─────────│
-    │                  ││────────────────────────────────┘           └───┘         │
-    │                  ││                                                          │
-    │                  ││                                                          │
-    │                  ││                                                          │
+    │                  ││────────────────────────────────────┬───┬───┬───┬───┬───┬─│
+    │quotient          ││ 001                                │1AF│1D8│1E5│000│1F0│1│
+    │                  ││────────────────────────────────────┴───┴───┴───┴───┴───┴─│
+    │                  ││────────────────────────────────────────┬───┬───┬───────┬─│
+    │remainder         ││ 000                                    │1FF│000│1FF    │1│
+    │                  ││────────────────────────────────────────┴───┴───┴───────┴─│
+    │valid             ││                                    ┌───────────┐   ┌─────│
+    │                  ││────────────────────────────────────┘           └───┘     │
     └──────────────────┘└──────────────────────────────────────────────────────────┘
     |}]
 ;;
@@ -423,23 +400,59 @@ let%expect_test "Wavetest, clear test, width 8, signed" =
     │start             ││────┐                                                     │
     │                  ││    └───────────────────────────────────────────────────  │
     │                  ││────────────┬───┬───┬───┬───┬───┬───────────────────────  │
-    │quotient          ││ 01         │81 │C1 │E1 │F1 │F9 │01                       │
+    │quotient          ││ 001        │101│181│1C1│1E1│1F1│001                      │
     │                  ││────────────┴───┴───┴───┴───┴───┴───────────────────────  │
     │                  ││────────────────────────────────────────────────────────  │
-    │remainder         ││ 00                                                       │
+    │remainder         ││ 000                                                      │
     │                  ││────────────────────────────────────────────────────────  │
     │valid             ││                                                          │
     │                  ││────────────────────────────────────────────────────────  │
-    │                  ││                                                          │
-    │                  ││                                                          │
-    │                  ││                                                          │
+    └──────────────────┘└──────────────────────────────────────────────────────────┘
+    |}]
+;;
+
+let%expect_test "Wavetest, -8 divided by -1, width 4, signed, iterative (test the two's \
+                 complement representability problem)"
+  =
+  let open Make_test ((val spec 4 Signed Iterative)) in
+  let sim, waves, inputs = start_division ~numerator:(-8) ~denominator:(-1) in
+  for _ = 0 to Div.I.port_widths.numerator + 4 do
+    Cyclesim.cycle sim;
+    inputs.start := Bits.gnd;
+    inputs.numerator <--. 0;
+    inputs.denominator <--. 0
+  done;
+  print waves;
+  [%expect
+    {|
+    ┌Signals───────────┐┌Waves─────────────────────────────────────────────────────┐
+    │clock             ││┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─│
+    │                  ││  └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ │
+    │clear             ││                                                          │
+    │                  ││────────────────────────────────────                      │
+    │                  ││────┬───────────────────────────────                      │
+    │denominator       ││ F  │0                                                    │
+    │                  ││────┴───────────────────────────────                      │
+    │                  ││────┬───────────────────────────────                      │
+    │numerator         ││ 8  │0                                                    │
+    │                  ││────┴───────────────────────────────                      │
+    │start             ││────┐                                                     │
+    │                  ││    └───────────────────────────────                      │
+    │                  ││────────┬───┬───┬───────────────────                      │
+    │quotient          ││ 01     │00 │01 │08                                       │
+    │                  ││────────┴───┴───┴───────────────────                      │
+    │                  ││────────────────────────────────────                      │
+    │remainder         ││ 00                                                       │
+    │                  ││────────────────────────────────────                      │
+    │valid             ││                        ┌───────────                      │
+    │                  ││────────────────────────┘                                 │
     └──────────────────┘└──────────────────────────────────────────────────────────┘
     |}]
 ;;
 
 (* Constrained random stim *)
 
-let test_widths = [ 8; 16; 32 ]
+let test_widths = [ 4; 5; 6; 7; 8; 12; 16; 24; 32; 33; 48 ]
 
 let%expect_test "Quickcheck, random unsigned" =
   List.iter test_widths ~f:(fun width ->
@@ -457,12 +470,12 @@ let n_tests = 1000 (* Number of tests specified manually for non-Quickcheck test
 
 let%expect_test "Random test, width 32, unsigned, pipelined" =
   let open Make_test ((val spec 32 Unsigned Pipelined)) in
-  random_test_unrolled ~n_tests ~pvalid:0.8 ()
+  random_test_unrolled ~pipe_depth:31 ~n_tests ~pvalid:0.8 ()
 ;;
 
 let%expect_test "Random test, width 32, signed, pipelined" =
   let open Make_test ((val spec 32 Signed Pipelined)) in
-  random_test_unrolled ~n_tests ~pvalid:0.8 ()
+  random_test_unrolled ~pipe_depth:32 ~n_tests ~pvalid:0.8 ()
 ;;
 
 let%expect_test "Random test, width 32, unsigned, combinational" =

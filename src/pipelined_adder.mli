@@ -26,10 +26,9 @@ val create
 
     The maximum delay is an adder of width:
 
-    [max (width / part_width) (part_width*2)]
-*)
+    [max (width / part_width) (part_width*2)] *)
 module Short_latency : sig
-  (** Combinational version of the circuit.  For testing. *)
+  (** Combinational version of the circuit. For testing. *)
   val comb : (module Comb.S with type t = 'a) -> part_width:int -> 'a -> 'a -> 'a
 
   (** Sequential circuit with 2 cycle delay. *)

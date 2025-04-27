@@ -12,12 +12,12 @@ let%expect_test "test bits" =
             Mul.create
               ~config
               (module Bits)
-              (of_int ~width:bits_x x)
-              (of_int ~width:bits_y y)
+              (of_int_trunc ~width:bits_x x)
+              (of_int_trunc ~width:bits_y y)
           in
           let wallace = mul Wallace in
           let dadda = mul Dadda in
-          if expected <> to_int wallace || expected <> to_int dadda
+          if expected <> to_int_trunc wallace || expected <> to_int_trunc dadda
           then
             print_s
               [%message
@@ -40,7 +40,7 @@ let%expect_test "shift" =
   for shift = 0 to 10 do
     let times = 1 lsl shift in
     let mul config =
-      Mul.create ~config (module Bits) vdd (of_int ~width:(num_bits times) times)
+      Mul.create ~config (module Bits) vdd (of_int_trunc ~width:(num_bits times) times)
     in
     let wallace = mul Wallace in
     let dadda = mul Dadda in
@@ -89,7 +89,11 @@ let%expect_test "max" =
   for x = 1 to 3 do
     for y = 1 to 3 do
       let mul config =
-        Mul.create ~config (module Bits) (of_int ~width:x (-1)) (of_int ~width:y (-1))
+        Mul.create
+          ~config
+          (module Bits)
+          (of_int_trunc ~width:x (-1))
+          (of_int_trunc ~width:y (-1))
       in
       let wallace = mul Wallace in
       let dadda = mul Dadda in

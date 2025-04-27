@@ -12,7 +12,7 @@ module Make (Spec : Spec) = struct
   let of_float x = round (x *. scale)
   let to_float t = Float.of_int t /. scale
   let of_bits bits = bits |> Bits.to_signed_int
-  let to_bits t = Bits.of_int ~width t
+  let to_bits t = Bits.of_int_trunc ~width t
   let constb t = t |> to_bits |> Bits.to_bstr
   let pow2 i = Int.( lsl ) 1 (Spec.fractional_width + i)
   let bits_constf f = f |> of_float |> to_bits
@@ -21,5 +21,5 @@ module Make (Spec : Spec) = struct
     Signal.((sra (a *+ b) ~by:Spec.fractional_width).:[Spec.width - 1, 0])
   ;;
 
-  let signal_constf f = Signal.of_int ~width (f |> of_float)
+  let signal_constf f = Signal.of_int_trunc ~width (f |> of_float)
 end

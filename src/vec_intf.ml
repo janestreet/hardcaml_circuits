@@ -27,7 +27,12 @@ module type S = sig
 
       [next] defines a function which can set the register when not performing an insert
       or delete operation. *)
-  val create : Reg_spec.t -> vec_size:int -> next:(index:int -> data -> data) -> op -> t
+  val create
+    :  Signal.Reg_spec.t
+    -> vec_size:int
+    -> next:(index:int -> data -> data)
+    -> op
+    -> t
 
   (** Get the value at the given index. *)
   val get : t -> index:int -> data

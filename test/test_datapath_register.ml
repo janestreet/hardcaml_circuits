@@ -29,15 +29,15 @@ let run_test ~sim n =
   let rec run_cycle ?(data_index = 0) () =
     inputs.i.valid := Base.Random.bool () |> of_bool;
     inputs.i.ready := Base.Random.bool () |> of_bool;
-    inputs.i.data := Bits.of_int ~width:16 data_index;
+    inputs.i.data := Bits.of_int_trunc ~width:16 data_index;
     let data_index =
-      if is_vdd (!(inputs.i.valid) &: !(outputs.ready))
+      if to_bool (!(inputs.i.valid) &: !(outputs.ready))
       then (
         Queue.enqueue input_queue !(inputs.i.data);
         data_index + 1)
       else data_index
     in
-    if is_vdd (!(outputs.valid) &: !(inputs.i.ready))
+    if to_bool (!(outputs.valid) &: !(inputs.i.ready))
     then (
       match Queue.dequeue input_queue with
       | None -> raise_s [%message "No inputs in queue" [%here]]

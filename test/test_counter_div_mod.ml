@@ -15,7 +15,7 @@ module Sim (Config : Counter_div_mod.Config) = struct
     inputs.clear := Bits.vdd;
     Cyclesim.cycle sim;
     inputs.clear := Bits.gnd;
-    let conv x = Bits.to_int !x in
+    let conv x = Bits.to_int_trunc !x in
     let first_output = Counter_div_mod.O.map outputs ~f:conv in
     let outputs =
       List.map2_exn set_input_list input_list ~f:(fun set_opt incr ->
@@ -24,8 +24,9 @@ module Sim (Config : Counter_div_mod.Config) = struct
          | None -> inputs.set := Bits.gnd
          | Some (q, r) ->
            inputs.set := Bits.vdd;
-           inputs.set_quotient := Bits.of_int ~width:Counter_div_mod.quotient_bits q;
-           inputs.set_remainder := Bits.of_int ~width:Counter_div_mod.remainder_bits r);
+           inputs.set_quotient := Bits.of_int_trunc ~width:Counter_div_mod.quotient_bits q;
+           inputs.set_remainder
+           := Bits.of_int_trunc ~width:Counter_div_mod.remainder_bits r);
         Cyclesim.cycle sim;
         Counter_div_mod.O.map outputs ~f:conv)
     in
@@ -35,9 +36,7 @@ module Sim (Config : Counter_div_mod.Config) = struct
   ;;
 end
 
-let expect waves =
-  Waveform.expect ~wave_width:2 ~display_height:28 ~display_width:86 waves
-;;
+let expect waves = Waveform.expect ~wave_width:2 ~display_width:86 waves
 
 let%expect_test "custom" =
   let module Config = struct
@@ -76,12 +75,6 @@ let%expect_test "custom" =
     │                  ││────────────┬─────┬───────────┬─────┬─────┬───────────┬─────────│
     │remainder         ││ 0          │1    │2          │0    │1    │2          │0        │
     │                  ││────────────┴─────┴───────────┴─────┴─────┴───────────┴─────────│
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
     └──────────────────┘└────────────────────────────────────────────────────────────────┘
     7c3050d4d426f09cd7ca818604fb44bc
     |}]
@@ -122,14 +115,6 @@ let%expect_test "divisor = 1" =
     │                  ││────────────┴─────┴───────────┴─────┴─────┴───────────┴─────┴───│
     │remainder         ││                                                                │
     │                  ││────────────────────────────────────────────────────────────────│
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
     └──────────────────┘└────────────────────────────────────────────────────────────────┘
     e911836d727b90f77327c7205d54ff5f
     |}]
@@ -170,14 +155,6 @@ let%expect_test "set" =
     │                  ││──────────────────┴─────┴─────────────────┴─────                │
     │remainder         ││            ┌─────┐                 ┌─────┐                     │
     │                  ││────────────┘     └─────────────────┘     └─────                │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
     └──────────────────┘└────────────────────────────────────────────────────────────────┘
     0040c1caf60424948b122a1e2f09610c
     |}]

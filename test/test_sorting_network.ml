@@ -108,7 +108,7 @@ let%expect_test "check all possible zero-one inputs" =
   List.iter Config.all ~f:(fun config ->
     List.iter [ 1; 2; 4; 8; 16 ] ~f:(fun num_inputs ->
       for i = 0 to Int.pow 2 num_inputs - 1 do
-        let inputs = Bits.bits_msb (Bits.of_int ~width:num_inputs i) in
+        let inputs = Bits.bits_msb (Bits.of_int_trunc ~width:num_inputs i) in
         let sorted = create config sort_ascending_unsigned inputs in
         require
           (List.is_sorted sorted ~compare:(fun b1 b2 ->

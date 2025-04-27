@@ -31,7 +31,9 @@ module Make_tagged (Arg : Arg) = struct
 
       (* Initialize the indexes with [0,1,2,3,4, ...].  Tags are up to the user. *)
       let spec ~index =
-        { Interface.index = of_int ~width:log_vec_size index; tag = Arg.spec ~index }
+        { Interface.index = of_int_trunc ~width:log_vec_size index
+        ; tag = Arg.spec ~index
+        }
       ;;
     end)
 
@@ -76,12 +78,12 @@ module Make_tagged (Arg : Arg) = struct
       insertion_index
       (let d = Vec.get vec ~index:(vec_size - 1) in
        { d with tag = Option.value ~default:d.tag op.insertion_tag })
-      ~f:( <== );
+      ~f:( <-- );
     Interface.iter2
       deletion_index
       (let d = Vec.read_mux ~index:op.slot vec in
        { d with tag = Option.value ~default:d.tag op.deletion_tag })
-      ~f:( <== );
+      ~f:( <-- );
     (* the following is entirely optional, but useful for debugging. Track the highest
        index inserted, and the size of the vec as items are deleted. It means somewhat
        less if the user arbitrarily writes to slots (which is fine, but those indexes are
@@ -90,7 +92,7 @@ module Make_tagged (Arg : Arg) = struct
     let do_insert = op.op ==: insert (module Signal) in
     let do_remove = op.op ==: remove (module Signal) in
     length
-    <== reg_fb
+    <-- reg_fb
           spec
           ~enable:(do_insert |: do_remove)
           ~width:(Int.ceil_log2 (vec_size + 1))
@@ -98,8 +100,8 @@ module Make_tagged (Arg : Arg) = struct
             let slot = uresize op.slot ~width:(width length) in
             let next = length +:. 1 in
             let prev = length -:. 1 in
-            let max = of_int ~width:(width length) vec_size in
-            let min = of_int ~width:(width length) 0 in
+            let max = of_int_trunc ~width:(width length) vec_size in
+            let min = of_int_trunc ~width:(width length) 0 in
             let slot_is_empty = slot >=: length in
             let on_insert =
               mux2 (length ==: max) max @@ mux2 slot_is_empty (slot +:. 1) next
@@ -142,7 +144,7 @@ struct
 
       module Tag = Interface.Empty
 
-      let spec ~index:_ = Interface.Empty.None
+      let spec ~index:_ = Interface.Empty.Empty
     end)
 
   include Tagged

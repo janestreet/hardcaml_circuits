@@ -7,7 +7,7 @@ let test ~arity n =
   let clock = Signal.input "clock" 1 in
   let numbers = List.init n ~f:(fun i -> Signal.input ("x_" ^ Int.to_string i) 32) in
   let enable = Signal.input "enable" 1 in
-  let spec = Reg_spec.create ~clock () in
+  let spec = Signal.Reg_spec.create ~clock () in
   let output =
     Pipelined_tree_reduce.create ~f:Signal.( +: ) ~enable ~arity spec numbers
   in
@@ -26,7 +26,7 @@ let test ~arity n =
   (* First request *)
   get_input "enable" := Bits.vdd;
   for i = 0 to n - 1 do
-    get_input ("x_" ^ Int.to_string i) := Bits.of_int ~width:32 (i + 1)
+    get_input ("x_" ^ Int.to_string i) := Bits.of_int_trunc ~width:32 (i + 1)
   done;
   Cyclesim.cycle sim;
   get_input "enable" := Bits.gnd;
@@ -36,7 +36,7 @@ let test ~arity n =
   *)
   get_input "enable" := Bits.vdd;
   for i = 0 to n - 1 do
-    get_input ("x_" ^ Int.to_string i) := Bits.of_int ~width:32 (2 * (i + 1))
+    get_input ("x_" ^ Int.to_string i) := Bits.of_int_trunc ~width:32 (2 * (i + 1))
   done;
   Cyclesim.cycle sim;
   get_input "enable" := Bits.gnd;
@@ -52,7 +52,6 @@ let test ~arity n =
         ~expected_answer_2:(n * (1 + n) / 2 * 2 : int)];
   Waveform.expect
     ~display_width:80
-    ~display_height:13
     ~display_rules:
       Display_rule.
         [ port_name_is "clock" ~wave_format:Bit
@@ -78,8 +77,6 @@ let%expect_test "3 pipelined stages" =
     │                  ││────────────────────────┬───────────────┬─────────────────│
     │a_value           ││ 0                      │378            │756              │
     │                  ││────────────────────────┴───────────────┴─────────────────│
-    │                  ││                                                          │
-    │                  ││                                                          │
     └──────────────────┘└──────────────────────────────────────────────────────────┘
     dd1cc976f7161fd8b7f4682ea1019fe1
     |}]
@@ -98,10 +95,6 @@ let%expect_test "only 1 argument" =
     │                  ││────────────────┬─────────────────────────────────────────│
     │a_value           ││ 1              │2                                        │
     │                  ││────────────────┴─────────────────────────────────────────│
-    │                  ││                                                          │
-    │                  ││                                                          │
-    │                  ││                                                          │
-    │                  ││                                                          │
     └──────────────────┘└──────────────────────────────────────────────────────────┘
     0aad4d2cef873c61ff0be33625947486
     |}]
@@ -122,8 +115,6 @@ let%expect_test "less than arity, but more than 1" =
     │                  ││────────┬───────────────┬─────────────────────────────────│
     │a_value           ││ 0      │351            │702                              │
     │                  ││────────┴───────────────┴─────────────────────────────────│
-    │                  ││                                                          │
-    │                  ││                                                          │
     └──────────────────┘└──────────────────────────────────────────────────────────┘
     aecb274d7018587b09658a5b2119d04b
     |}]

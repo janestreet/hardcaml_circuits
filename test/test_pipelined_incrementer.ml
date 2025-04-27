@@ -25,11 +25,11 @@ let%expect_test "increment by 1" =
   let sim, waves, increment, _set, _value, _q =
     sim ~part_width:2 ~increment_width:2 ~total_width:4
   in
-  increment := Bits.of_int ~width:2 1;
+  increment := Bits.of_int_trunc ~width:2 1;
   for _ = 0 to 30 do
     Cyclesim.cycle sim
   done;
-  Waveform.expect ~wave_width:0 ~display_width:86 ~display_height:17 waves;
+  Waveform.expect ~wave_width:0 ~display_width:86 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────┐
@@ -57,11 +57,11 @@ let%expect_test "increment by 3" =
   let sim, waves, increment, _set, _value, _q =
     sim ~part_width:2 ~increment_width:2 ~total_width:4
   in
-  increment := Bits.of_int ~width:2 3;
+  increment := Bits.of_int_trunc ~width:2 3;
   for _ = 0 to 30 do
     Cyclesim.cycle sim
   done;
-  Waveform.expect ~wave_width:0 ~display_width:86 ~display_height:17 waves;
+  Waveform.expect ~wave_width:0 ~display_width:86 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────┐
@@ -90,10 +90,10 @@ let%expect_test "increment by differing amounts" =
     sim ~part_width:2 ~increment_width:2 ~total_width:4
   in
   for i = 0 to 30 do
-    increment := Bits.of_int ~width:2 (i % 4);
+    increment := Bits.of_int_trunc ~width:2 (i % 4);
     Cyclesim.cycle sim
   done;
-  Waveform.expect ~wave_width:0 ~display_width:86 ~display_height:17 waves;
+  Waveform.expect ~wave_width:0 ~display_width:86 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────┐
@@ -121,25 +121,25 @@ let%expect_test "set value" =
   let sim, waves, increment, set, value, _q =
     sim ~part_width:2 ~increment_width:2 ~total_width:4
   in
-  increment := Bits.of_int ~width:2 1;
+  increment := Bits.of_int_trunc ~width:2 1;
   for _ = 0 to 8 do
     Cyclesim.cycle sim
   done;
   set := Bits.vdd;
-  value := Bits.of_int ~width:4 0xf;
+  value := Bits.of_int_trunc ~width:4 0xf;
   Cyclesim.cycle sim;
   set := Bits.gnd;
   for _ = 0 to 8 do
     Cyclesim.cycle sim
   done;
   set := Bits.vdd;
-  value := Bits.of_int ~width:4 0x3;
+  value := Bits.of_int_trunc ~width:4 0x3;
   Cyclesim.cycle sim;
   set := Bits.gnd;
   for _ = 0 to 8 do
     Cyclesim.cycle sim
   done;
-  Waveform.expect ~wave_width:0 ~display_width:86 ~display_height:17 waves;
+  Waveform.expect ~wave_width:0 ~display_width:86 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────┐
@@ -167,11 +167,11 @@ let%expect_test "weird sizes" =
   let sim, waves, increment, _set, _value, _q =
     sim ~part_width:3 ~increment_width:2 ~total_width:4
   in
-  increment := Bits.of_int ~width:2 1;
+  increment := Bits.of_int_trunc ~width:2 1;
   for _ = 0 to 30 do
     Cyclesim.cycle sim
   done;
-  Waveform.expect ~wave_width:0 ~display_width:86 ~display_height:17 waves;
+  Waveform.expect ~wave_width:0 ~display_width:86 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────┐
@@ -202,16 +202,16 @@ let%expect_test "64 bit" =
   (* roll over at 32 bits *)
   increment := Bits.vdd;
   set := Bits.vdd;
-  value := Bits.of_int ~width:64 0xFFFF_FFFF;
+  value := Bits.of_int_trunc ~width:64 0xFFFF_FFFF;
   Cyclesim.cycle sim;
   set := Bits.gnd;
   Cyclesim.cycle sim;
-  print_s [%message (Bits.to_int64 !q : Int64.Hex.t)];
-  [%expect {| ("Bits.to_int64 (!q)" 0xffffffff) |}];
+  print_s [%message (Bits.to_int64_trunc !q : Int64.Hex.t)];
+  [%expect {| ("Bits.to_int64_trunc (!q)" 0xffffffff) |}];
   Cyclesim.cycle sim;
-  print_s [%message (Bits.to_int64 !q : Int64.Hex.t)];
-  [%expect {| ("Bits.to_int64 (!q)" 0x100000000) |}];
+  print_s [%message (Bits.to_int64_trunc !q : Int64.Hex.t)];
+  [%expect {| ("Bits.to_int64_trunc (!q)" 0x100000000) |}];
   Cyclesim.cycle sim;
-  print_s [%message (Bits.to_int64 !q : Int64.Hex.t)];
-  [%expect {| ("Bits.to_int64 (!q)" 0x100000001) |}]
+  print_s [%message (Bits.to_int64_trunc !q : Int64.Hex.t)];
+  [%expect {| ("Bits.to_int64_trunc (!q)" 0x100000001) |}]
 ;;

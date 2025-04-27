@@ -1,5 +1,6 @@
 open Base
 open Hardcaml
+open Signal
 include Cordic_intf
 
 module System = struct
@@ -11,7 +12,7 @@ module System = struct
     | Linear -> "10"
   ;;
 
-  let to_signal t = Signal.of_string (const t)
+  let to_signal t = of_string (const t)
 end
 
 module Mode = struct
@@ -23,7 +24,7 @@ module Mode = struct
     | Inverse -> "11"
   ;;
 
-  let to_signal t = Signal.of_string (const t)
+  let to_signal t = of_string (const t)
 end
 
 module Make (Fixnum_spec : Fixnum.Spec) = struct
@@ -72,21 +73,19 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
   end
 
   module Iterative = struct
-    module S = Signal
-    module C = Make_unrolled (S)
-    open S
+    module C = Make_unrolled (Signal)
 
     let hyper_iter ~reg_spec ~enable ~ld ~system ~iter =
-      let is_hyper = system ==: Signal.of_bit_string (System.const Hyperbolic) in
+      let is_hyper = system ==: of_bit_string (System.const Hyperbolic) in
       let iterh = wire (width iter) -- "iterh" in
       let k = wire (width iter + 2) -- "k" in
       let repeat = (k ==: zero 2 @: iterh) -- "repeated_step" in
       let upd v ~init t f =
         v
-        <== reg
+        <-- reg
               reg_spec
               ~enable
-              (mux2 ld (of_int ~width:(width t) init) (mux2 repeat t f))
+              (mux2 ld (of_int_trunc ~width:(width t) init) (mux2 repeat t f))
       in
       upd k ~init:4 (k +: sll k ~by:1 +:. 1) k;
       upd iterh ~init:1 iterh (iterh +:. 1);
@@ -103,7 +102,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
         mux
           iter
           (Array.to_list
-             (Array.map table ~f:(fun c -> S.of_bit_string (c |> Fixnum.constb))))
+             (Array.map table ~f:(fun c -> of_bit_string (c |> Fixnum.constb))))
       in
       let atan = table_lookup (C.atan iterations) in
       let atanh = table_lookup (C.atanh iterations) in
@@ -116,9 +115,9 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
       let xsft = log_shift ~f:sra xw ~by:iter in
       let ysft = log_shift ~f:sra yw ~by:iter in
       let xs, ys, zs = C.step ~x:xw ~xsft ~y:yw ~ysft ~z:zw ~d ~m ~e in
-      xw <== reg reg_spec ~enable (mux2 ld x xs);
-      yw <== reg reg_spec ~enable (mux2 ld y ys);
-      zw <== reg reg_spec ~enable (mux2 ld z zs);
+      xw <-- reg reg_spec ~enable (mux2 ld x xs);
+      yw <-- reg reg_spec ~enable (mux2 ld y ys);
+      zw <-- reg reg_spec ~enable (mux2 ld z zs);
       xw, yw, zw
     ;;
   end
@@ -160,7 +159,7 @@ module Make (Fixnum_spec : Fixnum.Spec) = struct
       | Combinational -> Unrolled.cordic ~system ~mode ~iterations ~c ~x ~y ~z ()
       | Pipelined ->
         Unrolled.cordic
-          ~pipe:(Signal.reg reg_spec ~enable:i.enable)
+          ~pipe:(reg reg_spec ~enable:i.enable)
           ~system
           ~mode
           ~iterations

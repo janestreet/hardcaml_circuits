@@ -17,7 +17,7 @@ let create_sim log_vec_size =
     ; op = Signal.input "op" (Signal.width (Vec.noop (module Signal)))
     }
   in
-  let vec = IVec.create (Reg_spec.create ~clock ~clear ()) op in
+  let vec = IVec.create (Signal.Reg_spec.create ~clock ~clear ()) op in
   let indexes = IVec.indexes vec in
   let circuit =
     Circuit.create_exn
@@ -42,7 +42,7 @@ let create_sim log_vec_size =
   Cyclesim.cycle sim;
   clear := Bits.gnd;
   ( sim
-  , (fun i -> slot := Bits.of_int ~width:log_vec_size i)
+  , (fun i -> slot := Bits.of_int_trunc ~width:log_vec_size i)
   , fun (f : (module Comb.S with type t = 'a) -> 'a) -> op := f (module Bits) )
 ;;
 
@@ -61,7 +61,7 @@ let%expect_test "fill and remove from start" =
   done;
   op Vec.noop;
   Cyclesim.cycle sim;
-  Waveform.print ~display_width:86 ~display_height:38 ~wave_width:2 waves;
+  Waveform.print ~display_width:86 ~wave_width:2 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────┐
@@ -101,6 +101,7 @@ let%expect_test "fill and remove from start" =
     │length            ││ 0    │1    │2    │3    │4    │3    │2    │1    │0              │
     │                  ││──────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────          │
     │gnd               ││                                                                │
+    │                  ││──────────────────────────────────────────────────────          │
     └──────────────────┘└────────────────────────────────────────────────────────────────┘
     |}]
 ;;
@@ -120,7 +121,7 @@ let%expect_test "fill and remove from end" =
   done;
   op Vec.noop;
   Cyclesim.cycle sim;
-  Waveform.print ~display_width:86 ~display_height:38 ~wave_width:2 waves;
+  Waveform.print ~display_width:86 ~wave_width:2 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────┐
@@ -160,6 +161,7 @@ let%expect_test "fill and remove from end" =
     │length            ││ 0    │1    │2    │3    │4    │3    │2    │1    │0              │
     │                  ││──────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────          │
     │gnd               ││                                                                │
+    │                  ││──────────────────────────────────────────────────────          │
     └──────────────────┘└────────────────────────────────────────────────────────────────┘
     |}]
 ;;
@@ -179,7 +181,7 @@ let%expect_test "fill at end and remove from start" =
   done;
   op Vec.noop;
   Cyclesim.cycle sim;
-  Waveform.print ~display_width:86 ~display_height:38 ~wave_width:2 waves;
+  Waveform.print ~display_width:86 ~wave_width:2 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────┐
@@ -219,6 +221,7 @@ let%expect_test "fill at end and remove from start" =
     │length            ││ 0    │1    │2    │3    │4    │3    │2    │1    │0              │
     │                  ││──────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────          │
     │gnd               ││                                                                │
+    │                  ││──────────────────────────────────────────────────────          │
     └──────────────────┘└────────────────────────────────────────────────────────────────┘
     |}]
 ;;
@@ -238,7 +241,7 @@ let%expect_test "fill at start and remove from end" =
   done;
   op Vec.noop;
   Cyclesim.cycle sim;
-  Waveform.print ~display_width:86 ~display_height:38 ~wave_width:2 waves;
+  Waveform.print ~display_width:86 ~wave_width:2 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────┐
@@ -278,6 +281,7 @@ let%expect_test "fill at start and remove from end" =
     │length            ││ 0    │1    │2    │3    │4    │3    │2    │1    │0              │
     │                  ││──────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────          │
     │gnd               ││                                                                │
+    │                  ││──────────────────────────────────────────────────────          │
     └──────────────────┘└────────────────────────────────────────────────────────────────┘
     |}]
 ;;
@@ -301,7 +305,7 @@ let create_sim log_vec_size =
        flow the table, or are performed outside the current "length". *)
     let expect = Array.init vec_size ~f:Fn.id in
     fun () ->
-      let slots = Array.map slots ~f:(fun b -> Bits.to_int !b) in
+      let slots = Array.map slots ~f:(fun b -> Bits.to_int_trunc !b) in
       Array.sort slots ~compare:Int.compare;
       [%test_result: int array] slots ~expect
   in
@@ -313,18 +317,18 @@ let create_sim log_vec_size =
     set_slot slot;
     set_op Vec.insert;
     cycle ();
-    table.(Bits.to_int !insertion_index) <- data
+    table.(Bits.to_int_trunc !insertion_index) <- data
   in
   let remove ~slot =
     set_slot slot;
     set_op Vec.remove;
     cycle ();
-    table.(Bits.to_int !deletion_index) <- '_'
+    table.(Bits.to_int_trunc !deletion_index) <- '_'
   in
   let show () =
-    let len = Bits.to_int !length in
+    let len = Bits.to_int_trunc !length in
     let s = String.init vec_size ~f:(fun i -> table.(i)) in
-    let s' = String.init vec_size ~f:(fun i -> table.(Bits.to_int !(slots.(i)))) in
+    let s' = String.init vec_size ~f:(fun i -> table.(Bits.to_int_trunc !(slots.(i)))) in
     let s'' = String.subo s' ~len in
     Stdio.printf "[%s] [%s] %s [%i]\n" s s' s'' len
   in
@@ -490,8 +494,8 @@ let%expect_test "test tagging - show that the tags move (and change) with insert
   let op =
     { IVec.slot = Signal.input "slot" log_vec_size
     ; op = Signal.input "op" (Signal.width (Vec.noop (module Signal)))
-    ; insertion_tag = Some { value = Signal.of_int ~width:4 0xA }
-    ; deletion_tag = Some { value = Signal.of_int ~width:4 0xD }
+    ; insertion_tag = Some { value = Signal.of_int_trunc ~width:4 0xA }
+    ; deletion_tag = Some { value = Signal.of_int_trunc ~width:4 0xD }
     }
   in
   let set_tags = Signal.input "set_tags" 1 in
@@ -499,13 +503,13 @@ let%expect_test "test tagging - show that the tags move (and change) with insert
   let vec =
     IVec.create
       ~tag_next:(fun ~index d ->
-        { Tag.value = Signal.mux2 set_tags (Signal.of_int ~width:4 index) d.value })
+        { Tag.value = Signal.mux2 set_tags (Signal.of_int_trunc ~width:4 index) d.value })
       ~index_next:(fun ~index d ->
         Signal.mux2
           set_indexes
-          (Signal.of_int ~width:log_vec_size ((1 lsl log_vec_size) - index - 1))
+          (Signal.of_int_trunc ~width:log_vec_size ((1 lsl log_vec_size) - index - 1))
           d)
-      (Reg_spec.create ~clock ~clear ())
+      (Signal.Reg_spec.create ~clock ~clear ())
       op
   in
   let indexes = IVec.indexes vec in
@@ -538,7 +542,7 @@ let%expect_test "test tagging - show that the tags move (and change) with insert
   clear := Bits.gnd;
   let (waves, sim), slot, op =
     ( Waveform.create sim
-    , (fun i -> slot := Bits.of_int ~width:log_vec_size i)
+    , (fun i -> slot := Bits.of_int_trunc ~width:log_vec_size i)
     , fun (f : (module Comb.S with type t = 'a) -> 'a) -> op := f (module Bits) )
   in
   (* move indexes and tags around by inserting and deleting *)
@@ -566,7 +570,7 @@ let%expect_test "test tagging - show that the tags move (and change) with insert
   Cyclesim.cycle sim;
   set_indexes := Bits.gnd;
   Cyclesim.cycle sim;
-  Waveform.print ~display_width:86 ~display_height:56 ~wave_width:2 waves;
+  Waveform.print ~display_width:86 ~wave_width:2 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────┐
@@ -623,7 +627,6 @@ let%expect_test "test tagging - show that the tags move (and change) with insert
     │                  ││────────────────────────┴───────────┴─────────────────          │
     │gnd               ││                                                                │
     │                  ││──────────────────────────────────────────────────────          │
-    │                  ││                                                                │
     └──────────────────┘└────────────────────────────────────────────────────────────────┘
     |}]
 ;;

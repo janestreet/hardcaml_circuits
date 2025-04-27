@@ -19,8 +19,8 @@
 
     http://www.iti.fh-flensburg.de/lang/algorithmen/sortieren/networks/indexen.htm
 
-    The algorithms are analysed using the 0-1 principle which states that a network
-    that sorts any sequence of 0s and 1s also sorts arbitrary data. *)
+    The algorithms are analysed using the 0-1 principle which states that a network that
+    sorts any sequence of 0s and 1s also sorts arbitrary data. *)
 
 module Config : sig
   (** The sorting algorithms require the input list's length to be a power of 2. *)

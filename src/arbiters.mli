@@ -1,9 +1,10 @@
-(** Arbiter circuits.  Given a set of requesters the arbiter chooses one to succeed. *)
+(** Arbiter circuits. Given a set of requesters the arbiter chooses one to succeed. *)
 
 open! Base
 open! Hardcaml
 
-(** Priority is specified as either a offset to start searching from, or as a special mask.
+(** {v
+ Priority is specified as either a offset to start searching from, or as a special mask.
 
     The mask has the form:
 
@@ -12,7 +13,7 @@ open! Hardcaml
     - [2]             [11..1100]
     - [3]             [11..1000]
     - [num_sources-1] [10..0000]
-*)
+    v} *)
 module Index : sig
   type 'a t =
     | Offset of 'a

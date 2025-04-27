@@ -20,8 +20,8 @@ let create_sim n_bits =
   fun () ->
     for i = 0 to (1 lsl n_bits) - 1 do
       for j = 0 to (1 lsl n_bits) - 1 do
-        a := Bits.of_int ~width:n_bits i;
-        b := Bits.of_int ~width:n_bits j;
+        a := Bits.of_int_trunc ~width:n_bits i;
+        b := Bits.of_int_trunc ~width:n_bits j;
         Cyclesim.cycle sim
       done
     done

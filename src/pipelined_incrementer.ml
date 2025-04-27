@@ -16,7 +16,7 @@ let create ~part_width ~clock ~clear ~(set : Signal.t With_valid.t) ~increment =
       let w = wire part_width in
       let a = mux2 set_valid (gnd @: set_value) Uop.(w +: incr) in
       let lsbs = reg (lsbs a) in
-      w <== lsbs;
+      w <-- lsbs;
       let msb = reg (msb a) in
       msb, lsbs
     in

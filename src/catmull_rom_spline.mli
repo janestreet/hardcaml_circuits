@@ -13,8 +13,7 @@
     For the hardware implemention, we also need to specify the fractional precision we
     want to use. We can experiment with the floating point version to find the minimum
     error for a specific configuration, then tweak the fixed points to get something
-    suitable.
-*)
+    suitable. *)
 
 open Base
 open Hardcaml
@@ -42,8 +41,7 @@ val evaluate_at
 
 type precision_config =
   { interpolation_table_fixed_point : int
-  (** Fixed point of interpolation table values (integer part if fixed to range in +/- 2).
-      *)
+  (** Fixed point of interpolation table values (integer part if fixed to range in +/- 2). *)
   ; control_point_fixed_point : int
   (** Fixed point of control point values (integer part will be inferred from evaluating
       the given function). *)

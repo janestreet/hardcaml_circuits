@@ -1,13 +1,13 @@
-(** Parallel prefix networks.  See https://en.wikipedia.org/wiki/Prefix_sum.
+(** Parallel prefix networks. See https://en.wikipedia.org/wiki/Prefix_sum.
 
     These require an associative operator, but do not depend on commutativity. *)
 
 module Config : sig
   type t =
-    | Serial (** Simple serial prefix structure.  Used for testing *)
-    | Sklansky (** Sklansky's parallel prefix structure.  High fanout *)
-    | Brent_kung (** Brent-Kung parallel prefix structure.  Lower fanout, more hardware *)
-    | Kogge_stone (** Kooge-Stone parallel prefix structure.  Large but fast *)
+    | Serial (** Simple serial prefix structure. Used for testing *)
+    | Sklansky (** Sklansky's parallel prefix structure. High fanout *)
+    | Brent_kung (** Brent-Kung parallel prefix structure. Lower fanout, more hardware *)
+    | Kogge_stone (** Kooge-Stone parallel prefix structure. Large but fast *)
   [@@deriving enumerate, sexp_of]
 end
 

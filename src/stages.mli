@@ -26,9 +26,9 @@ val input : 'a t array -> 'a
 (** The final output of the stages construction. *)
 val output : 'a t array -> 'a
 
-(** Create a pipeline of registers.  The [enable] controls the whole pipeline. *)
+(** Create a pipeline of registers. The [enable] controls the whole pipeline. *)
 val pipeline
-  :  Reg_spec.t
+  :  Signal.Reg_spec.t
   -> int
   -> enable:Signal.t
   -> init:Signal.t
@@ -43,7 +43,7 @@ type enabled_stage =
 (** Create a pipeline of registers. The [enable] is passed down the pipeline with the
     data. *)
 val pipeline_with_enable
-  :  Reg_spec.t
+  :  Signal.Reg_spec.t
   -> int
   -> enable:Signal.t
   -> init:Signal.t

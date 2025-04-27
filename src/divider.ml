@@ -4,6 +4,14 @@ open Signal
 include Divider_intf
 
 module Make (Spec : Spec) = struct
+  (* Signed division requires one additional bit in the output, because (INT_MIN)/(-1) is
+     not representable in two's complement without one extra bit in the quotient. *)
+  let div_width =
+    match Spec.signedness with
+    | Signed -> Spec.width + 1
+    | Unsigned -> Spec.width
+  ;;
+
   module I = struct
     type 'a t =
       { clock : 'a
@@ -17,8 +25,8 @@ module Make (Spec : Spec) = struct
 
   module O = struct
     type 'a t =
-      { quotient : 'a [@bits Spec.width]
-      ; remainder : 'a [@bits Spec.width]
+      { quotient : 'a [@bits div_width]
+      ; remainder : 'a [@bits div_width]
       ; valid : 'a
       }
     [@@deriving hardcaml]
@@ -55,13 +63,13 @@ module Make (Spec : Spec) = struct
     (* R and D need twice the word width of N and Q -
        add an extra bit to ensure initial values stay unsigned *)
     type 'a t =
-      { quot : 'a [@bits Spec.width]
-      ; rem : 'a [@bits (2 * Spec.width) + 1]
-      ; denom : 'a [@bits (2 * Spec.width) + 1]
+      { quot : 'a [@bits div_width]
+      ; rem : 'a [@bits (2 * div_width) + 1]
+      ; denom : 'a [@bits (2 * div_width) + 1]
       ; valid : 'a
-      ; count : 'a [@bits address_bits_for Spec.width]
+      ; count : 'a [@bits address_bits_for div_width]
       ; running : 'a
-      ; quot_mask : 'a [@bits Spec.width]
+      ; quot_mask : 'a [@bits div_width]
       }
     [@@deriving hardcaml]
 
@@ -75,7 +83,7 @@ module Make (Spec : Spec) = struct
         -- [%string "rem-s%{i#Int}"]
       in
       let quot_mask =
-        (sll (of_int ~width:Spec.width 1) ~by:i |> reverse)
+        (sll (of_int_trunc ~width:div_width 1) ~by:i |> reverse)
         -- [%string "quot_mask-s%{i#Int}"]
       in
       let quot =
@@ -90,15 +98,15 @@ module Make (Spec : Spec) = struct
   let create_unsigned_unrolled scope ?(pipe = Fn.id) (i : _ I.t) =
     let ( -- ) = Scope.naming scope in
     let rec create_pipeline t (stage : int) =
-      if stage = Spec.width
+      if stage = div_width
       then t
       else create_pipeline (State.create_next_stage scope ~pipe t stage) (stage + 1)
     in
     let (stage_input : _ State.t) =
       { (State.Of_signal.of_int 0) with
-        quot = of_int 0 ~width:Spec.width
-      ; rem = gnd @: zero Spec.width @: i.numerator
-      ; denom = gnd @: i.denominator @: zero Spec.width
+        quot = of_int_trunc 0 ~width:div_width
+      ; rem = gnd @: zero div_width @: uresize ~width:div_width i.numerator
+      ; denom = gnd @: uresize ~width:div_width i.denominator @: zero div_width
       ; valid = i.start
       }
     in
@@ -114,7 +122,7 @@ module Make (Spec : Spec) = struct
         (pipeline_outputs.rem +: pipeline_outputs.denom)
         pipeline_outputs.rem
     in
-    { O.remainder = adjusted_remainder.:+[Spec.width, Some Spec.width]
+    { O.remainder = adjusted_remainder.:+[div_width, Some div_width]
     ; quotient = adjusted_quotient
     ; valid = pipeline_outputs.valid
     }
@@ -133,10 +141,11 @@ module Make (Spec : Spec) = struct
       compile
         [ if_
             start
-            [ state.denom <-- gnd @: denominator @: zero Spec.width
+            [ state.denom
+              <-- gnd @: uresize ~width:div_width denominator @: zero div_width
             ; state.quot <--. 0
-            ; state.rem <-- gnd @: zero Spec.width @: numerator
-            ; state.count <-- ones (address_bits_for Spec.width)
+            ; state.rem <-- gnd @: zero div_width @: uresize ~width:div_width numerator
+            ; state.count <--. div_width - 1
             ; state.running <--. 1
             ; state.valid <--. 0
             ; state.quot_mask <-- vdd @: zero (width state.quot_mask.value - 1)
@@ -161,7 +170,7 @@ module Make (Spec : Spec) = struct
     let adjusted_remainder =
       mux2 remainder_pos state.rem.value (state.rem.value +: state.denom.value)
     in
-    { O.remainder = adjusted_remainder.:+[Spec.width, Some Spec.width]
+    { O.remainder = adjusted_remainder.:+[div_width, Some div_width]
     ; quotient = adjusted_quotient
     ; valid = state.valid.value
     }
@@ -187,7 +196,7 @@ module Make (Spec : Spec) = struct
     let num_denom_output_signs =
       match Spec.architecture with
       | Iterative -> Signal.reg spec ~enable:start (num_i_sign @: denom_i_sign)
-      | Pipelined -> Signal.pipeline spec ~n:Spec.width (num_i_sign @: denom_i_sign)
+      | Pipelined -> Signal.pipeline spec ~n:div_width (num_i_sign @: denom_i_sign)
       | Combinational -> num_i_sign @: denom_i_sign
     in
     let twos_neg x = ~:x +:. 1 in

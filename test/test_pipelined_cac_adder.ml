@@ -11,7 +11,7 @@ let%expect_test "cac truthtable" =
   in
   let cacs =
     List.init 8 ~f:(fun i ->
-      let x = of_int ~width:3 i in
+      let x = of_int_trunc ~width:3 i in
       i, (x, cac x))
   in
   print_s [%message (cacs : (int * (Bits.t * Bits.t)) list)];
@@ -37,10 +37,10 @@ let exhaustive_test_bits ~width ~part_width =
         Short_latency.comb
           (module Bits)
           ~part_width
-          (Bits.of_int ~width a)
-          (Bits.of_int ~width b)
+          (Bits.of_int_trunc ~width a)
+          (Bits.of_int_trunc ~width b)
       in
-      if Bits.to_int sum <> (a + b) land max
+      if Bits.to_int_trunc sum <> (a + b) land max
       then print_s [%message "mismatch" (a : int) "+" (b : int) "<>" (sum : Bits.t)]
     done
   done
@@ -122,16 +122,19 @@ let simulate ~part_width =
   let sum = Cyclesim.out_port sim "sum" in
   let prev_result = ref 0 in
   for i = 0 to (16 * 16) - 1 do
-    let x = Bits.of_int ~width:8 i in
+    let x = Bits.of_int_trunc ~width:8 i in
     a := x.Bits.:[3, 0];
     b := x.Bits.:[7, 4];
     Cyclesim.cycle sim;
     if i > 0
-    then if Bits.to_int !sum <> !prev_result then Stdio.printf "%i\n" (Bits.to_int !sum);
+    then
+      if Bits.to_int_trunc !sum <> !prev_result
+      then Stdio.printf "%i\n" (Bits.to_int_trunc !sum);
     prev_result := ((i lsr 4) + (i land 15)) land 15
   done;
   Cyclesim.cycle sim;
-  if Bits.to_int !sum <> !prev_result then Stdio.printf "%i\n" (Bits.to_int !sum)
+  if Bits.to_int_trunc !sum <> !prev_result
+  then Stdio.printf "%i\n" (Bits.to_int_trunc !sum)
 ;;
 
 let%expect_test "simulation" =

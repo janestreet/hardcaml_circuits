@@ -3,13 +3,11 @@ open Hardcaml
 open Hardcaml_waveterm
 open Hardcaml_circuits
 
-let ( <--. ) a b = a := Bits.of_int ~width:(Bits.width !a) b
-
 let init ~cycles ~num_data =
   let open Signal in
   let clock = input "clock" 1 in
   let clear = input "clear" 1 in
-  let data = List.init num_data ~f:(fun i -> of_int ~width:8 (i + 1)) in
+  let data = List.init num_data ~f:(fun i -> of_int_trunc ~width:8 (i + 1)) in
   let selector = input "selector" (Bits.address_bits_for (List.length data)) in
   let value =
     Pipelined_tree_mux.pipelined_tree_mux
@@ -20,6 +18,7 @@ let init ~cycles ~num_data =
   in
   let value = output "value" value in
   let sim = Cyclesim.create (Circuit.create_exn ~name:"pipelined_tree_mux" [ value ]) in
+  let open Bits in
   let waves, sim = Waveform.create sim in
   let selector = Cyclesim.in_port sim "selector" in
   for i = 0 to num_data - 1 do
@@ -34,7 +33,7 @@ let init ~cycles ~num_data =
 
 let%expect_test "" =
   let waves = init ~cycles:1 ~num_data:4 in
-  Waveform.print ~display_width:86 ~display_height:15 ~wave_width:1 waves;
+  Waveform.print ~display_width:86 ~wave_width:1 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────┐
@@ -48,16 +47,13 @@ let%expect_test "" =
     │                  ││────┬───┬───┬───┬───                                            │
     │value             ││ 00 │01 │02 │03 │04                                             │
     │                  ││────┴───┴───┴───┴───                                            │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
     └──────────────────┘└────────────────────────────────────────────────────────────────┘
     |}]
 ;;
 
 let%expect_test "" =
   let waves = init ~cycles:2 ~num_data:4 in
-  Waveform.print ~display_width:86 ~display_height:15 ~wave_width:1 waves;
+  Waveform.print ~display_width:86 ~wave_width:1 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────┐
@@ -71,16 +67,13 @@ let%expect_test "" =
     │                  ││────────┬───┬───┬───┬───                                        │
     │value             ││ 00     │01 │02 │03 │04                                         │
     │                  ││────────┴───┴───┴───┴───                                        │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
     └──────────────────┘└────────────────────────────────────────────────────────────────┘
     |}]
 ;;
 
 let%expect_test "" =
   let waves = init ~cycles:4 ~num_data:2 in
-  Waveform.print ~display_width:86 ~display_height:15 ~wave_width:1 waves;
+  Waveform.print ~display_width:86 ~wave_width:1 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────┐
@@ -93,17 +86,13 @@ let%expect_test "" =
     │                  ││────────────────┬───┬───                                        │
     │value             ││ 00             │01 │02                                         │
     │                  ││────────────────┴───┴───                                        │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
     └──────────────────┘└────────────────────────────────────────────────────────────────┘
     |}]
 ;;
 
 let%expect_test "" =
   let waves = init ~cycles:4 ~num_data:9 in
-  Waveform.print ~display_width:86 ~display_height:15 ~wave_width:1 waves;
+  Waveform.print ~display_width:86 ~wave_width:1 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────┐
@@ -117,9 +106,6 @@ let%expect_test "" =
     │                  ││────────────────┬───┬───┬───┬───┬───┬───┬───┬───┬───            │
     │value             ││ 00             │01 │02 │03 │04 │05 │06 │07 │08 │09             │
     │                  ││────────────────┴───┴───┴───┴───┴───┴───┴───┴───┴───            │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
     └──────────────────┘└────────────────────────────────────────────────────────────────┘
     |}]
 ;;
