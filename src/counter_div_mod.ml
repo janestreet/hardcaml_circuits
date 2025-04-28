@@ -78,7 +78,7 @@ module Make (Config : Config) = struct
         |> Signal.priority_select_with_default ~default:x)
     in
     wrap_now
-    <== (counter_remainder ==:. max_remainder &: (counter_quotient ==:. max_quotient));
+    <-- (counter_remainder ==:. max_remainder &: (counter_quotient ==:. max_quotient));
     { quotient = counter_quotient; remainder = counter_remainder }
   ;;
 

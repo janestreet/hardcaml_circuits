@@ -8,6 +8,7 @@ module Datapath_register = Datapath_register
 module Divide_by_constant = Divide_by_constant
 module Divider = Divider
 module Exactly_divisible_by_constant_power = Exactly_divisible_by_constant_power
+module Fanout_tree = Fanout_tree
 module Fast_fifo = Fast_fifo
 module Fixnum = Fixnum
 module Index_vec = Index_vec

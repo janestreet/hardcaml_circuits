@@ -22,7 +22,7 @@ module Make (Data : Hardcaml.Interface.S) : sig
     [@@deriving hardcaml]
   end
 
-  val create_io : Reg_spec.t -> Signal.t IO.t -> Signal.t IO.t
+  val create_io : Signal.Reg_spec.t -> Signal.t IO.t -> Signal.t IO.t
   val create : Scope.t -> Signal.t I.t -> Signal.t IO.t
   val hierarchical : ?instance:string -> Scope.t -> Signal.t I.t -> Signal.t IO.t
 end

@@ -10,7 +10,7 @@ let create_sim n_bits =
   let sim = Cyclesim.create circuit in
   let i = Cyclesim.in_port sim "i" in
   let o = Cyclesim.out_port sim "o" in
-  i := Bits.of_int ~width:n_bits 1;
+  i := Bits.of_int_trunc ~width:n_bits 1;
   fun () ->
     for _ = 0 to 99 do
       Cyclesim.cycle sim;

@@ -40,7 +40,7 @@ let%expect_test "pipeline" =
   let d = Signal.input "d" 8 in
   let q =
     Stages.pipeline
-      (Reg_spec.create ~clock:(Signal.input "clock" 1) ())
+      (Signal.Reg_spec.create ~clock:(Signal.input "clock" 1) ())
       3
       ~enable:Signal.vdd
       ~init:d
@@ -53,14 +53,14 @@ let%expect_test "pipeline" =
   let waves, sim = Waveform.create sim in
   let d = Cyclesim.in_port sim "d" in
   for i = 5 to 9 do
-    d := Bits.of_int ~width:8 i;
+    d := Bits.of_int_trunc ~width:8 i;
     Cyclesim.cycle sim
   done;
   for _ = 0 to 3 do
-    d := Bits.of_int ~width:8 0;
+    d := Bits.of_int_trunc ~width:8 0;
     Cyclesim.cycle sim
   done;
-  Waveform.expect ~display_width:84 ~display_height:10 ~wave_width:2 waves;
+  Waveform.expect ~display_width:84 ~wave_width:2 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves─────────────────────────────────────────────────────────┐
@@ -81,7 +81,7 @@ let%expect_test "pipeline with enable" =
   let d = Signal.input "d" 8 in
   let q =
     Stages.pipeline_with_enable
-      (Reg_spec.create ~clock:(Signal.input "clock" 1) ())
+      (Signal.Reg_spec.create ~clock:(Signal.input "clock" 1) ())
       3
       ~enable:(Signal.input "enable" 1)
       ~init:d
@@ -99,20 +99,20 @@ let%expect_test "pipeline with enable" =
   let d = Cyclesim.in_port sim "d" in
   enable := Bits.vdd;
   for i = 1 to 2 do
-    d := Bits.of_int ~width:8 i;
+    d := Bits.of_int_trunc ~width:8 i;
     Cyclesim.cycle sim
   done;
   enable := Bits.gnd;
-  d := Bits.of_int ~width:8 0xee;
+  d := Bits.of_int_trunc ~width:8 0xee;
   Cyclesim.cycle sim;
   enable := Bits.vdd;
-  d := Bits.of_int ~width:8 0xfe;
+  d := Bits.of_int_trunc ~width:8 0xfe;
   Cyclesim.cycle sim;
   enable := Bits.gnd;
   for _ = 0 to 3 do
     Cyclesim.cycle sim
   done;
-  Waveform.expect ~display_width:84 ~display_height:15 ~wave_width:2 waves;
+  Waveform.expect ~display_width:84 ~wave_width:2 waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves─────────────────────────────────────────────────────────┐
@@ -128,7 +128,6 @@ let%expect_test "pipeline with enable" =
     │                  ││──────────────────┴─────┴───────────┴───────────              │
     │valid             ││                  ┌───────────┐     ┌─────┐                   │
     │                  ││──────────────────┘           └─────┘     └─────              │
-    │                  ││                                                              │
     └──────────────────┘└──────────────────────────────────────────────────────────────┘
     80d601d312c1a1050d63faaab6f39939
     |}]

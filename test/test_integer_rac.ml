@@ -21,7 +21,7 @@ module Make (Config : Rac.Config) = struct
         { i with
           en = Bits.vdd
         ; ld = Bits.vdd
-        ; x = Array.map ~f:(Bits.of_int ~width:8) data_in
+        ; x = Array.map ~f:(Bits.of_int_trunc ~width:8) data_in
         }
     in
     (* This cycle's [addsub] setting is because in [Integer] mode, the first bit that we
@@ -49,14 +49,14 @@ module Make (Config : Rac.Config) = struct
   ;;
 
   let create_sim ~coefs =
-    let coefs = Array.map coefs ~f:(Bits.of_int ~width:8) in
+    let coefs = Array.map coefs ~f:(Bits.of_int_trunc ~width:8) in
     Sim.create (Rac.create ~coefs)
   ;;
 
   let run_and_print_waves ~simulator ~testbench ~data_in =
     let waves, simulator = Waveform.create simulator in
     let result = run ~simulator ~testbench ~data_in in
-    Waveform.expect ~display_height:28 ~display_width:120 ~wave_width:2 waves;
+    Waveform.expect ~display_width:120 ~wave_width:2 waves;
     result
   ;;
 
@@ -116,7 +116,6 @@ let%expect_test "simulation example" =
     │                  ││────────────────────────────────────────────────┬─────┬─────┬─────┬─────                          │
     │q                 ││ 00000                                          │00004│0000D│0001E│0003C                          │
     │                  ││────────────────────────────────────────────────┴─────┴─────┴─────┴─────                          │
-    │                  ││                                                                                                  │
     └──────────────────┘└──────────────────────────────────────────────────────────────────────────────────────────────────┘
     d2ae5bacae9add968e82b39c76f6dd3e
     (result 30)

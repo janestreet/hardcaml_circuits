@@ -3,7 +3,7 @@
     multipliation.
 
     When dividing, the output [quotient] (ie the result) is correct if and only if the
-    input value is exactly divisible by the divider.  It does not perform truncation.
+    input value is exactly divisible by the divider. It does not perform truncation.
 
     Only odd values of [base] are currently supported. Even values can be synthesized with
     additional logic to divide by powers of 2 (ie shifting).
@@ -15,8 +15,7 @@
 
     Optional (but generally required) outputs indicate if the division (or multiplication)
     overflowed the output range, or if the input was not exactly divisible. To support
-    this the internal multiply operation uses more bits.
-*)
+    this the internal multiply operation uses more bits. *)
 
 open! Base
 open Hardcaml
@@ -30,7 +29,7 @@ module Inclusive_integer_range : sig
     }
   [@@deriving sexp_of]
 
-  (** Create an integer range.  [min <= max] or it will raise. *)
+  (** Create an integer range. [min <= max] or it will raise. *)
   val create : min:int -> max:int -> t
 
   (** Does the range need a sign bit? *)
@@ -49,29 +48,29 @@ module Make (Bits : Comb.S) : sig
   (** Number of bits in [pow] control signals for the given range. *)
   val pow_bits : bounds:Inclusive_integer_range.t -> int
 
-  (** In the first stage we look up the table of modulo inverses corresponding to [pow].
-  *)
+  (** In the first stage we look up the table of modulo inverses corresponding to [pow]. *)
   module Inverse_rom : sig
     type 'a t
 
     val create
       :  check_for_error:bool
-           (** Whether or not this module should internally drive [error]
-               This performs two checks -
+           (** Whether or not this module should internally drive [error] This performs
+               two checks -
 
                (1) Whether the output of the division will fit in [output_bits].
                (2) Whether the [dividend] is an integer multiple of [base ** pow].
 
                Setting to [true] makes the internal multiply wider and adds some extra
                logic. *)
+      -> signedness:Signedness.t (** The dividend signed or unsigned *)
       -> bounds:Inclusive_integer_range.t
            (** The range of powers of [base] that this module supports dividing by. *)
       -> base:int
            (** The base of the power that is going to serve as the divisor in the
-          division. *)
+               division. *)
       -> output_bits:int
       -> dividend:Bits.t (** The signed number to be divided *)
-      -> pow:Bits.t (** The selected power.  Requires [pow_bits]. *)
+      -> pow:Bits.t (** The selected power. Requires [pow_bits]. *)
       -> Bits.t t
 
     val map : Bits.t t -> f:(string -> Bits.t -> Bits.t) -> Bits.t t
@@ -108,12 +107,17 @@ module Make (Bits : Comb.S) : sig
   end
 
   val divide
-    :  check_for_error:bool
+    :  ?map_inverse_rom:(string -> Bits.t -> Bits.t)
+    -> ?map_multiplication:(string -> Bits.t -> Bits.t)
+    -> ?map_error_check:(string -> Bits.t -> Bits.t)
+    -> check_for_error:bool
+    -> signedness:Signedness.t
     -> bounds:Inclusive_integer_range.t
     -> base:int
     -> output_bits:int
     -> dividend:Bits.t
     -> pow:Bits.t
+    -> unit
     -> Bits.t Types.With_valid.t
 end
 

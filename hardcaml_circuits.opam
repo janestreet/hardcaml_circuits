@@ -18,7 +18,7 @@ depends: [
   "ppx_hardcaml"
   "ppx_jane"
   "stdio"
-  "dune"                 {>= "3.11.0"}
+  "dune"                 {>= "3.17.0"}
 ]
 available: arch != "arm32" & arch != "x86_32"
 synopsis: "Hardcaml Circuits"

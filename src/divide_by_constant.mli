@@ -1,8 +1,7 @@
 (** Unsigned division by an constant. Result is exact with respect to standard integer
     division with truncation. Uses a multipler and 2 adders internally.
 
-    https://en.wikipedia.org/wiki/Division_algorithm#Division_by_a_constant
-*)
+    https://en.wikipedia.org/wiki/Division_algorithm#Division_by_a_constant *)
 
 open Base
 open Hardcaml

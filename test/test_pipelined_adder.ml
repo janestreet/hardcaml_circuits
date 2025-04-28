@@ -40,10 +40,10 @@ let test_randomly ~part_width ~adder_width ~num_tests =
               (cycles : int)
               (part_width : int)
               (adder_width : int)
-              (Bits.to_int a_d.(i) : Int.Hex.t)
-              (Bits.to_int b_d.(i) : Int.Hex.t)
-              (Bits.to_int expected : Int.Hex.t)
-              (Bits.to_int !c : Int.Hex.t)])
+              (Bits.to_int_trunc a_d.(i) : Int.Hex.t)
+              (Bits.to_int_trunc b_d.(i) : Int.Hex.t)
+              (Bits.to_int_trunc expected : Int.Hex.t)
+              (Bits.to_int_trunc !c : Int.Hex.t)])
   done
 ;;
 

@@ -28,10 +28,10 @@ let%expect_test "parallel prefix adder" =
           create
             (module Bits)
             ~config
-            ~input1:(Bits.of_int ~width:nbits input1)
-            ~input2:(Bits.of_int ~width:nbits input2)
+            ~input1:(Bits.of_int_trunc ~width:nbits input1)
+            ~input2:(Bits.of_int_trunc ~width:nbits input2)
             ~carry_in:(if carry = 1 then Bits.vdd else Bits.gnd)
-          |> Bits.to_int
+          |> Bits.to_int_trunc
         in
         require_equal (module Int) (input1 + input2 + carry) output;
         print_s

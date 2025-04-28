@@ -2,14 +2,13 @@
 
     This table stores indexes and optional tags and should be connected to a RAM. The
     structure is built from registers. For [N] slots, it requires [N * log2 N * width tag]
-    register bits.
-*)
+    register bits. *)
 
 open Base
 open Hardcaml
 
 module type Arg = sig
-  (** Tag associated with each index.  Set to [Hardcaml.Interface.None] to disable. *)
+  (** Tag associated with each index. Set to [Hardcaml.Interface.None] to disable. *)
   module Tag : Interface.S
 
   (** Value associated with tag values. *)
@@ -26,7 +25,7 @@ module type S = sig
   (** {2 Hardware design and queries}
 
       The vec is a small, growable array of elements. Elements may be inserted and removed
-      from any position.  Note that insertion and deletion shuffle elements up/down.
+      from any position. Note that insertion and deletion shuffle elements up/down.
 
       Unlike a normal data structure, it isn't supposed to hold the actual data. Instead
       it holds the index at which the data should reside. It should be connected to an
@@ -37,8 +36,8 @@ module type S = sig
       - [access_index] (with the address on [op.slot] and [op.op=noop]) when you want to
         access the data at a slot.
 
-      To insert an element, set [op.op = insert] and *during the same cycle* write the data
-      to the (external) memory at [insertion_index]. Similarly to delete an element.
+      To insert an element, set [op.op = insert] and *during the same cycle* write the
+      data to the (external) memory at [insertion_index]. Similarly to delete an element.
 
       In some cases it is necessary to associate some extra bits that move with the
       indices - this can be done using tags. Tags may be changed (though the [tag_next]
@@ -71,11 +70,13 @@ module type S = sig
 
   (** {2 Length status}
 
-      The length is tracked during inserts and removes. To compute the length it tracks the
-      insertion/deletion slot. Removing from an 'empty' slot does not decrease the size.
+      The length is tracked during inserts and removes. To compute the length it tracks
+      the insertion/deletion slot. Removing from an 'empty' slot does not decrease the
+      size.
 
-      Using length is optional and probably not required unless treating the vec as a queue
-      or stack (which can also be implemented more efficiently with a fifo like structure).
+      Using length is optional and probably not required unless treating the vec as a
+      queue or stack (which can also be implemented more efficiently with a fifo like
+      structure).
 
       [full] and [empty] are derived combinationally from [length]. *)
 
@@ -118,7 +119,7 @@ module type Index_vec = sig
     val create
       :  ?index_next:(index:int -> Signal.t -> Signal.t)
       -> tag_next:(index:int -> Signal.t Arg.Tag.t -> Signal.t Arg.Tag.t)
-      -> Reg_spec.t
+      -> Signal.Reg_spec.t
       -> op
       -> t
   end
@@ -140,6 +141,10 @@ module type Index_vec = sig
         [index_next] is an optional function that can be used to update the index values
         themselves in cycles which no insertion or deletion is taking place. This is
         useful for multiplexing vector operations over data stored in RAM. *)
-    val create : ?index_next:(index:int -> Signal.t -> Signal.t) -> Reg_spec.t -> op -> t
+    val create
+      :  ?index_next:(index:int -> Signal.t -> Signal.t)
+      -> Signal.Reg_spec.t
+      -> op
+      -> t
   end
 end

@@ -125,9 +125,10 @@ module Make (Bits : Comb.S) = struct
       { bits : 'a T.t
       ; output_bits : int
       ; check_for_error : bool
+      ; signedness : Signedness.t
       }
 
-    let create ~check_for_error ~bounds ~base ~output_bits ~dividend ~pow =
+    let create ~check_for_error ~signedness ~bounds ~base ~output_bits ~dividend ~pow =
       if width pow <> pow_bits ~bounds
       then raise_s [%message "Width of [pow] is incorrect"];
       if base % 2 = 0 then raise_s [%message "[base] must be odd"];
@@ -149,6 +150,7 @@ module Make (Bits : Comb.S) = struct
           }
       ; output_bits
       ; check_for_error
+      ; signedness
       }
     ;;
 
@@ -170,6 +172,7 @@ module Make (Bits : Comb.S) = struct
       ; inverse_bits : int
       ; output_bits : int
       ; check_for_error : bool
+      ; signedness : Signedness.t
       }
     [@@deriving fields ~getters]
 
@@ -177,13 +180,19 @@ module Make (Bits : Comb.S) = struct
       { Inverse_rom.bits = { inverse; dividend; is_division }
       ; output_bits
       ; check_for_error
+      ; signedness
       }
       =
-      let result = dividend *+ inverse in
+      let result =
+        match signedness with
+        | Signed -> dividend *+ inverse
+        | Unsigned -> dividend *: inverse
+      in
       { bits = { dividend; result; is_division }
       ; inverse_bits = width inverse
       ; output_bits
       ; check_for_error
+      ; signedness
       }
     ;;
 
@@ -211,32 +220,37 @@ module Make (Bits : Comb.S) = struct
       else gnd
     ;;
 
+    let unsigned_int_doesn't_fit ~num_bits unsigned =
+      if num_bits < Bits.width unsigned
+      then drop_bottom unsigned ~width:num_bits <>:. 0
+      else gnd
+    ;;
+
     let create
       ({ Multiplication.bits = { dividend; result; is_division }
        ; inverse_bits
        ; output_bits
        ; check_for_error
+       ; signedness
        } as t)
       =
+      let int_doesn't_fit =
+        match signedness with
+        | Signed -> signed_int_doesn't_fit
+        | Unsigned -> unsigned_int_doesn't_fit
+      in
       let division_input_too_big =
-        if check_for_error
-        then signed_int_doesn't_fit ~num_bits:inverse_bits dividend
-        else gnd
+        if check_for_error then int_doesn't_fit ~num_bits:inverse_bits dividend else gnd
       in
       let division_output_not_multiple =
         (* Technically, this also catches some corner cases of the input being too big -
            specifically when it's between the max output range and the range representable
            by [inverse_bits]. *)
         if check_for_error
-        then
-          signed_int_doesn't_fit
-            ~num_bits:output_bits
-            (sel_bottom result ~width:inverse_bits)
+        then int_doesn't_fit ~num_bits:output_bits (sel_bottom result ~width:inverse_bits)
         else gnd
       in
-      let multiplication_output_too_big =
-        signed_int_doesn't_fit ~num_bits:output_bits result
-      in
+      let multiplication_output_too_big = int_doesn't_fit ~num_bits:output_bits result in
       { quotient = Multiplication.quotient t
       ; division_input_too_big = division_input_too_big &: is_division
       ; division_output_not_multiple = division_output_not_multiple &: is_division
@@ -253,11 +267,33 @@ module Make (Bits : Comb.S) = struct
     let map t ~f = map2 port_names t ~f
   end
 
-  let divide ~check_for_error ~bounds ~base ~output_bits ~dividend ~pow =
+  let divide
+    ?(map_inverse_rom = fun _ -> Fn.id)
+    ?(map_multiplication = fun _ -> Fn.id)
+    ?(map_error_check = fun _ -> Fn.id)
+    ~check_for_error
+    ~signedness
+    ~bounds
+    ~base
+    ~output_bits
+    ~dividend
+    ~pow
+    ()
+    =
     let q =
-      Inverse_rom.create ~check_for_error ~bounds ~base ~output_bits ~dividend ~pow
+      Inverse_rom.create
+        ~check_for_error
+        ~signedness
+        ~bounds
+        ~base
+        ~output_bits
+        ~dividend
+        ~pow
+      |> Inverse_rom.map ~f:map_inverse_rom
       |> Multiplication.create
+      |> Multiplication.map ~f:map_multiplication
       |> Error_check.create
+      |> Error_check.map ~f:map_error_check
     in
     { With_valid.valid = ~:(Error_check.error q); value = Error_check.quotient q }
   ;;

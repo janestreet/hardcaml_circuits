@@ -36,8 +36,8 @@ module Make (Data : Hardcaml.Interface.S) = struct
       output_ready |: (~:temp_valid_reg &: (~:output_valid_reg |: ~:(i.valid)))
     in
     let input_ready_reg = reg ~enable:vdd input_ready_early in
-    output_valid_reg <== reg ~enable:vdd output_valid_next.value;
-    temp_valid_reg <== reg ~enable:vdd temp_valid_next.value;
+    output_valid_reg <-- reg ~enable:vdd output_valid_next.value;
+    temp_valid_reg <-- reg ~enable:vdd temp_valid_next.value;
     Always.(
       compile
         [ (* transfer sink ready state to source *)
@@ -79,7 +79,7 @@ module Make (Data : Hardcaml.Interface.S) = struct
   ;;
 
   let create _scope (i : _ I.t) =
-    let spec = Reg_spec.create () ~clock:i.clock ~clear:i.clear in
+    let spec = Signal.Reg_spec.create () ~clock:i.clock ~clear:i.clear in
     create_io spec i.i
   ;;
 

@@ -51,12 +51,12 @@ struct
     let used = wire (bits_for_addr + 1) -- "used" in
     let used_minus_1 = wire bits_for_addr -- "used_minus_1" in
     let used_next = mux2 push_actual (used +:. 1) (mux2 pop_actual (used -:. 1) used) in
-    used <== reg spec used_next;
-    used_minus_1 <== reg spec (lsbs (used_next -:. 1));
+    used <-- reg spec used_next;
+    used_minus_1 <-- reg spec (lsbs (used_next -:. 1));
     let empty_next = used_next ==:. 0 in
-    empty <== reg spec ~clear_to:vdd ~reset_to:vdd empty_next;
+    empty <-- reg spec ~clear_to:vdd ~reset_to:vdd empty_next;
     let full_next = used_next ==:. capacity in
-    full <== reg spec full_next;
+    full <-- reg spec full_next;
     (* ram instantiation *)
     let write_port =
       { Write_port.write_clock = i.clock

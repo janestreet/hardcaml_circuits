@@ -37,9 +37,8 @@ let create_circuit
     include Hardcaml.Interface.Make (Pre)
   end
   in
-  let module _ = Hardcaml_xilinx_reports.Command.With_interface (I) (O) in
   let create scope (input : _ I.t) =
-    let spec_no_clear = Reg_spec.create ~clock:input.clock () in
+    let spec_no_clear = Signal.Reg_spec.create ~clock:input.clock () in
     let reg x = Signal.reg spec_no_clear ~enable:Signal.vdd x in
     Component.create ~params ~scope ~clock:input.clock (I_data.map ~f:reg input.i_data)
     |> O.map ~f:reg
@@ -117,7 +116,6 @@ let command_for_single =
               ~sort_by_name:true
               ~flags:synth_flags
               (fun scope -> create_circuit scope (module Component) params)]
-        ~behave_nicely_in_pipeline:false
     in
     let name = Component.name |> String.substr_replace_all ~pattern:"_" ~with_:"-" in
     name, command)

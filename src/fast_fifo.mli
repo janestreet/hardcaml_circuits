@@ -32,8 +32,7 @@ module Make (M : Hardcaml.Interface.S) : sig
       Note that when [o.full] is asserted, [i.wr_enable] is ignored, even if [rd_enable]
       is asserted at the same cycle.
 
-      Raises an exception if [capacity < 1].
-  *)
+      Raises an exception if [capacity < 1]. *)
   val create : cut_through:bool -> capacity:int -> Scope.t -> Signal.t I.t -> Signal.t O.t
 
   val hierarchical

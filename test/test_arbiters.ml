@@ -7,9 +7,9 @@ let%expect_test "select next with clz" =
       List.init (Bits.width valids) ~f:(fun i ->
         Arbiters.select_next_with_clz
           (module Bits)
-          ~index:(Offset (Bits.of_int ~width:(Int.ceil_log2 (Bits.width valids)) i))
+          ~index:(Offset (Bits.of_int_trunc ~width:(Int.ceil_log2 (Bits.width valids)) i))
           valids
-        |> Bits.to_int)
+        |> Bits.to_int_trunc)
     in
     print_s [%message (valids : Bits.t)];
     List.iteri next ~f:(fun index next ->
@@ -17,7 +17,7 @@ let%expect_test "select next with clz" =
   in
   (* try all 4 bit cases *)
   for i = 0 to 15 do
-    test (Bits.of_int ~width:4 i);
+    test (Bits.of_int_trunc ~width:4 i);
     Stdio.printf "\n"
   done;
   [%expect
@@ -183,18 +183,22 @@ struct
       let valids = bits_lsb valids in
       let with_valids =
         List.mapi valids ~f:(fun i valid ->
-          { With_valid.valid; value = of_int ~width:8 i })
+          { With_valid.valid; value = of_int_trunc ~width:8 i })
       in
       let active =
         List.init (List.length valids) ~f:(fun i ->
           X.round_robin
             ~index:
               (Arbiters.Index.Offset
-                 (of_int ~width:(Int.ceil_log2 (List.length valids)) i))
+                 (of_int_trunc ~width:(Int.ceil_log2 (List.length valids)) i))
             ~data:with_valids)
       in
       let sexp_of_result (t : Bits.t With_valid.t) =
-        let r = if Bits.to_int t.valid <> 0 then Some (Bits.to_int t.value) else None in
+        let r =
+          if Bits.to_int_trunc t.valid <> 0
+          then Some (Bits.to_int_trunc t.value)
+          else None
+        in
         [%sexp (r : int option)]
       in
       List.iteri active ~f:(fun offset active ->
@@ -267,19 +271,19 @@ struct
   ;;
 end
 
-module _ = Test_round_robin_comb (struct
+module%test Test_log_shift_comb = Test_round_robin_comb (struct
     let round_robin =
       Arbiters.Round_robin_with_priority.Log_shift.combinational (module Bits)
     ;;
   end)
 
-module _ = Test_round_robin_comb (struct
+module%test Test_priority_count_zeros_comb = Test_round_robin_comb (struct
     let round_robin =
       Arbiters.Round_robin_with_priority.Count_zeros.combinational (module Bits)
     ;;
   end)
 
-module _ = Test_round_robin_comb (struct
+module%test Test_priority_onehot_cleaner_comb = Test_round_robin_comb (struct
     let round_robin =
       Arbiters.Round_robin_with_priority.Onehot_cleaner.combinational (module Bits)
     ;;
@@ -349,9 +353,9 @@ struct
           })
       in
       for i = 0 to num_sources - 1 do
-        data.(i).value := Bits.of_int ~width:data_width i
+        data.(i).value := Bits.of_int_trunc ~width:data_width i
       done;
-      index := Bits.of_int ~width:log_num_sources 0;
+      index := Bits.of_int_trunc ~width:log_num_sources 0;
       for i = num_sources - 1 downto 0 do
         data.(i).valid := Bits.vdd;
         Cyclesim.cycle sim
@@ -362,7 +366,7 @@ struct
       data.(1).valid := Bits.vdd;
       data.(num_sources - 1).valid := Bits.vdd;
       for i = 0 to num_sources - 1 do
-        index := Bits.of_int ~width:log_num_sources i;
+        index := Bits.of_int_trunc ~width:log_num_sources i;
         Cyclesim.cycle sim
       done;
       Cyclesim.cycle sim;
@@ -388,8 +392,6 @@ struct
       │               ││────────┘           └───────────────────           │
       │valid3         ││    ┌───────────────────────────────────           │
       │               ││────┘                                              │
-      │               ││                                                   │
-      │               ││                                                   │
       └───────────────┘└───────────────────────────────────────────────────┘
       2e2932e173d8209aeaaf01d084e347e9
       |}];
@@ -413,23 +415,21 @@ struct
       │               ││────────┘           └───────────────────           │
       │valid3         ││    ┌───────────────────────────────────           │
       │               ││────┘                                              │
-      │               ││                                                   │
-      │               ││                                                   │
       └───────────────┘└───────────────────────────────────────────────────┘
       2e2932e173d8209aeaaf01d084e347e9
       |}]
   ;;
 end
 
-module _ = Test_round_robin_seq (struct
+module%test Test_log_shift_seq = Test_round_robin_seq (struct
     let round_robin = Arbiters.Round_robin_with_priority.Log_shift.sequential
   end)
 
-module _ = Test_round_robin_seq (struct
+module%test Test_priority_count_zeros_seq = Test_round_robin_seq (struct
     let round_robin = Arbiters.Round_robin_with_priority.Count_zeros.sequential
   end)
 
-module _ = Test_round_robin_seq (struct
+module%test Test_priority_onehot_cleaner_seq = Test_round_robin_seq (struct
     let round_robin = Arbiters.Round_robin_with_priority.Onehot_cleaner.sequential
   end)
 
@@ -537,7 +537,7 @@ let%expect_test "prove the combinational architectures are equivalent" =
       (mux
          index
          (List.init (1 lsl log_size) ~f:(fun i ->
-            of_int ~width:(1 lsl log_size) (-1 lsl i))))
+            of_int_trunc ~width:(1 lsl log_size) (-1 lsl i))))
   in
   let prove, balanced, fast, small = build_proof mask in
   prove balanced fast;

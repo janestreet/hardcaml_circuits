@@ -77,7 +77,7 @@ struct
        | false -> ()
        | true ->
          let valid = to_bool !(o.q.valid) in
-         let value = to_int !(o.q.value) in
+         let value = to_int_trunc !(o.q.value) in
          (match Core.Stack.pop model with
           | None -> [%test_result: bool] valid ~expect:false
           | Some model_value ->
@@ -94,7 +94,7 @@ struct
       i.pop := gnd;
       (* set new inputs *)
       let push ?(cut_through = false) v =
-        i.wr_data := Bits.of_int ~width v;
+        i.wr_data := Bits.of_int_trunc ~width v;
         i.push := vdd;
         if cut_through || Core.Stack.length model < capacity then Core.Stack.push model v
       in
@@ -127,7 +127,7 @@ open Default_test
 let%expect_test "basic stack test - push a couple, push and pop, pop and underflow" =
   let (events : event list) = [ Push 1; Push 2; Push_pop 3; Pop; Pop; Pop; Pop ] in
   let waves = run_test ~verbose:true events in
-  Waveform.print ~display_width:52 ~display_height:27 ~wave_width:1 ~display_rules waves;
+  Waveform.print ~display_width:52 ~wave_width:1 ~display_rules waves;
   [%expect
     {|
     (popped (valid true) (value 3))
@@ -172,7 +172,7 @@ let%expect_test "basic stack test - fill up, overflow, push and pop, pop everyth
     @ List.init default_capacity ~f:(Fn.const Pop)
   in
   let waves = run_test events in
-  Waveform.print ~display_width:102 ~display_height:27 ~wave_width:1 ~display_rules waves;
+  Waveform.print ~display_width:102 ~wave_width:1 ~display_rules waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────────────────────┐
@@ -212,7 +212,7 @@ let%expect_test "stack test with read latency 2: fill, overflow, push and pop, p
     @ List.init default_capacity ~f:(Fn.const Pop)
   in
   let waves = run_test ~read_latency:2 events in
-  Waveform.print ~display_width:102 ~display_height:27 ~wave_width:1 ~display_rules waves;
+  Waveform.print ~display_width:102 ~wave_width:1 ~display_rules waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────────────────────┐
@@ -252,7 +252,7 @@ let%expect_test "stack test with read latency 3: fill, overflow, push and pop, p
     @ List.init default_capacity ~f:(Fn.const Pop)
   in
   let waves = run_test ~read_latency:3 events in
-  Waveform.print ~display_width:102 ~display_height:27 ~wave_width:1 ~display_rules waves;
+  Waveform.print ~display_width:102 ~wave_width:1 ~display_rules waves;
   [%expect
     {|
     ┌Signals───────────┐┌Waves───────────────────────────────────────────────────────────────────────────┐

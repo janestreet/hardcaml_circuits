@@ -6,8 +6,8 @@ open! Expect_test_helpers_base
 let test modulo =
   let result =
     List.init 16 ~f:(fun i ->
-      Modulo.unsigned_by_constant (module Bits) (Bits.of_int ~width:4 i) modulo
-      |> Bits.to_int)
+      Modulo.unsigned_by_constant (module Bits) (Bits.of_int_trunc ~width:4 i) modulo
+      |> Bits.to_int_trunc)
   in
   print_s [%message (result : int list)];
   let utilization =
@@ -75,8 +75,8 @@ let%expect_test "random tests" =
       let x = Random.int (1 lsl width) in
       let expected = x % modu in
       let got =
-        Modulo.unsigned_by_constant (module Bits) (Bits.of_int ~width x) modu
-        |> Bits.to_int
+        Modulo.unsigned_by_constant (module Bits) (Bits.of_int_trunc ~width x) modu
+        |> Bits.to_int_trunc
       in
       if expected <> got
       then print_s [%message (x : int) (modu : int) (expected : int) (got : int)]
@@ -89,6 +89,6 @@ let%expect_test "random tests" =
 
 let%expect_test "mod 0 raises" =
   require_does_raise (fun () ->
-    Modulo.unsigned_by_constant (module Bits) (Bits.of_int ~width:10 10) 0);
+    Modulo.unsigned_by_constant (module Bits) (Bits.of_int_trunc ~width:10 10) 0);
   [%expect {| "Cannot perform mod 0" |}]
 ;;

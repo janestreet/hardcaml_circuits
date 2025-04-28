@@ -52,7 +52,7 @@ module Make (M : Hardcaml.Interface.S) = struct
         ~rd:(~:fifo_empty &: i.rd_enable)
         ()
     in
-    fifo_empty <== underlying_fifo.empty;
+    fifo_empty <-- underlying_fifo.empty;
     let rd_data =
       if cut_through
       then

@@ -93,9 +93,12 @@ let testhw
           precision_config
           ~control_point_table
           ~interpolation_table
-          ~k:(Bits.of_int ~width:(Bits.address_bits_for config.num_control_points) k)
+          ~k:
+            (Bits.of_int_trunc ~width:(Bits.address_bits_for config.num_control_points) k)
           ~t:
-            (Bits.of_int ~width:(Bits.address_bits_for config.num_interpolation_points) t)
+            (Bits.of_int_trunc
+               ~width:(Bits.address_bits_for config.num_interpolation_points)
+               t)
         |> Hw.Fixed.to_float
       in
       let expected = expected config ~f ~minf ~k ~t in

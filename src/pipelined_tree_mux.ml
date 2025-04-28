@@ -118,7 +118,7 @@ let pipelined_tree_priority_select
         |> reduce
              ~cycle:(cycle + 1)
              ~enable:
-               (if Signal.is_vdd enable
+               (if Signal.Type.is_vdd enable
                 then
                   (* Skip inserting a register when enable is just tied to vdd. *)
                   enable

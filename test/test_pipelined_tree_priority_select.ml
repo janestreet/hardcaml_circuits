@@ -10,7 +10,9 @@ let init ~cycles num_data =
   let data =
     let input_n name index width = input (name ^ Int.to_string index) width in
     List.init num_data ~f:(fun i ->
-      { With_valid.valid = input_n "valid" (i + 1) 1; value = of_int ~width:8 (i + 1) })
+      { With_valid.valid = input_n "valid" (i + 1) 1
+      ; value = of_int_trunc ~width:8 (i + 1)
+      })
   in
   let { With_valid.valid; value } =
     Pipelined_tree_mux.pipelined_tree_priority_select
@@ -45,11 +47,7 @@ let strobe ~cycles num_data =
     Cyclesim.cycle sim
   done;
   Cyclesim.cycle sim;
-  Waveform.print
-    ~display_width:86
-    ~display_height:(11 + (num_data * 2))
-    ~wave_width:1
-    waves
+  Waveform.print ~display_width:86 ~wave_width:1 waves
 ;;
 
 let%expect_test "combinational" =
@@ -64,10 +62,6 @@ let%expect_test "combinational" =
     │                  ││────────────                                                    │
     │value             ││ 01                                                             │
     │                  ││────────────                                                    │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
     └──────────────────┘└────────────────────────────────────────────────────────────────┘
     |}];
   strobe ~cycles:0 3;
@@ -85,10 +79,6 @@ let%expect_test "combinational" =
     │                  ││────┬───┬───┬───────                                            │
     │value             ││ 03 │01 │02 │03                                                 │
     │                  ││────┴───┴───┴───────                                            │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
-    │                  ││                                                                │
     └──────────────────┘└────────────────────────────────────────────────────────────────┘
     |}]
 ;;
@@ -329,11 +319,7 @@ let random ~cycles num_data =
     Cyclesim.cycle sim
   done;
   Cyclesim.cycle sim;
-  Waveform.print
-    ~display_width:86
-    ~display_height:(11 + (num_data * 2))
-    ~wave_width:1
-    waves
+  Waveform.print ~display_width:86 ~wave_width:1 waves
 ;;
 
 let%expect_test "random valids" =

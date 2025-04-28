@@ -54,7 +54,7 @@ module Make (Arg : Arg) = struct
            (do_insert &: shift)
            (mux2 op_index_1h.:(index) op.insert_data shifted_up.(index))
            (mux2 (do_remove &: shift) shifted_down.(index) (next ~index regs.(index))))
-        ~f:( <== )
+        ~f:( <-- )
     done;
     { vec_size; regs }
   ;;

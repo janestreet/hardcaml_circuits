@@ -1,12 +1,12 @@
 (** ROM-accumulator.
 
     Evaluate [ a0.x0 + a1.x1 + ... + an.xn ] where the [ai] are constants, using
-    distributed arithmetic.  The architecture uses a rom and add/shift circuit and
-    requires no multipliers.
+    distributed arithmetic. The architecture uses a rom and add/shift circuit and requires
+    no multipliers.
 
-    The ROM-accumulator extends the idea of multiplication by adding and shifting.
-    [a0.x0] can be the calculated by testing each bit of [x] and adding [a] to the shifted
-    accumulator.  Similarly [a0.x0 + a1.x1] can be calculated by forming an address vector
+    The ROM-accumulator extends the idea of multiplication by adding and shifting. [a0.x0]
+    can be the calculated by testing each bit of [x] and adding [a] to the shifted
+    accumulator. Similarly [a0.x0 + a1.x1] can be calculated by forming an address vector
     from each successive bit, [b], of x0 and x1, i.e.:
 
     [[x1.[b]; x0.[b]]]
@@ -49,8 +49,8 @@ module type Config = sig
   (** Number of coefficients. *)
   val num_coefs : int
 
-  (** Extra least significant bits added to the accumulator.  This can add extra
-      precision without extending the rom size. *)
+  (** Extra least significant bits added to the accumulator. This can add extra precision
+      without extending the rom size. *)
   val rom_shift : int
 end
 
