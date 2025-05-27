@@ -1,5 +1,5 @@
-Hardcaml Circuits Library
-=========================
+Circuits
+========
 
 # hardcaml_circuits
 

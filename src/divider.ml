@@ -103,7 +103,7 @@ module Make (Spec : Spec) = struct
       else create_pipeline (State.create_next_stage scope ~pipe t stage) (stage + 1)
     in
     let (stage_input : _ State.t) =
-      { (State.Of_signal.of_int 0) with
+      { (State.Of_signal.zero ()) with
         quot = of_int_trunc 0 ~width:div_width
       ; rem = gnd @: zero div_width @: uresize ~width:div_width i.numerator
       ; denom = gnd @: uresize ~width:div_width i.denominator @: zero div_width
