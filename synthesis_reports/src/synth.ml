@@ -96,7 +96,7 @@ let create_mega_circuit scope (circuits : Circuit.t list) =
         let inst = Instantiation.create ~name:circuit_name ~inputs ~outputs () in
         List.map output_names ~f:(fun name ->
           Int.incr i;
-          Signal.output (sprintf "data_out_%d" !i) (Map.find_exn inst name)))
+          Signal.output (sprintf "data_out_%d" !i) (Instantiation.output inst name)))
     |> List.concat
   in
   Circuit.create_exn ~name:"top" outputs
