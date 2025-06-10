@@ -23,7 +23,7 @@ module Make (Data : Hardcaml.Interface.S) = struct
   let create_io spec (i : _ IO.t) =
     let open Signal in
     let reg ~enable d = reg ~enable spec d in
-    let wire0 () = Always.Variable.wire ~default:gnd in
+    let wire0 () = Always.Variable.wire ~default:gnd () in
     let output_ready = i.ready in
     let temp_valid_reg = wire 1 in
     let output_valid_reg = wire 1 in
