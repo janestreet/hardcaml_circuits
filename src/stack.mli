@@ -2,11 +2,13 @@
 
 open Hardcaml
 
-module Make (Config : sig
-    module M : Hardcaml.Interface.S
+module type Config = sig
+  module M : Hardcaml.Interface.S
 
-    val capacity : int
-  end) : sig
+  val capacity : int
+end
+
+module Make (Config : Config) : sig
   module I : sig
     type 'a t =
       { clock : 'a

@@ -1,6 +1,13 @@
 open Import
 open Hardcaml_waveterm
 
+type ports =
+  { increment : Bits.t ref
+  ; set : Bits.t ref
+  ; value : Bits.t ref
+  ; q : Bits.t ref
+  }
+
 let sim ~part_width ~increment_width ~total_width =
   let clock = Signal.input "clock" 1 in
   let clear = Signal.input "clear" 1 in
@@ -10,25 +17,30 @@ let sim ~part_width ~increment_width ~total_width =
   let increment = Signal.input "increment" increment_width in
   let q = Pipelined_incrementer.create ~part_width ~clock ~clear ~set ~increment in
   let circuit = Circuit.create_exn ~name:"pipelined_incr" [ Signal.output "q" q ] in
-  let sim = Cyclesim.create circuit in
-  let increment, set, value, q =
-    ( Cyclesim.in_port sim "increment"
-    , Cyclesim.in_port sim "set"
-    , Cyclesim.in_port sim "value"
-    , Cyclesim.out_port sim "q" )
+  let sim =
+    Cyclesim.create ~config:{ Cyclesim.Config.default with store_circuit = true } circuit
+  in
+  let ports =
+    { increment = Cyclesim.in_port sim "increment"
+    ; set = Cyclesim.in_port sim "set"
+    ; value = Cyclesim.in_port sim "value"
+    ; q = Cyclesim.out_port sim "q"
+    }
   in
   let waves, sim = Waveform.create sim in
-  sim, waves, increment, set, value, q
+  sim, waves, ports
 ;;
 
-let%expect_test "increment by 1" =
-  let sim, waves, increment, _set, _value, _q =
-    sim ~part_width:2 ~increment_width:2 ~total_width:4
-  in
+let incr_by_one ~sim { increment; _ } =
   increment := Bits.of_int_trunc ~width:2 1;
   for _ = 0 to 30 do
     Cyclesim.cycle sim
-  done;
+  done
+;;
+
+let%expect_test "increment by 1" =
+  let sim, waves, ports = sim ~part_width:2 ~increment_width:2 ~total_width:4 in
+  incr_by_one ~sim ports;
   Waveform.expect ~wave_width:0 ~display_width:86 waves;
   [%expect
     {|
@@ -53,14 +65,16 @@ let%expect_test "increment by 1" =
     |}]
 ;;
 
-let%expect_test "increment by 3" =
-  let sim, waves, increment, _set, _value, _q =
-    sim ~part_width:2 ~increment_width:2 ~total_width:4
-  in
+let incr_by_three ~sim { increment; _ } =
   increment := Bits.of_int_trunc ~width:2 3;
   for _ = 0 to 30 do
     Cyclesim.cycle sim
-  done;
+  done
+;;
+
+let%expect_test "increment by 3" =
+  let sim, waves, ports = sim ~part_width:2 ~increment_width:2 ~total_width:4 in
+  incr_by_three ~sim ports;
   Waveform.expect ~wave_width:0 ~display_width:86 waves;
   [%expect
     {|
@@ -85,14 +99,16 @@ let%expect_test "increment by 3" =
     |}]
 ;;
 
-let%expect_test "increment by differing amounts" =
-  let sim, waves, increment, _set, _value, _q =
-    sim ~part_width:2 ~increment_width:2 ~total_width:4
-  in
+let incr_by_differing ~sim { increment; _ } =
   for i = 0 to 30 do
     increment := Bits.of_int_trunc ~width:2 (i % 4);
     Cyclesim.cycle sim
-  done;
+  done
+;;
+
+let%expect_test "increment by differing amounts" =
+  let sim, waves, ports = sim ~part_width:2 ~increment_width:2 ~total_width:4 in
+  incr_by_differing ~sim ports;
   Waveform.expect ~wave_width:0 ~display_width:86 waves;
   [%expect
     {|
@@ -117,10 +133,7 @@ let%expect_test "increment by differing amounts" =
     |}]
 ;;
 
-let%expect_test "set value" =
-  let sim, waves, increment, set, value, _q =
-    sim ~part_width:2 ~increment_width:2 ~total_width:4
-  in
+let set_value ~sim { increment; set; value; _ } =
   increment := Bits.of_int_trunc ~width:2 1;
   for _ = 0 to 8 do
     Cyclesim.cycle sim
@@ -138,7 +151,12 @@ let%expect_test "set value" =
   set := Bits.gnd;
   for _ = 0 to 8 do
     Cyclesim.cycle sim
-  done;
+  done
+;;
+
+let%expect_test "set value" =
+  let sim, waves, ports = sim ~part_width:2 ~increment_width:2 ~total_width:4 in
+  set_value ~sim ports;
   Waveform.expect ~wave_width:0 ~display_width:86 waves;
   [%expect
     {|
@@ -163,14 +181,16 @@ let%expect_test "set value" =
     |}]
 ;;
 
-let%expect_test "weird sizes" =
-  let sim, waves, increment, _set, _value, _q =
-    sim ~part_width:3 ~increment_width:2 ~total_width:4
-  in
+let weird_sizes ~sim { increment; _ } =
   increment := Bits.of_int_trunc ~width:2 1;
   for _ = 0 to 30 do
     Cyclesim.cycle sim
-  done;
+  done
+;;
+
+let%expect_test "weird sizes" =
+  let sim, waves, ports = sim ~part_width:3 ~increment_width:2 ~total_width:4 in
+  weird_sizes ~sim ports;
   Waveform.expect ~wave_width:0 ~display_width:86 waves;
   [%expect
     {|
@@ -195,10 +215,7 @@ let%expect_test "weird sizes" =
     |}]
 ;;
 
-let%expect_test "64 bit" =
-  let sim, _waves, increment, set, value, q =
-    sim ~part_width:32 ~increment_width:1 ~total_width:64
-  in
+let sixty_four_bit ~sim { increment; set; value; q } =
   (* roll over at 32 bits *)
   increment := Bits.vdd;
   set := Bits.vdd;
@@ -207,11 +224,19 @@ let%expect_test "64 bit" =
   set := Bits.gnd;
   Cyclesim.cycle sim;
   print_s [%message (Bits.to_int64_trunc !q : Int64.Hex.t)];
-  [%expect {| ("Bits.to_int64_trunc (!q)" 0xffffffff) |}];
   Cyclesim.cycle sim;
   print_s [%message (Bits.to_int64_trunc !q : Int64.Hex.t)];
-  [%expect {| ("Bits.to_int64_trunc (!q)" 0x100000000) |}];
   Cyclesim.cycle sim;
-  print_s [%message (Bits.to_int64_trunc !q : Int64.Hex.t)];
-  [%expect {| ("Bits.to_int64_trunc (!q)" 0x100000001) |}]
+  print_s [%message (Bits.to_int64_trunc !q : Int64.Hex.t)]
+;;
+
+let%expect_test "64 bit" =
+  let sim, _waves, ports = sim ~part_width:32 ~increment_width:1 ~total_width:64 in
+  sixty_four_bit ~sim ports;
+  [%expect
+    {|
+    ("Bits.to_int64_trunc (!q)" 0xffffffff)
+    ("Bits.to_int64_trunc (!q)" 0x100000000)
+    ("Bits.to_int64_trunc (!q)" 0x100000001)
+    |}]
 ;;

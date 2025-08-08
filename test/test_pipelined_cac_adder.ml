@@ -108,15 +108,18 @@ let%expect_test "prove 64 bit variants" =
     |}]
 ;;
 
-(* Simulate the pipeline. *)
-let simulate ~part_width =
+let sim ~part_width =
   let open Signal in
   let clock = input "clock" 1 in
   let a = input "a" 4 in
   let b = input "b" 4 in
   let sum = Short_latency.create ~part_width ~clock a b in
   let circuit = Circuit.create_exn ~name:"pipelined_adder" [ output "sum" sum ] in
-  let sim = Cyclesim.create circuit in
+  Cyclesim.create ~config:{ Cyclesim.Config.default with store_circuit = true } circuit
+;;
+
+(* Simulate the pipeline. *)
+let test sim =
   let a = Cyclesim.in_port sim "a" in
   let b = Cyclesim.in_port sim "b" in
   let sum = Cyclesim.out_port sim "sum" in
@@ -136,6 +139,8 @@ let simulate ~part_width =
   if Bits.to_int_trunc !sum <> !prev_result
   then Stdio.printf "%i\n" (Bits.to_int_trunc !sum)
 ;;
+
+let simulate ~part_width = test (sim ~part_width)
 
 let%expect_test "simulation" =
   simulate ~part_width:1;

@@ -11,7 +11,7 @@ module Make (M : Hardcaml.Interface.S) = struct
       ; wr_enable : 'a
       ; rd_enable : 'a
       }
-    [@@deriving hardcaml]
+    [@@deriving hardcaml ~rtlmangle:false]
   end
 
   module O = struct
@@ -21,7 +21,7 @@ module Make (M : Hardcaml.Interface.S) = struct
       ; full : 'a
       ; one_from_full : 'a
       }
-    [@@deriving hardcaml]
+    [@@deriving hardcaml ~rtlmangle:false]
   end
 
   let create ~cut_through ~capacity (scope : Scope.t) (i : _ I.t) =

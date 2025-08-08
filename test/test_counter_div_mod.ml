@@ -4,11 +4,21 @@ open Hardcaml_waveterm
 open Hardcaml_circuits
 
 module Sim (Config : Counter_div_mod.Config) = struct
-  let create ~(set_input_list : (int * int) option list) (input_list : bool list) =
+  module Counter_div_mod = Counter_div_mod.Make (Config)
+  module Sim = Cyclesim.With_interface (Counter_div_mod.I) (Counter_div_mod.O)
+
+  let create_sim () =
     let scope = Scope.create ~flatten_design:true () in
-    let module Counter_div_mod = Counter_div_mod.Make (Config) in
-    let module Sim = Cyclesim.With_interface (Counter_div_mod.I) (Counter_div_mod.O) in
-    let sim = Sim.create (Counter_div_mod.create scope) in
+    Sim.create
+      ~config:{ Cyclesim.Config.default with store_circuit = true }
+      (Counter_div_mod.create scope)
+  ;;
+
+  let run_test
+    ~(set_input_list : (int * int) option list)
+    ~(input_list : bool list)
+    (sim : Sim.t)
+    =
     let waves, sim = Hardcaml_waveterm.Waveform.create sim in
     let inputs = Cyclesim.inputs sim in
     let outputs = Cyclesim.outputs sim in
@@ -34,6 +44,38 @@ module Sim (Config : Counter_div_mod.Config) = struct
     Cyclesim.cycle sim;
     waves, first_output :: outputs
   ;;
+
+  let testbench ~(set_input_list : (int * int) option list) ~(input_list : bool list) =
+    let sim = create_sim () in
+    run_test ~set_input_list ~input_list sim
+  ;;
+
+  let random_test sim =
+    let open Config in
+    let max_value = (max_quotient * divisor) + max_remainder in
+    let inputs = List.init ((2 * max_value) + 2) ~f:(Fn.const true) in
+    let set_input_list = List.init (List.length inputs) ~f:(Fn.const None) in
+    let _waves, outputs = run_test ~set_input_list ~input_list:inputs sim in
+    let prev_value = ref (-1) in
+    List.iter outputs ~f:(fun { quotient; remainder } ->
+      let current_value = (quotient * divisor) + remainder in
+      let pass =
+        if !prev_value = max_value
+        then current_value = 0
+        else current_value = !prev_value + 1
+      in
+      if not pass
+      then
+        raise_s
+          [%message
+            (max_value : int)
+              (divisor : int)
+              (!prev_value : int)
+              (current_value : int)
+              (quotient : int)
+              (remainder : int)];
+      prev_value := current_value)
+  ;;
 end
 
 let expect waves = Waveform.expect ~wave_width:2 ~display_width:86 waves
@@ -50,7 +92,7 @@ let%expect_test "custom" =
   (* set_input_list is None meaning no set, or Some (quotient, remainder) when setting. *)
   let input_list = [ true; true; false; true; true; true; false; true; true ] in
   let set_input_list = List.init (List.length input_list) ~f:(Fn.const None) in
-  let waves, _outputs = Sim.create ~set_input_list input_list in
+  let waves, _outputs = Sim.testbench ~set_input_list ~input_list in
   expect waves;
   [%expect
     {|
@@ -92,7 +134,7 @@ let%expect_test "divisor = 1" =
   (* set_input_list is None meaning no set, or Some (quotient, remainder) when setting. *)
   let input_list = [ true; true; false; true; true; true; false; true; true ] in
   let set_input_list = List.init (List.length input_list) ~f:(Fn.const None) in
-  let waves, _outputs = Sim.create ~set_input_list input_list in
+  let waves, _outputs = Sim.testbench ~set_input_list ~input_list in
   expect waves;
   [%expect
     {|
@@ -132,7 +174,7 @@ let%expect_test "set" =
   (* set_input_list is None = no set, or Some (quotient, remainder) when setting. *)
   let input_list = [ true; true; true; false; false; true ] in
   let set_input_list = [ None; Some (2, 0); None; None; Some (0, 1); None ] in
-  let waves, _outputs = Sim.create ~set_input_list input_list in
+  let waves, _outputs = Sim.testbench ~set_input_list ~input_list in
   expect waves;
   [%expect
     {|
@@ -171,30 +213,7 @@ let%expect_test "iterate configs" =
         end
         in
         let module Sim = Sim (Config) in
-        (* input list is [incr] signal *)
-        let max_value = (max_quotient * divisor) + max_remainder in
-        let inputs = List.init ((2 * max_value) + 2) ~f:(Fn.const true) in
-        let set_input_list = List.init (List.length inputs) ~f:(Fn.const None) in
-        let _waves, outputs = Sim.create ~set_input_list inputs in
-        let prev_value = ref (-1) in
-        List.iter outputs ~f:(fun { quotient; remainder } ->
-          let current_value = (quotient * divisor) + remainder in
-          let pass =
-            if !prev_value = max_value
-            then current_value = 0
-            else current_value = !prev_value + 1
-          in
-          if not pass
-          then
-            raise_s
-              [%message
-                (max_value : int)
-                  (divisor : int)
-                  (!prev_value : int)
-                  (current_value : int)
-                  (quotient : int)
-                  (remainder : int)];
-          prev_value := current_value)
+        Sim.random_test (Sim.create_sim ())
       done
     done
   done;

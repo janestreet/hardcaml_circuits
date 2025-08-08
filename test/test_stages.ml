@@ -36,7 +36,7 @@ let%expect_test "sum stages" =
     |}]
 ;;
 
-let%expect_test "pipeline" =
+let sim () =
   let d = Signal.input "d" 8 in
   let q =
     Stages.pipeline
@@ -48,9 +48,13 @@ let%expect_test "pipeline" =
   in
   let sim =
     Cyclesim.create
+      ~config:{ Cyclesim.Config.default with store_circuit = true }
       (Circuit.create_exn ~name:"pipeline" [ Signal.output "q" (Stages.output q) ])
   in
-  let waves, sim = Waveform.create sim in
+  Waveform.create sim
+;;
+
+let run sim =
   let d = Cyclesim.in_port sim "d" in
   for i = 5 to 9 do
     d := Bits.of_int_trunc ~width:8 i;
@@ -59,7 +63,12 @@ let%expect_test "pipeline" =
   for _ = 0 to 3 do
     d := Bits.of_int_trunc ~width:8 0;
     Cyclesim.cycle sim
-  done;
+  done
+;;
+
+let%expect_test "pipeline" =
+  let waves, sim = sim () in
+  run sim;
   Waveform.expect ~display_width:84 ~wave_width:2 waves;
   [%expect
     {|
@@ -77,7 +86,7 @@ let%expect_test "pipeline" =
     |}]
 ;;
 
-let%expect_test "pipeline with enable" =
+let sim_with_enable () =
   let d = Signal.input "d" 8 in
   let q =
     Stages.pipeline_with_enable
@@ -90,11 +99,15 @@ let%expect_test "pipeline with enable" =
   let sim =
     let { Stages.data; enable } = Stages.output q in
     Cyclesim.create
+      ~config:{ Cyclesim.Config.default with store_circuit = true }
       (Circuit.create_exn
          ~name:"pipeline"
          [ Signal.output "q" data; Signal.output "valid" enable ])
   in
-  let waves, sim = Waveform.create sim in
+  Waveform.create sim
+;;
+
+let run_with_enable sim =
   let enable = Cyclesim.in_port sim "enable" in
   let d = Cyclesim.in_port sim "d" in
   enable := Bits.vdd;
@@ -111,7 +124,12 @@ let%expect_test "pipeline with enable" =
   enable := Bits.gnd;
   for _ = 0 to 3 do
     Cyclesim.cycle sim
-  done;
+  done
+;;
+
+let%expect_test "pipeline with enable" =
+  let waves, sim = sim_with_enable () in
+  run_with_enable sim;
   Waveform.expect ~display_width:84 ~wave_width:2 waves;
   [%expect
     {|

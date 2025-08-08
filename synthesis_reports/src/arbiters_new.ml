@@ -62,7 +62,7 @@ module Input = struct
     ; data : 'a With_valid.t list [@length 1]
     ; index : 'a
     }
-  [@@deriving hardcaml]
+  [@@deriving hardcaml ~rtlmangle:false]
 end
 
 module Output = With_valid

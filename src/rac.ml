@@ -63,7 +63,7 @@ module Make (Config : Config) = struct
       ; addsub : 'a [@bits 1]
       ; x : 'a array [@length num_coefs] [@bits data_bits]
       }
-    [@@deriving hardcaml]
+    [@@deriving hardcaml ~rtlmangle:false]
   end
 
   module O = struct

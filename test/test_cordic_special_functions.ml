@@ -50,27 +50,38 @@ let%expect_test "iterative" =
 ;;
 
 module Test (Function : Cordic_special_functions.Function) = struct
+  module Function = Function
   module Args = Function.Args
   module Results = Function.Results
 
-  let test args =
-    let iterations = 16 in
-    let create_sim architecture =
-      Function.Sim.create (Function.create { architecture; iterations })
-    in
-    let sim = create_sim Combinational in
-    let comb_results = Function.Test.combinational ~sim args in
-    let sim = create_sim Iterative in
-    let iter_results = Function.Test.iterative ~iterations ~sim args in
+  let iterations = 16
+
+  let create_sim architecture =
+    Function.Sim.create
+      ~config:{ Cyclesim.Config.default with store_circuit = true }
+      (Function.create { architecture; iterations })
+  ;;
+
+  let create_sims () = create_sim Combinational, create_sim Iterative
+
+  let run sim_comb sim_iterative args =
+    let comb_results = Function.Test.combinational ~sim:sim_comb args in
+    let iter_results = Function.Test.iterative ~iterations ~sim:sim_iterative args in
     require_equal
       (module struct
-        type t = float Results.t [@@deriving compare, sexp_of]
+        type t = float Results.t [@@deriving compare ~localize, sexp_of]
 
         let equal = [%compare.equal: t]
       end)
       comb_results
       iter_results;
-    print_s [%message "" ~_:(args : float Args.t) ~_:(iter_results : float Results.t)]
+    iter_results
+  ;;
+
+  let test args =
+    let sim_comb, sim_iterative = create_sims () in
+    let results = run sim_comb sim_iterative args in
+    print_s [%message "" ~_:(args : float Args.t) ~_:(results : float Results.t)]
   ;;
 end
 

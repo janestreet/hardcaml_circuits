@@ -21,7 +21,7 @@ struct
       { index : 'a [@bits log2_num_sources]
       ; data : 'a With_valid.t list [@length Bits.num_sources]
       }
-    [@@deriving hardcaml]
+    [@@deriving hardcaml ~rtlmangle:false]
   end
 
   module O = With_valid
@@ -81,7 +81,7 @@ let command =
     ~summary:"count leading zeros logic"
     (let open Command.Let_syntax in
      let%map_open () = return ()
-     and flags = Hardcaml_xilinx_reports.Command.Command_flags.flags
+     and flags = Hardcaml_xilinx_reports.Command.Command_flags.flags ()
      and data_width = flag "width" (required int) ~doc:"DATA_WIDTH Width of data"
      and num_sources =
        flag "num-sources" (required int) ~doc:"NUM sources to arbitrate"

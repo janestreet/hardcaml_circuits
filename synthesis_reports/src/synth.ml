@@ -23,7 +23,7 @@ let create_circuit
       { clock : 'a
       ; i_data : 'a I_data.t [@rtlprefix "i_data_"]
       }
-    [@@deriving hardcaml]
+    [@@deriving hardcaml ~rtlmangle:false]
   end
   in
   let module O = struct
@@ -109,7 +109,7 @@ let command_for_single =
       Async.Command.async
         ~summary:(Printf.sprintf "Single-component synthesis for %s" Component.name)
         [%map_open.Command
-          let synth_flags = Hardcaml_xilinx_reports.Command.Command_flags.flags
+          let synth_flags = Hardcaml_xilinx_reports.Command.Command_flags.flags ()
           and params = Component.Params.flags in
           fun () ->
             Hardcaml_xilinx_reports.Command.run_circuit
