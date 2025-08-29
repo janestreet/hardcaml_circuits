@@ -23,7 +23,9 @@ module Make (Data : Hardcaml.Interface.S) = struct
   end
 
   let create_io ?(attributes = []) spec (i : _ IO.t) =
-    let reg ~enable d = reg ~enable spec d in
+    let reg ~enable d =
+      reg ~enable spec d |> fun init -> List.fold attributes ~init ~f:add_attribute
+    in
     let wire0 () = Always.Variable.wire ~default:gnd () in
     let output_ready = i.ready in
     let temp_valid_reg = wire 1 in
@@ -73,8 +75,7 @@ module Make (Data : Hardcaml.Interface.S) = struct
     let temp = Data.map i.data ~f:(reg ~enable:store_input_to_temp.value) in
     let output =
       Data.map (Data.Of_signal.mux2 store_input_to_output.value i.data temp) ~f:(fun x ->
-        reg x ~enable:(store_input_to_output.value |: store_temp_to_output.value)
-        |> fun init -> List.fold attributes ~init ~f:add_attribute)
+        reg x ~enable:(store_input_to_output.value |: store_temp_to_output.value))
     in
     { IO.data = output; valid = output_valid_reg; ready = input_ready_reg }
   ;;
