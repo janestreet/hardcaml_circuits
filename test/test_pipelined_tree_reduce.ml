@@ -3,7 +3,7 @@ open Hardcaml
 open Hardcaml_waveterm
 open Hardcaml_circuits
 
-let test ~arity n =
+let sim ~arity n =
   let clock = Signal.input "clock" 1 in
   let numbers = List.init n ~f:(fun i -> Signal.input ("x_" ^ Int.to_string i) 32) in
   let enable = Signal.input "enable" 1 in
@@ -18,8 +18,13 @@ let test ~arity n =
       ; Signal.( -- ) (Signal.wireof output.value) "a_value"
       ]
   in
-  let sim = Cyclesim.create circuit in
-  let waves, sim = Waveform.create sim in
+  let sim =
+    Cyclesim.create ~config:{ Cyclesim.Config.default with store_circuit = true } circuit
+  in
+  Waveform.create sim
+;;
+
+let run sim n =
   let get_input name =
     List.find_exn ~f:(fun (a, _) -> String.equal name a) (Cyclesim.inputs sim) |> snd
   in
@@ -44,7 +49,12 @@ let test ~arity n =
   Cyclesim.cycle sim;
   Cyclesim.cycle sim;
   Cyclesim.cycle sim;
-  Cyclesim.cycle sim;
+  Cyclesim.cycle sim
+;;
+
+let test ~arity n =
+  let waves, sim = sim ~arity n in
+  run sim n;
   Core.print_s
     [%message
       ""

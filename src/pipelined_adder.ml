@@ -57,8 +57,8 @@ module Short_latency = struct
     =
     let open Comb in
     let build_sums a b =
-      let sum0 = Uop.(a +: b) in
-      let sum1 = Uop.(a +: b) +:. 1 in
+      let sum0 = Unsigned.(a +: b) in
+      let sum1 = Unsigned.(a +: b) +:. 1 in
       let sum x = { c_out = msb x; sum = lsbs x } in
       { sum0 = sum sum0; sum1 = sum sum1 }
     in

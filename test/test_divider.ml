@@ -24,9 +24,12 @@ module Make_test (Spec : Spec) = struct
         (Scope.create ~flatten_design:true ~auto_label_hierarchical_ports:true ())
     in
     let sim =
-      if all_waves
-      then Sim.create ~config:Cyclesim.Config.trace_all div
-      else Sim.create div
+      let config =
+        if all_waves
+        then { Cyclesim.Config.trace_all with store_circuit = true }
+        else { Cyclesim.Config.default with store_circuit = true }
+      in
+      Sim.create ~config div
     in
     Waveform.create sim
   ;;
@@ -90,10 +93,11 @@ module Make_test (Spec : Spec) = struct
   ;;
 
   let quickcheck_test_setup =
-    let waves, sim = create () in
-    let inputs = Cyclesim.inputs sim in
-    let outputs = Cyclesim.outputs sim in
-    waves, sim, inputs, outputs
+    lazy
+      (let waves, sim = create () in
+       let inputs = Cyclesim.inputs sim in
+       let outputs = Cyclesim.outputs sim in
+       waves, sim, inputs, outputs)
   ;;
 
   let quickcheck_gen pstart =
@@ -121,7 +125,7 @@ module Make_test (Spec : Spec) = struct
   ;;
 
   let quickcheck_div_test () =
-    let _, sim, inputs, outputs = quickcheck_test_setup in
+    let _, sim, inputs, outputs = Lazy.force quickcheck_test_setup in
     Quickcheck.test
       ~trials:50000
       (quickcheck_gen 1.0)
@@ -130,7 +134,7 @@ module Make_test (Spec : Spec) = struct
   ;;
 
   let random_test_unrolled ~pipe_depth ~n_tests ~pvalid () =
-    let (_ : Waveform.t), sim, inputs, outputs = quickcheck_test_setup in
+    let (_ : Waveform.t), sim, inputs, outputs = Lazy.force quickcheck_test_setup in
     let gen_sequence = quickcheck_gen pvalid in
     let random = Splittable_random.of_int 0 in
     let input_queue = Queue.create ~capacity:pipe_depth () in

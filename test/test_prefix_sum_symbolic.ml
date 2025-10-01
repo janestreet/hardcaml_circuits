@@ -10,7 +10,7 @@ module Wire = struct
         ; input1 : t
         ; input2 : t
         }
-  [@@deriving compare]
+  [@@deriving compare ~localize]
 
   let id_counter = ref 0
   let reset_id_counter () = id_counter := 0

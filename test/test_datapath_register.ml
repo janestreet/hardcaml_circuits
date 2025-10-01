@@ -9,7 +9,7 @@ module Data = Types.Value (struct
     let port_width = 16
   end)
 
-open Datapath_register.Make (Data)
+include Datapath_register.Make (Data)
 module Sim = Cyclesim.With_interface (I) (IO)
 
 let create_sim ?(all_waves = false) () =
@@ -17,7 +17,12 @@ let create_sim ?(all_waves = false) () =
     create (Scope.create ~flatten_design:true ~auto_label_hierarchical_ports:true ())
   in
   let sim =
-    if all_waves then Sim.create ~config:Cyclesim.Config.trace_all dut else Sim.create dut
+    let config =
+      { (if all_waves then Cyclesim.Config.trace_all else Cyclesim.Config.default) with
+        store_circuit = true
+      }
+    in
+    Sim.create ~config dut
   in
   Waveform.create sim
 ;;
@@ -31,7 +36,7 @@ let run_test ~sim n =
     inputs.i.ready := Base.Random.bool () |> of_bool;
     inputs.i.data := Bits.of_int_trunc ~width:16 data_index;
     let data_index =
-      if to_bool (!(inputs.i.valid) &: !(outputs.ready))
+      if to_bool (!(inputs.i.valid) &: !(outputs.ready)) && data_index < n
       then (
         Queue.enqueue input_queue !(inputs.i.data);
         data_index + 1)

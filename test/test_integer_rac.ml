@@ -50,7 +50,9 @@ module Make (Config : Rac.Config) = struct
 
   let create_sim ~coefs =
     let coefs = Array.map coefs ~f:(Bits.of_int_trunc ~width:8) in
-    Sim.create (Rac.create ~coefs)
+    Sim.create
+      ~config:{ Cyclesim.Config.default with store_circuit = true }
+      (Rac.create ~coefs)
   ;;
 
   let run_and_print_waves ~simulator ~testbench ~data_in =

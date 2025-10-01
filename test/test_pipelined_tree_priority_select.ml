@@ -3,7 +3,7 @@ open Hardcaml
 open Hardcaml_waveterm
 open Hardcaml_circuits
 
-let init ~cycles num_data =
+let init ?(trace_reductions = true) ~cycles num_data =
   let open Signal in
   let clock = input "clock" 1 in
   let clear = input "clear" 1 in
@@ -16,7 +16,7 @@ let init ~cycles num_data =
   in
   let { With_valid.valid; value } =
     Pipelined_tree_mux.pipelined_tree_priority_select
-      ~trace_reductions:true
+      ~trace_reductions
       ~cycles
       ~reg:(fun ?enable d -> reg ?enable (Reg_spec.create ~clock ~clear ()) d)
       data
@@ -25,18 +25,18 @@ let init ~cycles num_data =
   let value = output "value" value in
   let sim =
     Cyclesim.create
+      ~config:{ Cyclesim.Config.default with store_circuit = true }
       (Circuit.create_exn ~name:"pipelined_priority_select" [ valid; value ])
   in
   let waves, sim = Waveform.create sim in
+  waves, sim
+;;
+
+let run sim ~cycles num_data =
   let valid =
     Array.init num_data ~f:(fun i ->
       Cyclesim.in_port sim ("valid" ^ Int.to_string (i + 1)))
   in
-  waves, sim, valid
-;;
-
-let strobe ~cycles num_data =
-  let waves, sim, valid = init ~cycles num_data in
   Cyclesim.cycle sim;
   for i = 0 to num_data - 1 do
     valid.(i) := Bits.vdd;
@@ -46,7 +46,12 @@ let strobe ~cycles num_data =
   for _ = 1 to cycles do
     Cyclesim.cycle sim
   done;
-  Cyclesim.cycle sim;
+  Cyclesim.cycle sim
+;;
+
+let strobe ~cycles num_data =
+  let waves, sim = init ~cycles num_data in
+  run sim ~cycles num_data;
   Waveform.print ~display_width:86 ~wave_width:1 waves
 ;;
 
@@ -306,8 +311,11 @@ let%expect_test "more cycles" =
     |}]
 ;;
 
-let random ~cycles num_data =
-  let waves, sim, valid = init ~cycles num_data in
+let random sim ~cycles num_data =
+  let valid =
+    Array.init num_data ~f:(fun i ->
+      Cyclesim.in_port sim ("valid" ^ Int.to_string (i + 1)))
+  in
   Cyclesim.cycle sim;
   for i = 0 to num_data - 1 do
     Array.iter valid ~f:(fun v -> v := if Random.int 2 = 0 then Bits.vdd else Bits.gnd);
@@ -318,12 +326,14 @@ let random ~cycles num_data =
   for _ = 1 to cycles do
     Cyclesim.cycle sim
   done;
-  Cyclesim.cycle sim;
-  Waveform.print ~display_width:86 ~wave_width:1 waves
+  Cyclesim.cycle sim
 ;;
 
 let%expect_test "random valids" =
-  random ~cycles:2 7;
+  let cycles, num_data = 2, 7 in
+  let waves, sim = init ~cycles num_data in
+  random sim ~cycles num_data;
+  Waveform.print ~display_width:86 ~wave_width:1 waves;
   (* Note; [07] is shown when nothing is valid (no inputs are high - [valid] out will be
      low).  Otherwise by insepction this looks correct. *)
   [%expect

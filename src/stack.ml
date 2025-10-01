@@ -2,12 +2,13 @@ open Base
 open Hardcaml
 open Signal
 
-module Make (Config : sig
-    module M : Hardcaml.Interface.S
+module type Config = sig
+  module M : Hardcaml.Interface.S
 
-    val capacity : int
-  end) =
-struct
+  val capacity : int
+end
+
+module Make (Config : Config) = struct
   open Config
 
   module I = struct
@@ -18,7 +19,7 @@ struct
       ; push : 'a
       ; pop : 'a
       }
-    [@@deriving hardcaml]
+    [@@deriving hardcaml ~rtlmangle:false]
   end
 
   module M_with_valid = With_valid.Wrap.Make (M)
@@ -33,7 +34,7 @@ struct
       ; used : 'a [@bits bits_for_addr + 1]
       (* We need 1 more bit for [used] to encode values up to and including [capacity] *)
       }
-    [@@deriving hardcaml]
+    [@@deriving hardcaml ~rtlmangle:false]
   end
 
   let create ?(read_latency = 1) (scope : Scope.t) (i : _ I.t) =

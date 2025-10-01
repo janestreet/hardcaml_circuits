@@ -1,5 +1,7 @@
 open! Base
 open! Hardcaml
+open Signal
+module M_creates = Datapath_register_intf.M_creates
 
 module Make (Data : Hardcaml.Interface.S) = struct
   module IO = struct
@@ -8,7 +10,7 @@ module Make (Data : Hardcaml.Interface.S) = struct
       ; valid : 'a
       ; ready : 'a
       }
-    [@@deriving hardcaml]
+    [@@deriving hardcaml ~rtlmangle:false]
   end
 
   module I = struct
@@ -17,12 +19,13 @@ module Make (Data : Hardcaml.Interface.S) = struct
       ; clear : 'a
       ; i : 'a IO.t [@rtlprefix "i_"]
       }
-    [@@deriving hardcaml]
+    [@@deriving hardcaml ~rtlmangle:false]
   end
 
-  let create_io spec (i : _ IO.t) =
-    let open Signal in
-    let reg ~enable d = reg ~enable spec d in
+  let create_io ?(attributes = []) spec (i : _ IO.t) =
+    let reg ~enable d =
+      reg ~enable spec d |> fun init -> List.fold attributes ~init ~f:add_attribute
+    in
     let wire0 () = Always.Variable.wire ~default:gnd () in
     let output_ready = i.ready in
     let temp_valid_reg = wire 1 in
@@ -71,20 +74,19 @@ module Make (Data : Hardcaml.Interface.S) = struct
         ]);
     let temp = Data.map i.data ~f:(reg ~enable:store_input_to_temp.value) in
     let output =
-      Data.map
-        (Data.Of_signal.mux2 store_input_to_output.value i.data temp)
-        ~f:(reg ~enable:(store_input_to_output.value |: store_temp_to_output.value))
+      Data.map (Data.Of_signal.mux2 store_input_to_output.value i.data temp) ~f:(fun x ->
+        reg x ~enable:(store_input_to_output.value |: store_temp_to_output.value))
     in
     { IO.data = output; valid = output_valid_reg; ready = input_ready_reg }
   ;;
 
-  let create _scope (i : _ I.t) =
+  let create ?attributes _scope (i : _ I.t) =
     let spec = Signal.Reg_spec.create () ~clock:i.clock ~clear:i.clear in
-    create_io spec i.i
+    create_io ?attributes spec i.i
   ;;
 
-  let hierarchical ?instance scope i =
+  let hierarchical ?instance ?attributes scope i =
     let module Scoped = Hierarchy.In_scope (I) (IO) in
-    Scoped.hierarchical ~scope ~name:"datapath_reg" ?instance create i
+    Scoped.hierarchical ~scope ~name:"datapath_reg" ?instance (create ?attributes) i
   ;;
 end

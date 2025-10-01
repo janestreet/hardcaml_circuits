@@ -299,6 +299,89 @@ let display_rules =
     ]
 ;;
 
+type arbiter =
+  clock:Signal.t
+  -> clear:Signal.t
+  -> index:Signal.t Hardcaml_circuits.Arbiters.Index.t
+  -> data:(Signal.t, Signal.t) Comb.with_valid2 list
+  -> Signal.t With_valid.t
+
+let create_round_robin_seq ~num_sources ~data_width ~use_mask arbiter =
+  let open Signal in
+  let log_num_sources = Int.ceil_log2 num_sources in
+  let index = input "index" log_num_sources in
+  let clock = input "clock" 1 in
+  let clear = input "clear" 1 in
+  let data =
+    List.init num_sources ~f:(fun i ->
+      { With_valid.valid = input ("valid" ^ Int.to_string i) 1
+      ; value = input ("value" ^ Int.to_string i) data_width
+      })
+  in
+  let arb : _ With_valid.t =
+    let index : _ Arbiters.Index.t =
+      if use_mask
+      then Mask (log_shift ~f:sll (ones num_sources) ~by:index)
+      else Arbiters.Index.Offset index
+    in
+    arbiter ~clock ~clear ~index ~data
+  in
+  let circuit =
+    Circuit.create_exn
+      ~name:"arbiter"
+      [ output "valid" arb.valid; output "value" arb.value ]
+  in
+  let sim =
+    Cyclesim.create ~config:{ Cyclesim.Config.default with store_circuit = true } circuit
+  in
+  sim
+;;
+
+let test_round_robin_seq ~num_sources ~data_width sim =
+  let log_num_sources = Int.ceil_log2 num_sources in
+  let waves, sim = Waveform.create sim in
+  let clear = Cyclesim.in_port sim "clear" in
+  clear := Bits.vdd;
+  Cyclesim.cycle sim;
+  clear := Bits.gnd;
+  let index =
+    try Cyclesim.in_port sim "index" with
+    | _ -> ref (Bits.zero log_num_sources)
+  in
+  let data =
+    Array.init num_sources ~f:(fun i ->
+      { With_valid.valid = Cyclesim.in_port sim ("valid" ^ Int.to_string i)
+      ; value = Cyclesim.in_port sim ("value" ^ Int.to_string i)
+      })
+  in
+  for i = 0 to num_sources - 1 do
+    data.(i).value := Bits.of_int_trunc ~width:data_width i
+  done;
+  index := Bits.of_int_trunc ~width:log_num_sources 0;
+  for i = num_sources - 1 downto 0 do
+    data.(i).valid := Bits.vdd;
+    Cyclesim.cycle sim
+  done;
+  for i = 0 to 3 do
+    data.(i).valid := Bits.gnd
+  done;
+  data.(1).valid := Bits.vdd;
+  data.(num_sources - 1).valid := Bits.vdd;
+  for i = 0 to num_sources - 1 do
+    index := Bits.of_int_trunc ~width:log_num_sources i;
+    Cyclesim.cycle sim
+  done;
+  Cyclesim.cycle sim;
+  waves
+;;
+
+let test ~use_mask arbiter =
+  let data_width = 8 in
+  let num_sources = 4 in
+  let sim = create_round_robin_seq ~num_sources ~data_width ~use_mask arbiter in
+  test_round_robin_seq ~num_sources ~data_width sim
+;;
+
 module Test_round_robin_seq (F : sig
     val round_robin
       :  clock:Signal.t
@@ -309,70 +392,7 @@ module Test_round_robin_seq (F : sig
   end) =
 struct
   let%expect_test "testbench" =
-    let open Signal in
-    let test ~use_mask arbiter =
-      let data_width = 8 in
-      let num_sources = 4 in
-      let log_num_sources = Int.ceil_log2 num_sources in
-      let index = input "index" log_num_sources in
-      let clock = input "clock" 1 in
-      let clear = input "clear" 1 in
-      let data =
-        List.init num_sources ~f:(fun i ->
-          { With_valid.valid = input ("valid" ^ Int.to_string i) 1
-          ; value = input ("value" ^ Int.to_string i) data_width
-          })
-      in
-      let arb : _ With_valid.t =
-        let index : _ Arbiters.Index.t =
-          if use_mask
-          then Mask (log_shift ~f:sll (ones num_sources) ~by:index)
-          else Arbiters.Index.Offset index
-        in
-        arbiter ~clock ~clear ~index ~data
-      in
-      let circuit =
-        Circuit.create_exn
-          ~name:"arbiter"
-          [ output "valid" arb.valid; output "value" arb.value ]
-      in
-      let sim = Cyclesim.create circuit in
-      let waves, sim = Waveform.create sim in
-      let clear = Cyclesim.in_port sim "clear" in
-      clear := Bits.vdd;
-      Cyclesim.cycle sim;
-      clear := Bits.gnd;
-      let index =
-        try Cyclesim.in_port sim "index" with
-        | _ -> ref (Bits.zero log_num_sources)
-      in
-      let data =
-        Array.init num_sources ~f:(fun i ->
-          { With_valid.valid = Cyclesim.in_port sim ("valid" ^ Int.to_string i)
-          ; value = Cyclesim.in_port sim ("value" ^ Int.to_string i)
-          })
-      in
-      for i = 0 to num_sources - 1 do
-        data.(i).value := Bits.of_int_trunc ~width:data_width i
-      done;
-      index := Bits.of_int_trunc ~width:log_num_sources 0;
-      for i = num_sources - 1 downto 0 do
-        data.(i).valid := Bits.vdd;
-        Cyclesim.cycle sim
-      done;
-      for i = 0 to 3 do
-        data.(i).valid := Bits.gnd
-      done;
-      data.(1).valid := Bits.vdd;
-      data.(num_sources - 1).valid := Bits.vdd;
-      for i = 0 to num_sources - 1 do
-        index := Bits.of_int_trunc ~width:log_num_sources i;
-        Cyclesim.cycle sim
-      done;
-      Cyclesim.cycle sim;
-      Waveform.expect ~display_rules ~wave_width:1 waves
-    in
-    test ~use_mask:false F.round_robin;
+    test ~use_mask:false F.round_robin |> Waveform.expect ~display_rules ~wave_width:1;
     [%expect
       {|
       ┌Signals────────┐┌Waves──────────────────────────────────────────────┐
@@ -395,7 +415,7 @@ struct
       └───────────────┘└───────────────────────────────────────────────────┘
       2e2932e173d8209aeaaf01d084e347e9
       |}];
-    test ~use_mask:true F.round_robin;
+    test ~use_mask:true F.round_robin |> Waveform.expect ~display_rules ~wave_width:1;
     [%expect
       {|
       ┌Signals────────┐┌Waves──────────────────────────────────────────────┐

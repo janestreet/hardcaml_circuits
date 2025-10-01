@@ -3,7 +3,7 @@ open Hardcaml
 open Hardcaml_waveterm
 open Hardcaml_circuits
 
-let init ~cycles ~num_data =
+let sim ~cycles ~num_data =
   let open Signal in
   let clock = input "clock" 1 in
   let clear = input "clear" 1 in
@@ -17,9 +17,16 @@ let init ~cycles ~num_data =
       data
   in
   let value = output "value" value in
-  let sim = Cyclesim.create (Circuit.create_exn ~name:"pipelined_tree_mux" [ value ]) in
+  let sim =
+    Cyclesim.create
+      ~config:{ Cyclesim.Config.default with store_circuit = true }
+      (Circuit.create_exn ~name:"pipelined_tree_mux" [ value ])
+  in
+  Waveform.create sim
+;;
+
+let run sim ~cycles ~num_data =
   let open Bits in
-  let waves, sim = Waveform.create sim in
   let selector = Cyclesim.in_port sim "selector" in
   for i = 0 to num_data - 1 do
     selector <--. i;
@@ -27,12 +34,17 @@ let init ~cycles ~num_data =
   done;
   for _ = 0 to cycles - 1 do
     Cyclesim.cycle sim
-  done;
+  done
+;;
+
+let test ~cycles ~num_data =
+  let waves, sim = sim ~cycles ~num_data in
+  run sim ~cycles ~num_data;
   waves
 ;;
 
 let%expect_test "" =
-  let waves = init ~cycles:1 ~num_data:4 in
+  let waves = test ~cycles:1 ~num_data:4 in
   Waveform.print ~display_width:86 ~wave_width:1 waves;
   [%expect
     {|
@@ -52,7 +64,7 @@ let%expect_test "" =
 ;;
 
 let%expect_test "" =
-  let waves = init ~cycles:2 ~num_data:4 in
+  let waves = test ~cycles:2 ~num_data:4 in
   Waveform.print ~display_width:86 ~wave_width:1 waves;
   [%expect
     {|
@@ -72,7 +84,7 @@ let%expect_test "" =
 ;;
 
 let%expect_test "" =
-  let waves = init ~cycles:4 ~num_data:2 in
+  let waves = test ~cycles:4 ~num_data:2 in
   Waveform.print ~display_width:86 ~wave_width:1 waves;
   [%expect
     {|
@@ -91,7 +103,7 @@ let%expect_test "" =
 ;;
 
 let%expect_test "" =
-  let waves = init ~cycles:4 ~num_data:9 in
+  let waves = test ~cycles:4 ~num_data:9 in
   Waveform.print ~display_width:86 ~wave_width:1 waves;
   [%expect
     {|

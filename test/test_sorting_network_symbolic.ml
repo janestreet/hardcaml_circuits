@@ -9,7 +9,7 @@ module Types = struct
           { compare_and_swap : Compare_and_swap.t
           ; min_or_max : Min_or_max.t
           }
-    [@@deriving compare]
+    [@@deriving compare ~localize]
   end =
     Wire
 
@@ -72,7 +72,7 @@ module Compare_and_swap = struct
     ; input1 : Wire.t
     ; input2 : Wire.t
     }
-  [@@deriving compare]
+  [@@deriving compare ~localize]
 
   let sexp_of_t { id; depth = _; input1; input2 } =
     [%message "compare_and_swap" ~_:(id : int) (input1 : Wire.t) (input2 : Wire.t)]

@@ -10,18 +10,25 @@ module Int4 = Types.Scalar (struct
     let port_width = width
   end)
 
+type event =
+  | Push of int
+  | Pop
+  | Push_pop of int
+[@@deriving sexp_of]
+
 module Make_test (C : sig
     val capacity : int
   end) =
 struct
   open C
 
-  module Stack = Hardcaml_circuits.Stack.Make (struct
-      module M = Int4
+  module Stack_config = struct
+    module M = Int4
 
-      let capacity = capacity
-    end)
+    let capacity = capacity
+  end
 
+  module Stack = Hardcaml_circuits.Stack.Make (Stack_config)
   open Stack
   module Sim = Cyclesim.With_interface (I) (O)
 
@@ -39,25 +46,20 @@ struct
       |> List.concat)
   ;;
 
-  type event =
-    | Push of int
-    | Pop
-    | Push_pop of int
-  [@@deriving sexp_of]
-
   let create ~read_latency () =
     let circuit =
       hierarchical
         ~read_latency
         (Scope.create ~flatten_design:true ~auto_label_hierarchical_ports:true ())
     in
-    let sim = Sim.create ~config:Cyclesim.Config.trace_all circuit in
+    let sim =
+      Sim.create ~config:{ Cyclesim.Config.trace_all with store_circuit = true } circuit
+    in
     Waveform.create sim
   ;;
 
   (* runs through a series of events and validates the behavior against a software stack. *)
-  let run_test ?(read_latency = 1) ?(verbose = false) events =
-    let waves, sim = create ~read_latency () in
+  let run ?(verbose = false) ~read_latency (sim : Sim.t) events =
     let i, o = Cyclesim.inputs sim, Cyclesim.outputs sim in
     (* clear *)
     i.clear := vdd;
@@ -111,7 +113,12 @@ struct
       (* cycle *)
       Cyclesim.cycle sim);
     handle_pending_pop ();
-    Cyclesim.cycle sim;
+    Cyclesim.cycle sim
+  ;;
+
+  let run_test ?(read_latency = 1) ?verbose events =
+    let waves, sim = create ~read_latency () in
+    run ?verbose ~read_latency sim events;
     waves
   ;;
 end
@@ -124,9 +131,10 @@ module Default_test = Make_test (struct
 
 open Default_test
 
+let (basic_events : event list) = [ Push 1; Push 2; Push_pop 3; Pop; Pop; Pop; Pop ]
+
 let%expect_test "basic stack test - push a couple, push and pop, pop and underflow" =
-  let (events : event list) = [ Push 1; Push 2; Push_pop 3; Pop; Pop; Pop; Pop ] in
-  let waves = run_test ~verbose:true events in
+  let waves = run_test ~verbose:true basic_events in
   Waveform.print ~display_width:52 ~wave_width:1 ~display_rules waves;
   [%expect
     {|
@@ -165,13 +173,14 @@ let%expect_test "basic stack test - push a couple, push and pop, pop and underfl
     |}]
 ;;
 
+let (fill_push_and_pop_all_events : event list) =
+  List.init default_capacity ~f:(fun i -> Push i)
+  @ [ Push 10; Push_pop 11 ]
+  @ List.init default_capacity ~f:(Fn.const Pop)
+;;
+
 let%expect_test "basic stack test - fill up, overflow, push and pop, pop everything" =
-  let (events : event list) =
-    List.init default_capacity ~f:(fun i -> Push i)
-    @ [ Push 10; Push_pop 11 ]
-    @ List.init default_capacity ~f:(Fn.const Pop)
-  in
-  let waves = run_test events in
+  let waves = run_test fill_push_and_pop_all_events in
   Waveform.print ~display_width:102 ~wave_width:1 ~display_rules waves;
   [%expect
     {|
@@ -205,13 +214,14 @@ let%expect_test "basic stack test - fill up, overflow, push and pop, pop everyth
     |}]
 ;;
 
+let (read_latency_2_events : event list) =
+  List.init default_capacity ~f:(fun i -> Push i)
+  @ [ Push 10; Push_pop 11 ]
+  @ List.init default_capacity ~f:(Fn.const Pop)
+;;
+
 let%expect_test "stack test with read latency 2: fill, overflow, push and pop, pop all" =
-  let (events : event list) =
-    List.init default_capacity ~f:(fun i -> Push i)
-    @ [ Push 10; Push_pop 11 ]
-    @ List.init default_capacity ~f:(Fn.const Pop)
-  in
-  let waves = run_test ~read_latency:2 events in
+  let waves = run_test ~read_latency:2 read_latency_2_events in
   Waveform.print ~display_width:102 ~wave_width:1 ~display_rules waves;
   [%expect
     {|
@@ -245,13 +255,14 @@ let%expect_test "stack test with read latency 2: fill, overflow, push and pop, p
     |}]
 ;;
 
+let (read_latency_3_events : event list) =
+  List.init default_capacity ~f:(fun i -> Push i)
+  @ [ Push 10; Push_pop 11 ]
+  @ List.init default_capacity ~f:(Fn.const Pop)
+;;
+
 let%expect_test "stack test with read latency 3: fill, overflow, push and pop, pop all" =
-  let (events : event list) =
-    List.init default_capacity ~f:(fun i -> Push i)
-    @ [ Push 10; Push_pop 11 ]
-    @ List.init default_capacity ~f:(Fn.const Pop)
-  in
-  let waves = run_test ~read_latency:3 events in
+  let waves = run_test ~read_latency:3 read_latency_3_events in
   Waveform.print ~display_width:102 ~wave_width:1 ~display_rules waves;
   [%expect
     {|
@@ -285,6 +296,12 @@ let%expect_test "stack test with read latency 3: fill, overflow, push and pop, p
     |}]
 ;;
 
+let (capacity_5_events : event list) =
+  List.init 5 ~f:(fun i -> Push i)
+  @ [ Push 10; Push_pop 11 ]
+  @ List.init (5 + 1) ~f:(Fn.const Pop)
+;;
+
 let%expect_test "non-pow2 stack test - fill up, overflow, push_pop, pop all, underflow" =
   let capacity = 5 in
   let module Test =
@@ -293,12 +310,7 @@ let%expect_test "non-pow2 stack test - fill up, overflow, push_pop, pop all, und
     end)
   in
   let open Test in
-  let (events : event list) =
-    List.init capacity ~f:(fun i -> Push i)
-    @ [ Push 10; Push_pop 11 ]
-    @ List.init (capacity + 1) ~f:(Fn.const Pop)
-  in
-  let _waves = run_test ~verbose:true events in
+  let _waves = run_test ~verbose:true capacity_5_events in
   [%expect
     {|
     (popped (valid true) (value 11))

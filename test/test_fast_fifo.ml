@@ -1,3 +1,4 @@
+open! Core
 open Hardcaml
 open Hardcaml_circuits
 open Hardcaml_waveterm
@@ -11,31 +12,43 @@ module Foo = struct
 end
 
 module Fast_fifo = Fast_fifo.Make (Foo)
+module Sim = Cyclesim.With_interface (Fast_fifo.I) (Fast_fifo.O)
 
 let create_sim ?(capacity = 2) ?(cut_through = true) () =
   let scope = Scope.create ~flatten_design:true () in
-  let module Sim = Cyclesim.With_interface (Fast_fifo.I) (Fast_fifo.O) in
-  let sim = Sim.create (Fast_fifo.create ~cut_through ~capacity scope) in
+  let sim =
+    Sim.create
+      ~config:{ Cyclesim.Config.default with store_circuit = true }
+      (Fast_fifo.create ~cut_through ~capacity scope)
+  in
   let waves, sim = Hardcaml_waveterm.Waveform.create sim in
-  let inputs = Cyclesim.inputs sim in
-  inputs.clear := Bits.vdd;
-  Cyclesim.cycle sim;
-  inputs.clear := Bits.gnd;
   waves, sim
 ;;
 
 let expect waves = Waveform.expect ~wave_width:2 ~display_width:86 waves
 
-let%expect_test "combinational read/write" =
-  let waves, sim = create_sim () in
+let get_inputs_and_clear (sim : Sim.t) =
   let inputs = Cyclesim.inputs sim in
+  inputs.clear := Bits.vdd;
+  Cyclesim.cycle sim;
+  inputs.clear := Bits.gnd;
+  inputs
+;;
+
+let combinational_read_write (sim : Sim.t) =
+  let inputs = get_inputs_and_clear sim in
   inputs.wr_enable := Bits.vdd;
   inputs.wr_data.hello := Bits.of_int_trunc ~width:16 0x123;
   inputs.wr_data.world := Bits.of_int_trunc ~width:16 0x456;
   inputs.rd_enable := Bits.vdd;
   Cyclesim.cycle sim;
   inputs.wr_enable := Bits.gnd;
-  Cyclesim.cycle sim;
+  Cyclesim.cycle sim
+;;
+
+let%expect_test "combinational read/write" =
+  let waves, sim = create_sim () in
+  combinational_read_write sim;
   expect waves;
   [%expect
     {|
@@ -71,9 +84,8 @@ let%expect_test "combinational read/write" =
     |}]
 ;;
 
-let%expect_test "read exact one-cycle after write" =
-  let waves, sim = create_sim () in
-  let inputs = Cyclesim.inputs sim in
+let read_exact_one_cycle_after_write (sim : Sim.t) =
+  let inputs = get_inputs_and_clear sim in
   inputs.wr_enable := Bits.vdd;
   inputs.wr_data.hello := Bits.of_int_trunc ~width:16 0x123;
   inputs.wr_data.world := Bits.of_int_trunc ~width:16 0x456;
@@ -82,7 +94,12 @@ let%expect_test "read exact one-cycle after write" =
   inputs.rd_enable := Bits.vdd;
   Cyclesim.cycle sim;
   inputs.rd_enable := Bits.gnd;
-  Cyclesim.cycle sim;
+  Cyclesim.cycle sim
+;;
+
+let%expect_test "read exact one-cycle after write" =
+  let waves, sim = create_sim () in
+  read_exact_one_cycle_after_write sim;
   expect waves;
   [%expect
     {|
@@ -118,9 +135,8 @@ let%expect_test "read exact one-cycle after write" =
     |}]
 ;;
 
-let%expect_test "read and write at the same cycle when underlying fifo not empty" =
-  let waves, sim = create_sim () in
-  let inputs = Cyclesim.inputs sim in
+let read_and_write_same_cycle_when_not_empty (sim : Sim.t) =
+  let inputs = get_inputs_and_clear sim in
   inputs.wr_enable := Bits.vdd;
   inputs.wr_data.hello := Bits.of_int_trunc ~width:16 0x123;
   inputs.wr_data.world := Bits.of_int_trunc ~width:16 0x456;
@@ -136,7 +152,12 @@ let%expect_test "read and write at the same cycle when underlying fifo not empty
   inputs.rd_enable := Bits.vdd;
   Cyclesim.cycle sim;
   inputs.rd_enable := Bits.gnd;
-  Cyclesim.cycle sim;
+  Cyclesim.cycle sim
+;;
+
+let%expect_test "read and write at the same cycle when underlying fifo not empty" =
+  let waves, sim = create_sim () in
+  read_and_write_same_cycle_when_not_empty sim;
   expect waves;
   [%expect
     {|
@@ -172,9 +193,8 @@ let%expect_test "read and write at the same cycle when underlying fifo not empty
     |}]
 ;;
 
-let%expect_test "read and write at the same cycle when empty" =
-  let waves, sim = create_sim ~cut_through:false () in
-  let inputs = Cyclesim.inputs sim in
+let read_and_write_same_cycle_when_empty (sim : Sim.t) =
+  let inputs = get_inputs_and_clear sim in
   inputs.wr_enable := Bits.vdd;
   inputs.wr_data.hello := Bits.of_int_trunc ~width:16 0x123;
   inputs.wr_data.world := Bits.of_int_trunc ~width:16 0x456;
@@ -191,7 +211,12 @@ let%expect_test "read and write at the same cycle when empty" =
   inputs.rd_enable := Bits.vdd;
   Cyclesim.cycle sim;
   inputs.rd_enable := Bits.gnd;
-  Cyclesim.cycle sim;
+  Cyclesim.cycle sim
+;;
+
+let%expect_test "read and write at the same cycle when empty" =
+  let waves, sim = create_sim ~cut_through:false () in
+  read_and_write_same_cycle_when_empty sim;
   expect waves;
   [%expect
     {|
@@ -227,9 +252,8 @@ let%expect_test "read and write at the same cycle when empty" =
     |}]
 ;;
 
-let%expect_test "write when full will not be registered" =
-  let waves, sim = create_sim () in
-  let inputs = Cyclesim.inputs sim in
+let write_when_full_not_registered (sim : Sim.t) =
+  let inputs = get_inputs_and_clear sim in
   for i = 1 to 4 do
     inputs.wr_enable := Bits.vdd;
     inputs.wr_data.hello := Bits.of_int_trunc ~width:16 i;
@@ -249,7 +273,12 @@ let%expect_test "write when full will not be registered" =
     Cyclesim.cycle sim
   done;
   inputs.rd_enable := Bits.gnd;
-  Cyclesim.cycle sim;
+  Cyclesim.cycle sim
+;;
+
+let%expect_test "write when full will not be registered" =
+  let waves, sim = create_sim () in
+  write_when_full_not_registered sim;
   expect waves;
   [%expect
     {|
@@ -285,10 +314,8 @@ let%expect_test "write when full will not be registered" =
     |}]
 ;;
 
-let%expect_test "demonstrate [rd_enable=1], [rd_valid=0], until data is really available."
-  =
-  let waves, sim = create_sim () in
-  let inputs = Cyclesim.inputs sim in
+let demo_rd_en_1_rd_valid_0_until_available (sim : Sim.t) =
+  let inputs = get_inputs_and_clear sim in
   inputs.rd_enable := Bits.vdd;
   Cyclesim.cycle sim;
   Cyclesim.cycle sim;
@@ -298,7 +325,13 @@ let%expect_test "demonstrate [rd_enable=1], [rd_valid=0], until data is really a
   inputs.wr_data.world := Bits.of_int_trunc ~width:16 0xFFFF;
   Cyclesim.cycle sim;
   inputs.wr_enable := Bits.gnd;
-  Cyclesim.cycle sim;
+  Cyclesim.cycle sim
+;;
+
+let%expect_test "demonstrate [rd_enable=1], [rd_valid=0], until data is really available."
+  =
+  let waves, sim = create_sim () in
+  demo_rd_en_1_rd_valid_0_until_available sim;
   expect waves;
   [%expect
     {|

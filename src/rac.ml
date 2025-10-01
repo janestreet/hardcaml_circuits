@@ -19,7 +19,7 @@ let rec narrow x =
 let make_rom coefs =
   let open Bits in
   let n_coefs = List.length coefs in
-  let ( +: ) a b = Signed.(to_signal (of_signal a +: of_signal b)) in
+  let ( +: ) a b = Signed.(a +: b) in
   let last = ones n_coefs in
   let rec rom i =
     let sum =
@@ -63,7 +63,7 @@ module Make (Config : Config) = struct
       ; addsub : 'a [@bits 1]
       ; x : 'a array [@length num_coefs] [@bits data_bits]
       }
-    [@@deriving hardcaml]
+    [@@deriving hardcaml ~rtlmangle:false]
   end
 
   module O = struct
