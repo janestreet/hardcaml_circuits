@@ -19,7 +19,7 @@ let rec narrow x =
 let make_rom coefs =
   let open Bits in
   let n_coefs = List.length coefs in
-  let ( +: ) a b = Signed.(to_signal (of_signal a +: of_signal b)) in
+  let ( +: ) a b = Signed.(a +: b) in
   let last = ones n_coefs in
   let rec rom i =
     let sum =

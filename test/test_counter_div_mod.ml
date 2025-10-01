@@ -29,7 +29,7 @@ module Sim (Config : Counter_div_mod.Config) = struct
     let first_output = Counter_div_mod.O.map outputs ~f:conv in
     let outputs =
       List.map2_exn set_input_list input_list ~f:(fun set_opt incr ->
-        inputs.incr := Bits.of_bool incr;
+        inputs.increment := Bits.of_bool incr;
         (match set_opt with
          | None -> inputs.set := Bits.gnd
          | Some (q, r) ->
@@ -40,7 +40,7 @@ module Sim (Config : Counter_div_mod.Config) = struct
         Cyclesim.cycle sim;
         Counter_div_mod.O.map outputs ~f:conv)
     in
-    inputs.incr := Bits.gnd;
+    inputs.increment := Bits.gnd;
     Cyclesim.cycle sim;
     waves, first_output :: outputs
   ;;
@@ -101,7 +101,7 @@ let%expect_test "custom" =
     │                  ││   └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └│
     │clear             ││──────┐                                                         │
     │                  ││      └─────────────────────────────────────────────────────────│
-    │incr              ││      ┌───────────┐     ┌─────────────────┐     ┌───────────┐   │
+    │increment         ││      ┌───────────┐     ┌─────────────────┐     ┌───────────┐   │
     │                  ││──────┘           └─────┘                 └─────┘           └───│
     │set               ││                                                                │
     │                  ││────────────────────────────────────────────────────────────────│
@@ -143,7 +143,7 @@ let%expect_test "divisor = 1" =
     │                  ││   └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └│
     │clear             ││──────┐                                                         │
     │                  ││      └─────────────────────────────────────────────────────────│
-    │incr              ││      ┌───────────┐     ┌─────────────────┐     ┌───────────┐   │
+    │increment         ││      ┌───────────┐     ┌─────────────────┐     ┌───────────┐   │
     │                  ││──────┘           └─────┘                 └─────┘           └───│
     │set               ││                                                                │
     │                  ││────────────────────────────────────────────────────────────────│
@@ -183,7 +183,7 @@ let%expect_test "set" =
     │                  ││   └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └│
     │clear             ││──────┐                                                         │
     │                  ││      └─────────────────────────────────────────                │
-    │incr              ││      ┌─────────────────┐           ┌─────┐                     │
+    │increment         ││      ┌─────────────────┐           ┌─────┐                     │
     │                  ││──────┘                 └───────────┘     └─────                │
     │set               ││            ┌─────┐           ┌─────┐                           │
     │                  ││────────────┘     └───────────┘     └───────────                │

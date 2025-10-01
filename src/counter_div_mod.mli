@@ -31,7 +31,7 @@ module Make (Config : Config) : sig
       ; set : 'a
       ; set_quotient : 'a
       ; set_remainder : 'a
-      ; incr : 'a
+      ; increment : 'a
       }
     [@@deriving hardcaml]
   end

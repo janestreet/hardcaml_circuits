@@ -22,7 +22,7 @@ module Make (Config : Config) = struct
       ; set : 'a
       ; set_quotient : 'a [@bits quotient_bits]
       ; set_remainder : 'a [@bits remainder_bits]
-      ; incr : 'a
+      ; increment : 'a
       }
     [@@deriving hardcaml]
   end
@@ -35,7 +35,9 @@ module Make (Config : Config) = struct
     [@@deriving hardcaml]
   end
 
-  let create _scope ({ clock; clear; set; set_quotient; set_remainder; incr } : _ I.t)
+  let create
+    _scope
+    ({ clock; clear; set; set_quotient; set_remainder; increment } : _ I.t)
     : _ O.t
     =
     let open Signal in
@@ -50,13 +52,13 @@ module Make (Config : Config) = struct
             if max_remainder = divisor - 1
             then (* We automatically go to 0 just by incrementing. *)
               gnd
-            else incr &: wrap_now
-          else incr &: (x ==:. divisor - 1 |: wrap_now)
+            else increment &: wrap_now
+          else increment &: (x ==:. divisor - 1 |: wrap_now)
         in
         Signal.priority_select_with_default
           [ { valid = set; value = set_remainder }
           ; { valid = wrap_to_0; value = zero remainder_bits }
-          ; { valid = incr; value = x +:. 1 }
+          ; { valid = increment; value = x +:. 1 }
           ]
           ~default:x)
     in
@@ -71,8 +73,9 @@ module Make (Config : Config) = struct
         [ Some { With_valid.valid = set; value = set_quotient }
         ; Option.some_if
             (not can_skip_wrap)
-            { With_valid.valid = incr &: wrap_now; value = zero quotient_bits }
-        ; Some { valid = incr &: (counter_remainder ==:. divisor - 1); value = x +:. 1 }
+            { With_valid.valid = increment &: wrap_now; value = zero quotient_bits }
+        ; Some
+            { valid = increment &: (counter_remainder ==:. divisor - 1); value = x +:. 1 }
         ]
         |> List.filter_opt
         |> Signal.priority_select_with_default ~default:x)
