@@ -3,6 +3,6 @@
  (libraries base bignum.bigint core
    expect_test_helpers_core.expect_test_helpers_base hardcaml
    hardcaml_circuits hardcaml_step_testbench hardcaml_verify
-   hardcaml_waveterm re stdio sexp_pretty)
+   hardcaml_waveterm re sexp_pretty stdio)
  (preprocess
   (pps ppx_hardcaml ppx_jane)))
