@@ -1,6 +1,6 @@
 (library
  (name hardcaml_circuits)
  (public_name hardcaml_circuits)
- (libraries base hardcaml hardcaml_fixed_point stdio bignum.bigint)
+ (libraries base bignum.bigint hardcaml hardcaml_fixed_point stdio)
  (preprocess
   (pps ppx_hardcaml ppx_jane)))
