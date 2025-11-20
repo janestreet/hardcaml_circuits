@@ -70,7 +70,7 @@ let cordic ?(c = 0.) () ~(system : System.t) ~(mode : Mode.t) ~iterations ~x ~y 
     x', y', z')
 ;;
 
-(* range |pi/2| *)
+(*=range |pi/2| *)
 let cos_sin ~iterations angle =
   let gain = gain ~iterations in
   let x, y, _ =
@@ -112,7 +112,7 @@ let rect_to_polar ~iterations x y =
   x /. gain, z
 ;;
 
-(* range ~|0.98| *)
+(*=range ~|0.98| *)
 let asin ~iterations a =
   let gain = gain ~iterations in
   let _, _, z =
@@ -147,7 +147,7 @@ let cosh_sinh ~iterations a =
   x, y
 ;;
 
-(* range ~|0.8| *)
+(*=range ~|0.8| *)
 let atanh ~iterations a =
   let _, _, z =
     cordic () ~system:Hyperbolic ~mode:Vectoring ~iterations ~x:1. ~y:a ~z:0.

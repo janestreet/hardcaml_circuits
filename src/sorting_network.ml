@@ -37,7 +37,7 @@ module Make (S : sig
 struct
   open S
 
-  (* Bitonic sort.
+  (*=Bitonic sort.
 
      A bitonic sequence is one which changes at most twice.  The following are all
      bitonic:
@@ -76,7 +76,7 @@ struct
             | Down -> max, min)
         in
         (* If [dirn = Up], then every element in [bitonic0] is [<=] every element in
-           [bitonic1].  If [dirn = Down], then similarly but with [>=]. *)
+           [bitonic1]. If [dirn = Down], then similarly but with [>=]. *)
         let bitonic0 = List.map pairs ~f:fst in
         let bitonic1 = List.map pairs ~f:snd in
         let sorted0 = loop bitonic0 in
@@ -94,7 +94,7 @@ struct
       let up = sort' Up l0 in
       (* [up] looks like one of: 0, 1, 01 *)
       let down = sort' Down l1 in
-      (* [down looks like one of: 0, 1, 10 *)
+      (*=[down looks like one of: 0, 1, 10 *)
       let bitonic = up @ down in
       (* [bitonic] looks like one of: 0, 1, 01, 10, 010 *)
       sort_bitonic dirn bitonic
@@ -104,15 +104,15 @@ struct
 
   (* Odd-even merge sort
 
-     Consider a sequence whose first half and second half are sorted.  Now take the even
-     and odd indices to make two new sequences of half the size.  Both of these new
+     Consider a sequence whose first half and second half are sorted. Now take the even
+     and odd indices to make two new sequences of half the size. Both of these new
      sequences will also be made up of two sorted halves.
 
-     The base case of 2 elements is trivially sorted with a compare.  As we come back up
-     the recursion the even and odd elements are now sorted (by induction).  The merge
+     The base case of 2 elements is trivially sorted with a compare. As we come back up
+     the recursion the even and odd elements are now sorted (by induction). The merge
      operation will take these two sequences and apply compares between indices [i, i+1]
-     for all [1,3,5,...,n-3].  The trick to note is that the odd sequence can only have
-     2 more 1's than the even elements (that is, at this step, no more than 1 swap will
+     for all [1,3,5,...,n-3]. The trick to note is that the odd sequence can only have 2
+     more 1's than the even elements (that is, at this step, no more than 1 swap will
      actually be performed). *)
 
   let odd_even l =
@@ -149,7 +149,7 @@ struct
 
          http://www.iti.fh-flensburg.de/lang/algorithmen/sortieren/networks/oemen.htm
 
-         The operation in (d) is clearly a correct sort.  The shape of (b) and the comment
+         The operation in (d) is clearly a correct sort. The shape of (b) and the comment
          "the right column can have at most two more 1's that the left" is the key thing
          to why this works. *)
       List.hd_exn e :: compare_list o (List.tl_exn e)

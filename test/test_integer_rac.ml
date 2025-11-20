@@ -30,11 +30,11 @@ module Make (Config : Rac.Config) = struct
     let%bind _ = Step.cycle { i with addsub = is_integer_mode } in
     let%bind _ = Step.cycle ~num_cycles:(Config.data_bits - 2) i in
     (* This cycle's [addsub] setting is because in [Fixed] mode, the last bit that we
-       process is the (negative) high bit in the twos-complement fixnum, so we
-       accumulator to subtract rather than add. *)
+       process is the (negative) high bit in the twos-complement fixnum, so we accumulator
+       to subtract rather than add. *)
     let%bind o = Step.cycle { i with addsub = Bits.( ~: ) is_integer_mode } in
     (* The result is available above if the testbench outputs are calculated [After] the
-       clock edge, otherwise below.  Either way we need to final step to display the data
+       clock edge, otherwise below. Either way we need to final step to display the data
        in the waveform. *)
     let%bind _ = Step.cycle i in
     return (Bits.to_signed_int (Step.O_data.after_edge o).q)

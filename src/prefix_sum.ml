@@ -119,21 +119,18 @@ let create
 
     (* Proof of associativity of [+].
        {[
-         (t1 + t2) + t3
+         t1 + t2 + t3
          = { g = t2.g |: (t1.g &: t2.p); p = t1.p &: t2.p } + t3
-         = { g = t3.g |: ((t2.g |: (t1.g &: t2.p)) &: t3.p)
-           ; p = t1.p &: t2.p &: t3.p }
+         = { g = t3.g |: (t2.g |: (t1.g &: t2.p) &: t3.p); p = t1.p &: t2.p &: t3.p }
        ]}
        {[
          t1 + (t2 + t3)
          = t1 + { g = t3.g |: (t2.g &: t3.p); p = t2.p &: t3.p }
-         = { g = t3.g |: (t2.g &: t3.p) |: (t1.g & t2.p &: t3.p)
-           ; p = t1.p &: t2.p &: t3.p }
+         = { g = t3.g |: (t2.g &: t3.p) |: (t1.g & t2.p &: t3.p); p = t1.p &: t2.p &: t3.p }
        ]}
        So we need:
        {[
-         (t2.g |: (t1.g &: t2.p)) &: t3.p
-         = (t2.g &: t3.p) |: (t1.g & t2.p &: t3.p)
+         t2.g |: (t1.g &: t2.p) &: t3.p = (t2.g &: t3.p) |: (t1.g & t2.p &: t3.p)
        ]}
        which follows by distributing [&:] over [|:]. *)
   end
@@ -141,9 +138,9 @@ let create
   let open Gp in
   let input_bits = List.rev (List.zip_exn (bits_msb input1) (bits_msb input2)) in
   let half_adders = List.map input_bits ~f:(fun (a, b) -> A.half_adder a b) in
-  (* The i'th element of [prefix_sums] has [p] set iff the first i half adders
-     have [sum = 1].  It has [g] set iff the sum of the low i bits of [input1]
-     and [input2] is >= 2^i, i.e. will generate a carry.  *)
+  (* The i'th element of [prefix_sums] has [p] set iff the first i half adders have
+     [sum = 1]. It has [g] set iff the sum of the low i bits of [input1] and [input2] is
+     >= 2^i, i.e. will generate a carry. *)
   let prefix_sums =
     network
       config

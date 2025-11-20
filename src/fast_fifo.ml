@@ -25,8 +25,8 @@ module Make (M : Hardcaml.Interface.S) = struct
   end
 
   let create ~cut_through ~capacity (scope : Scope.t) (i : _ I.t) =
-    (* Fifo from [Fifo.create] has a one-cycle write latency. This means that
-       writes on cycle [T] will be available immediately at cycle [T+1].
+    (* Fifo from [Fifo.create] has a one-cycle write latency. This means that writes on
+       cycle [T] will be available immediately at cycle [T+1].
     *)
     let fifo_empty = wire 1 in
     let wr_underlying_fifo =
@@ -35,8 +35,8 @@ module Make (M : Hardcaml.Interface.S) = struct
       else i.wr_enable
     in
     let underlying_fifo =
-      (* Explicitly tell vivado to use registers rather than any kind of RAM,
-         because this fifo should generally be small.
+      (* Explicitly tell vivado to use registers rather than any kind of RAM, because this
+         fifo should generally be small.
       *)
       Fifo.create
         ~scope
