@@ -1,8 +1,8 @@
 open! Base
 open! Hardcaml
 
-(* We calculate the max bits the result could be (based on the subtraction of y)
-   and resize the result to this.*)
+(* We calculate the max bits the result could be (based on the subtraction of y) and
+   resize the result to this. *)
 let unsigned_by_constant' (type a) (module S : Comb.S with type t = a) (x : a) (y : int) =
   assert (y > 0);
   let rec build y =

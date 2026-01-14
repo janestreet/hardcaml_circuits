@@ -36,8 +36,7 @@ let run sim n =
   Cyclesim.cycle sim;
   get_input "enable" := Bits.gnd;
   Cyclesim.cycle sim;
-  (*
-     Second request
+  (* Second request
   *)
   get_input "enable" := Bits.vdd;
   for i = 0 to n - 1 do

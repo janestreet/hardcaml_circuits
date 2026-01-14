@@ -26,7 +26,7 @@ let run_lfsr ~nbits ~verbose ~config ~counterpart_taps ~op =
   then print_s [%message "LFSR did not generate all possible states"]
 ;;
 
-(* Test all variants of a 3 bit LFSR.  We should see all 7 possible states (note; not 8!)
+(* Test all variants of a 3 bit LFSR. We should see all 7 possible states (note; not 8!)
    and finish in the same state we started in. *)
 let%expect_test "3 bit galois, xor" =
   List.iter Config.all ~f:(fun config ->

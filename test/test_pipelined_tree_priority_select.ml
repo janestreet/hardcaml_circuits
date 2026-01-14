@@ -335,7 +335,7 @@ let%expect_test "random valids" =
   random sim ~cycles num_data;
   Waveform.print ~display_width:86 ~wave_width:1 waves;
   (* Note; [07] is shown when nothing is valid (no inputs are high - [valid] out will be
-     low).  Otherwise by insepction this looks correct. *)
+     low). Otherwise by insepction this looks correct. *)
   [%expect
     {|
     ((cycle 0) (reductions (3 3 1)))

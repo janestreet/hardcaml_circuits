@@ -2,7 +2,7 @@ open Base
 open Hardcaml
 
 (* twos-complement normalization -- returns the narrowest [Bits.t] value that represents
-   the same integer as the input.  *)
+   the same integer as the input. *)
 let rec narrow x =
   let open Bits in
   if width x = 1
@@ -14,7 +14,7 @@ let rec narrow x =
 
 (* [make_rom coefs] returns a list of values of length [2^n], where [n] is [length coefs],
    the value in list element [i] is the sum of the values in [coefs] at the indices of the
-   one bits in the representation of [i].  That is, the result holds all possible sums of
+   one bits in the representation of [i]. That is, the result holds all possible sums of
    subsets of [coefs]. *)
 let make_rom coefs =
   let open Bits in

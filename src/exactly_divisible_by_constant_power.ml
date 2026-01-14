@@ -55,8 +55,8 @@ type inverses =
   ; rom_values : Bigint.t list
   }
 
-(* The key task is to build a lookup table for the values:
-     [base]^(-N) (mod 2^[output_i_bits]) for N ∈ [pow_base_bounds].
+(* The key task is to build a lookup table for the values: [base]^(-N) (mod
+   2^[output_i_bits]) for N ∈ [pow_base_bounds].
 
    We allow the powers to be any number - positive, negative, or zero.
 
@@ -137,8 +137,8 @@ module Make (Bits : Comb.S) = struct
         inverse_and_bound_lookup ~check_for_error ~bounds ~base ~output_bits
       in
       let rom_idx = pow -: of_int_trunc ~width:(Bits.width pow) bounds.min in
-      (* Because [Config.pow_base_bounds] don't necessarily start at 0, we also have to map
-         from the power we are dividing by to the lookup address in the ROM. *)
+      (* Because [Config.pow_base_bounds] don't necessarily start at 0, we also have to
+         map from the power we are dividing by to the lookup address in the ROM. *)
       { bits =
           { inverse =
               (let conv = of_bigint ~width:inverse_bits in

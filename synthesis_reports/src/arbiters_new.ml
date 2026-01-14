@@ -87,7 +87,7 @@ let output_port_names_and_width (params : Params.t) =
 
 module Arb = Hardcaml_circuits.Arbiters
 
-(*
+(*=
    [ ( "log_comb"
    , wrap_comb
    (Arb.Round_robin_with_priority.Log_shift.combinational

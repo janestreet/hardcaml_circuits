@@ -38,10 +38,7 @@ struct
         |> I.to_list
       ; O.map O.port_names ~f:(port_name_is ~wave_format:(Bit_or Unsigned_int))
         |> O.to_list
-      ; [ port_name_matches
-            Re.Posix.(re "cut_through" |> compile)
-            ~wave_format:(Bit_or Unsigned_int)
-        ]
+      ; [ port_name_matches (Posix "cut_through") ~wave_format:(Bit_or Unsigned_int) ]
       ]
       |> List.concat)
   ;;

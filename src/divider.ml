@@ -32,8 +32,7 @@ module Make (Spec : Spec) = struct
     [@@deriving hardcaml]
   end
 
-  (*
-     {v
+  (* {v
         from: https://en.wikipedia.org/wiki/Division_algorithm#Non-restoring_division
 
         R := N
@@ -60,8 +59,8 @@ module Make (Spec : Spec) = struct
   *)
 
   module State = struct
-    (* R and D need twice the word width of N and Q -
-       add an extra bit to ensure initial values stay unsigned *)
+    (* R and D need twice the word width of N and Q - add an extra bit to ensure initial
+       values stay unsigned *)
     type 'a t =
       { quot : 'a [@bits div_width]
       ; rem : 'a [@bits (2 * div_width) + 1]

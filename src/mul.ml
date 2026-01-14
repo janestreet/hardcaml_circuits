@@ -15,13 +15,13 @@ module Make_gen (B : Gen) = struct
 
   (* A [Weights.t] represents the product of two [B.t]s as a set of weighted single-bit
      wires, where the value of a wire is zero if its bit is zero, or [Int.pow 2 w] if its
-     bit is one, where [w] is the weight of the wire.  [Weights.t] stores the wires
-     indexed by weight. *)
+     bit is one, where [w] is the weight of the wire. [Weights.t] stores the wires indexed
+     by weight. *)
   module Weights : sig
     type t [@@deriving sexp_of]
 
-    (* [create a b] creates the trivially correct product by multiplying every bit
-       in [a] by every bit in [b]. *)
+    (* [create a b] creates the trivially correct product by multiplying every bit in [a]
+       by every bit in [b]. *)
     val create : B.t -> B.t -> t
     val max_wires_at_any_weight : t -> int
 
@@ -30,8 +30,8 @@ module Make_gen (B : Gen) = struct
        groups of two wires of the same weight using a half adder, as per [config]. *)
     val layer : t -> config:Config.t -> t
 
-    (* [sum t] should only be called if [max_wires_at_any_weight t <= 2].  [sum]
-       constructs two numbers out of the wires in [t] and uses [B.(+:)] to add them. *)
+    (* [sum t] should only be called if [max_wires_at_any_weight t <= 2]. [sum] constructs
+       two numbers out of the wires in [t] and uses [B.(+:)] to add them. *)
     val sum : t -> target_width:int -> B.t
   end = struct
     (* [t.(w)] holds all wires of weight [w]. *)
@@ -68,8 +68,8 @@ module Make_gen (B : Gen) = struct
               | Wallace -> true
               | Dadda ->
                 (* We're trying to make [length result.(weight)] be zero mod 3 after
-                   including [a] and [b].  [m] measures the current length mod 3, not
-                   including [a] and [b].  So if [m = 2], we use a half adder, which will
+                   including [a] and [b]. [m] measures the current length mod 3, not
+                   including [a] and [b]. So if [m = 2], we use a half adder, which will
                    make the length be zero mod 3 after including the [sum] output of the
                    half adder. *)
                 let m = List.length result.(weight) % 3 in

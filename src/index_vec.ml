@@ -29,7 +29,7 @@ module Make_tagged (Arg : Arg) = struct
   module Vec = Vec.Make (struct
       module Interface = Interface
 
-      (* Initialize the indexes with [0,1,2,3,4, ...].  Tags are up to the user. *)
+      (* Initialize the indexes with [0,1,2,3,4, ...]. Tags are up to the user. *)
       let spec ~index =
         { Interface.index = of_int_trunc ~width:log_vec_size index
         ; tag = Arg.spec ~index

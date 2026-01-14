@@ -61,7 +61,7 @@ module Make (Config : Config) : sig
       ; clr : 'a
       ; en : 'a
       ; ld : 'a (* Load input data to internal shift registers *)
-      ; addsub : 'a (* High on the msb (if input data is signed).  *)
+      ; addsub : 'a (* High on the msb (if input data is signed). *)
       ; x : 'a array
       }
     [@@deriving hardcaml]

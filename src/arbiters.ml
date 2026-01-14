@@ -189,8 +189,8 @@ module Round_robin_with_priority = struct
     let is_pow2 = List.length data |> Int.is_pow2 in
     match arch with
     | Small ->
-      (* dont use [Count_zeros] for non-power of 2 number of inputs as it requires a modulo
-         operation. *)
+      (* dont use [Count_zeros] for non-power of 2 number of inputs as it requires a
+         modulo operation. *)
       if is_pow2 then (module Count_zeros : S) else get_arch Balanced data
     | Balanced -> (module Onehot_cleaner : S)
     | Fast -> (module Log_shift : S)

@@ -277,9 +277,8 @@ let%expect_test "atanh x, converges when |x| < 0.82" =
 
 let%expect_test "asin x, converges when |x| < 0.99, but not terribly stable." =
   let errors =
-    (* Increase [steps] to 100 to see some poor convergence around [0.66] -
-       this appears to be a known issue requiring a specific double iteration
-       scheme to circumvent. *)
+    (* Increase [steps] to 100 to see some poor convergence around [0.66] - this appears
+       to be a known issue requiring a specific double iteration scheme to circumvent. *)
     test_range
       ~start:(-1.)
       ~stop:1.
