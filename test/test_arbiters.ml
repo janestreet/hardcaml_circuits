@@ -290,12 +290,11 @@ module%test Test_priority_onehot_cleaner_comb = Test_round_robin_comb (struct
   end)
 
 let display_rules =
-  let re x = Re.Posix.(compile (re x)) in
   Display_rule.
     [ port_name_is "index" ~wave_format:Unsigned_int
     ; port_name_is "valid" ~wave_format:Bit
     ; port_name_is "value" ~wave_format:Unsigned_int
-    ; port_name_matches (re "valid.+") ~wave_format:Bit
+    ; port_name_matches (Posix "valid.+") ~wave_format:Bit
     ]
 ;;
 

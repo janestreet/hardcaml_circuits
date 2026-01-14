@@ -34,7 +34,7 @@ let test_fixed ?print () ~coefs ~data_in ~coef_prec ~data_prec =
         (float_result : float)]
 ;;
 
-let%expect_test "precisions" =
+let%expect_test ("precisions" [@tags "runtime5-only"]) =
   let coefs = Array.init 4 ~f:(fun _ -> Random.float 1.) in
   let data_in = Array.init 4 ~f:(fun _ -> Random.float 1.) in
   print_s [%message "" (coefs : float array) (data_in : float array)];
@@ -93,7 +93,7 @@ let%expect_test "precisions" =
     |}]
 ;;
 
-let%expect_test "signed" =
+let%expect_test ("signed" [@tags "runtime5-only"]) =
   let coefs = Array.init 4 ~f:(fun _ -> 2. *. (Random.float 1. -. 0.5)) in
   let data_in = Array.init 4 ~f:(fun _ -> 2. *. (Random.float 1. -. 0.5)) in
   print_s [%message "" (coefs : float array) (data_in : float array)];
@@ -120,7 +120,7 @@ let%expect_test "signed" =
     |}]
 ;;
 
-let%expect_test "utilization" =
+let%expect_test ("utilization" [@tags "runtime5-only"]) =
   let utilization =
     Circuit.create_exn
       ~name:"rac"
