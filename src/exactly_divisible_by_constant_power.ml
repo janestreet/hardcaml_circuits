@@ -141,7 +141,7 @@ module Make (Bits : Comb.S) = struct
          map from the power we are dividing by to the lookup address in the ROM. *)
       { bits =
           { inverse =
-              (let conv = of_bigint ~width:inverse_bits in
+              (let conv = of_bigint_trunc ~width:inverse_bits in
                match rom_values with
                | [ inverse ] -> conv inverse
                | _ -> mux rom_idx (List.map rom_values ~f:conv))

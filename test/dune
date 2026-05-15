@@ -1,7 +1,6 @@
 (library
  (name hardcaml_circuits_test)
- (libraries base bignum.bigint core
-   expect_test_helpers_core.expect_test_helpers_base hardcaml
+ (libraries base bignum.bigint core expect_test_helpers_base hardcaml
    hardcaml_circuits hardcaml_step_testbench hardcaml_verify
    hardcaml_waveterm sexp_pretty stdio)
  (preprocess

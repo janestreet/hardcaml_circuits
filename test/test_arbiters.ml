@@ -338,7 +338,7 @@ let create_round_robin_seq ~num_sources ~data_width ~use_mask arbiter =
 
 let test_round_robin_seq ~num_sources ~data_width sim =
   let log_num_sources = Int.ceil_log2 num_sources in
-  let waves, sim = Waveform.create sim in
+  let waves, sim = Cyclesim.Waveform.create sim in
   let clear = Cyclesim.in_port sim "clear" in
   clear := Bits.vdd;
   Cyclesim.cycle sim;

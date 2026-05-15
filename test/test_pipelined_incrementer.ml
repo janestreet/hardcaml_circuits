@@ -27,7 +27,7 @@ let sim ~part_width ~increment_width ~total_width =
     ; q = Cyclesim.out_port sim "q"
     }
   in
-  let waves, sim = Waveform.create sim in
+  let waves, sim = Cyclesim.Waveform.create sim in
   sim, waves, ports
 ;;
 

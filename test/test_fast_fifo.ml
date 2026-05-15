@@ -21,7 +21,7 @@ let create_sim ?(capacity = 2) ?(cut_through = true) () =
       ~config:{ Cyclesim.Config.default with store_circuit = true }
       (Fast_fifo.create ~cut_through ~capacity scope)
   in
-  let waves, sim = Hardcaml_waveterm.Waveform.create sim in
+  let waves, sim = Cyclesim.Waveform.create sim in
   waves, sim
 ;;
 

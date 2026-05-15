@@ -28,7 +28,7 @@ let init ?(trace_reductions = true) ~cycles num_data =
       ~config:{ Cyclesim.Config.default with store_circuit = true }
       (Circuit.create_exn ~name:"pipelined_priority_select" [ valid; value ])
   in
-  let waves, sim = Waveform.create sim in
+  let waves, sim = Cyclesim.Waveform.create sim in
   waves, sim
 ;;
 

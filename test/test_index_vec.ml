@@ -48,7 +48,7 @@ let create_sim log_vec_size =
 
 let%expect_test "fill and remove from start" =
   let sim, slot, op = create_sim 2 in
-  let waves, sim = Waveform.create sim in
+  let waves, sim = Cyclesim.Waveform.create sim in
   for _ = 0 to 3 do
     slot 0;
     op Vec.insert;
@@ -108,7 +108,7 @@ let%expect_test "fill and remove from start" =
 
 let%expect_test "fill and remove from end" =
   let sim, slot, op = create_sim 2 in
-  let waves, sim = Waveform.create sim in
+  let waves, sim = Cyclesim.Waveform.create sim in
   for i = 0 to 3 do
     slot i;
     op Vec.insert;
@@ -168,7 +168,7 @@ let%expect_test "fill and remove from end" =
 
 let%expect_test "fill at end and remove from start" =
   let sim, slot, op = create_sim 2 in
-  let waves, sim = Waveform.create sim in
+  let waves, sim = Cyclesim.Waveform.create sim in
   for i = 0 to 3 do
     slot i;
     op Vec.insert;
@@ -228,7 +228,7 @@ let%expect_test "fill at end and remove from start" =
 
 let%expect_test "fill at start and remove from end" =
   let sim, slot, op = create_sim 2 in
-  let waves, sim = Waveform.create sim in
+  let waves, sim = Cyclesim.Waveform.create sim in
   for _ = 0 to 3 do
     slot 0;
     op Vec.insert;
@@ -537,7 +537,7 @@ let test_tagging ~log_vec_size sim =
   let set_indexes = Cyclesim.in_port sim "set_indexes" in
   (* Circuit must be reset to initialize the vec index registers *)
   let (waves, sim), slot, op =
-    ( Waveform.create sim
+    ( Cyclesim.Waveform.create sim
     , (fun i -> slot := Bits.of_int_trunc ~width:log_vec_size i)
     , fun (f : (module Comb.S with type t = 'a) -> 'a) -> op := f (module Bits) )
   in

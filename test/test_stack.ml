@@ -52,7 +52,7 @@ struct
     let sim =
       Sim.create ~config:{ Cyclesim.Config.trace_all with store_circuit = true } circuit
     in
-    Waveform.create sim
+    Cyclesim.Waveform.create sim
   ;;
 
   (* runs through a series of events and validates the behavior against a software stack. *)
