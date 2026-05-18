@@ -54,7 +54,7 @@ module Make (Config : Rac.Config) = struct
   ;;
 
   let run_and_print_waves ~simulator ~testbench ~data_in =
-    let waves, simulator = Waveform.create simulator in
+    let waves, simulator = Cyclesim.Waveform.create simulator in
     let result = run ~simulator ~testbench ~data_in in
     Waveform.expect ~display_width:120 ~wave_width:2 waves;
     result

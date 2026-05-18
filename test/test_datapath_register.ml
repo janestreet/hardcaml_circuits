@@ -24,7 +24,7 @@ let create_sim ?(all_waves = false) () =
     in
     Sim.create ~config dut
   in
-  Waveform.create sim
+  Cyclesim.Waveform.create sim
 ;;
 
 let run_test ~sim n =

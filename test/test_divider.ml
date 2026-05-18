@@ -31,7 +31,7 @@ module Make_test (Spec : Spec) = struct
       in
       Sim.create ~config div
     in
-    Waveform.create sim
+    Cyclesim.Waveform.create sim
   ;;
 
   module I_stim = struct

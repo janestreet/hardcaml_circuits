@@ -19,7 +19,7 @@ module Sim (Config : Counter_div_mod.Config) = struct
     ~(input_list : bool list)
     (sim : Sim.t)
     =
-    let waves, sim = Hardcaml_waveterm.Waveform.create sim in
+    let waves, sim = Cyclesim.Waveform.create sim in
     let inputs = Cyclesim.inputs sim in
     let outputs = Cyclesim.outputs sim in
     inputs.clear := Bits.vdd;

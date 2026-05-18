@@ -22,7 +22,7 @@ let sim ~cycles ~num_data =
       ~config:{ Cyclesim.Config.default with store_circuit = true }
       (Circuit.create_exn ~name:"pipelined_tree_mux" [ value ])
   in
-  Waveform.create sim
+  Cyclesim.Waveform.create sim
 ;;
 
 let run sim ~cycles ~num_data =

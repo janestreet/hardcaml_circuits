@@ -51,7 +51,7 @@ let sim () =
       ~config:{ Cyclesim.Config.default with store_circuit = true }
       (Circuit.create_exn ~name:"pipeline" [ Signal.output "q" (Stages.output q) ])
   in
-  Waveform.create sim
+  Cyclesim.Waveform.create sim
 ;;
 
 let run sim =
@@ -104,7 +104,7 @@ let sim_with_enable () =
          ~name:"pipeline"
          [ Signal.output "q" data; Signal.output "valid" enable ])
   in
-  Waveform.create sim
+  Cyclesim.Waveform.create sim
 ;;
 
 let run_with_enable sim =

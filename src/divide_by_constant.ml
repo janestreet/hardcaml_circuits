@@ -51,7 +51,7 @@ module Make (Bits : Comb.S) = struct
       let dividend_bits = width dividend in
       dividend_larger_than_divisor divisor dividend_bits;
       let { a; k } = parameters ~dividend_bits ~divisor in
-      let a = of_bigint ~width:(num_bits_to_represent a) a in
+      let a = of_bigint_trunc ~width:(num_bits_to_represent a) a in
       let b =
         drop_bottom (dividend *: a) ~width:dividend_bits |> uresize ~width:dividend_bits
       in

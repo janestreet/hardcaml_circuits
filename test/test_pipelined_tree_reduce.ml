@@ -21,7 +21,7 @@ let sim ~arity n =
   let sim =
     Cyclesim.create ~config:{ Cyclesim.Config.default with store_circuit = true } circuit
   in
-  Waveform.create sim
+  Cyclesim.Waveform.create sim
 ;;
 
 let run sim n =
