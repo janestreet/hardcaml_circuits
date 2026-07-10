@@ -24,8 +24,8 @@ let serial ( +: ) l =
 
 let split_pow2 l =
   match List.length l with
-  | 0 -> [], []
-  | 1 -> l, []
+  | 0 -> #([], [])
+  | 1 -> #(l, [])
   | w -> List.split_n l (Int.floor_pow2 (w - 1))
 ;;
 
@@ -34,7 +34,7 @@ let rec sklansky ( +: ) l =
   | [] -> failwith "sklansky"
   | [ a ] -> [ a ]
   | _ ->
-    let s, t = split_pow2 l in
+    let #(s, t) = split_pow2 l in
     let s = sklansky ( +: ) s in
     let t = sklansky ( +: ) t in
     let s_last = List.last_exn s in

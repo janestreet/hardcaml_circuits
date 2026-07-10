@@ -67,7 +67,7 @@ struct
       match bitonic with
       | [ _ ] -> bitonic
       | _ ->
-        let l0, l1 = halve bitonic in
+        let #(l0, l1) = halve bitonic in
         let pairs =
           List.map2_exn l0 l1 ~f:(fun a b ->
             let { Min_max.min; max } = compare_and_swap a b in
@@ -90,7 +90,7 @@ struct
     match l with
     | [ _ ] -> l
     | _ ->
-      let l0, l1 = halve l in
+      let #(l0, l1) = halve l in
       let up = sort' Up l0 in
       (* [up] looks like one of: 0, 1, 01 *)
       let down = sort' Down l1 in
@@ -159,7 +159,7 @@ struct
     if List.length l <= 1
     then l
     else (
-      let l, h = halve l in
+      let #(l, h) = halve l in
       merge (odd_even_merge_sort l @ odd_even_merge_sort h))
   ;;
 end
