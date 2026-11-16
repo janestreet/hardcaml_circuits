@@ -1,7 +1,10 @@
 open Base
 open! Hardcaml
 
-(* xapp052 2..168 *)
+(* xapp052 2..168, except for 102: the note lists 102, 101, 36, 35, which is not a
+   maximal-length LFSR, as x^102 + x^101 + x^36 + x^35 + 1 is divisible by
+   x^3 + x^2 + 1. 102, 101, 26, 25 is the reciprocal of the polynomial in Stahnke's
+   table, which the note is based on. *)
 let taps =
   [| []
    ; []
@@ -105,7 +108,7 @@ let taps =
    ; [ 99; 97; 54; 52 ]
    ; [ 100; 63 ]
    ; [ 101; 100; 95; 94 ]
-   ; [ 102; 101; 36; 35 ]
+   ; [ 102; 101; 26; 25 ]
    ; [ 103; 94 ]
    ; [ 104; 103; 94; 93 ]
    ; [ 105; 89 ]
